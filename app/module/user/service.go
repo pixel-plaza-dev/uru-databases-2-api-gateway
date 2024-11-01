@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc/client/context"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
 )
 
@@ -29,7 +30,7 @@ func (s *Service) SignUp(ctx *gin.Context) (*pbuser.SignUpResponse, error) {
 	// Call the client
 	signUpResponse, err := s.client.SignUp(ctx, &signUpRequest)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(err)
 	}
 	return signUpResponse, nil
 }

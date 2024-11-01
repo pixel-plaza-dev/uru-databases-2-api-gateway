@@ -14,6 +14,7 @@ import (
 	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/listener"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func init() {
@@ -41,9 +42,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.UserServiceHostKey, apigrpc.UserServicePortKey)
 
 	// Connect to user service gRPC server
-	conn, err := grpc.NewClient(userUri.Uri)
+	conn, err := grpc.NewClient(userUri.Uri, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +67,7 @@ func main() {
 
 	// Create user controller
 	userService := user.NewService(userClient)
-	user.NewController(apiRoute, userService)
+	user.NewController(logger.UserServiceLogger, apiRoute, userService)
 
 	// Run the server
 	if err = router.Run(servicePort.FormattedPort); err != nil {
