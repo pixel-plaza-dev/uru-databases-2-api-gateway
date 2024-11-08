@@ -4,9 +4,11 @@ go 1.23.2
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.4.7
-	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.0.4
+	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.0.9
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.4.13
+	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.0.17
 	google.golang.org/grpc v1.67.1
 )
 
@@ -21,7 +23,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
