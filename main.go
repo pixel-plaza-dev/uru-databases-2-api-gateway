@@ -47,18 +47,18 @@ func main() {
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.ApiGatewayPortKey)
 
 	// Load auth service URI
-	authUri, err := commongrpc.LoadUri(apigrpc.AuthServiceHostKey, apigrpc.AuthServicePortKey)
+	authUri, err := commongrpc.LoadServiceURI(apigrpc.AuthServiceUriKey)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.AuthServiceHostKey, apigrpc.AuthServicePortKey)
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.AuthServiceUriKey)
 
 	// Load user service URI
-	userUri, err := commongrpc.LoadUri(apigrpc.UserServiceHostKey, apigrpc.UserServicePortKey)
+	userUri, err := commongrpc.LoadServiceURI(apigrpc.UserServiceUriKey)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.UserServiceHostKey, apigrpc.UserServicePortKey)
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.UserServiceUriKey)
 
 	// Load JWT public key
 	jwtPublicKey, err := commonjwt.LoadJwtKey(apijwt.PublicKey)
@@ -68,7 +68,7 @@ func main() {
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(apijwt.PublicKey)
 
 	// Connect to user service gRPC server
-	userConn, err := grpc.NewClient(userUri.Uri, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	userConn, err := grpc.NewClient(userUri, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +80,7 @@ func main() {
 	}(userConn)
 
 	// Connect to auth service gRPC server
-	authConn, err := grpc.NewClient(authUri.Uri, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.NewClient(authUri, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
