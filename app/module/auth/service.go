@@ -2,17 +2,20 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/flag"
+	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc/client/context"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/auth"
 )
 
 // Service is the service for auth
 type Service struct {
 	client pbauth.AuthClient
+	flag   *commonflag.ModeFlag
 }
 
 // NewService creates a new service
-func NewService(client pbauth.AuthClient) *Service {
-	return &Service{client: client}
+func NewService(flag *commonflag.ModeFlag, client pbauth.AuthClient) *Service {
+	return &Service{client: client, flag: flag}
 }
 
 // LogIn logs in the user
@@ -27,7 +30,7 @@ func (s *Service) LogIn(ctx *gin.Context) (*pbauth.LogInResponse, error) {
 	// Log in the user
 	response, err := s.client.LogIn(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -44,7 +47,7 @@ func (s *Service) RefreshToken(ctx *gin.Context) (*pbauth.RefreshTokenResponse, 
 	// Refresh the token
 	response, err := s.client.RefreshToken(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -61,7 +64,7 @@ func (s *Service) LogOut(ctx *gin.Context) (*pbauth.LogOutResponse, error) {
 	// Log out the user
 	response, err := s.client.LogOut(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -78,7 +81,7 @@ func (s *Service) CloseSessions(ctx *gin.Context) (*pbauth.CloseSessionsResponse
 	// Close all the user's sessions
 	response, err := s.client.CloseSessions(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -95,7 +98,7 @@ func (s *Service) GetSessions(ctx *gin.Context) (*pbauth.GetSessionsResponse, er
 	// Get all the user's sessions
 	response, err := s.client.GetSessions(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -112,7 +115,7 @@ func (s *Service) AddPermission(ctx *gin.Context) (*pbauth.AddPermissionResponse
 	// Add a permission to the user
 	response, err := s.client.AddPermission(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -129,7 +132,7 @@ func (s *Service) RevokePermission(ctx *gin.Context) (*pbauth.RevokePermissionRe
 	// Revoke a permission from the user
 	response, err := s.client.RevokePermission(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -146,7 +149,7 @@ func (s *Service) GetPermission(ctx *gin.Context) (*pbauth.GetPermissionResponse
 	// Get all the user's permissions
 	response, err := s.client.GetPermission(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -163,7 +166,7 @@ func (s *Service) GetPermissions(ctx *gin.Context) (*pbauth.GetPermissionsRespon
 	// Get all the user's permissions
 	response, err := s.client.GetPermissions(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -180,7 +183,7 @@ func (s *Service) AddRole(ctx *gin.Context) (*pbauth.AddRoleResponse, error) {
 	// Add a role to the user
 	response, err := s.client.AddRole(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -197,7 +200,7 @@ func (s *Service) RevokeRole(ctx *gin.Context) (*pbauth.RevokeRoleResponse, erro
 	// Revoke a role from the user
 	response, err := s.client.RevokeRole(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -214,7 +217,7 @@ func (s *Service) GetRoles(ctx *gin.Context) (*pbauth.GetRolesResponse, error) {
 	// Get all the user's roles
 	response, err := s.client.GetRoles(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -231,7 +234,7 @@ func (s *Service) AddRolePermission(ctx *gin.Context) (*pbauth.AddRolePermission
 	// Add a permission to the role
 	response, err := s.client.AddRolePermission(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -248,7 +251,7 @@ func (s *Service) RevokeRolePermission(ctx *gin.Context) (*pbauth.RevokeRolePerm
 	// Revoke a permission from the role
 	response, err := s.client.RevokeRolePermission(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -265,7 +268,7 @@ func (s *Service) GetRolePermissions(ctx *gin.Context) (*pbauth.GetRolePermissio
 	// Get all the role's permissions
 	response, err := s.client.GetRolePermissions(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -282,7 +285,7 @@ func (s *Service) AddUserRole(ctx *gin.Context) (*pbauth.AddUserRoleResponse, er
 	// Add a role to the user
 	response, err := s.client.AddUserRole(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -299,7 +302,7 @@ func (s *Service) RevokeUserRole(ctx *gin.Context) (*pbauth.RevokeUserRoleRespon
 	// Revoke a role from the user
 	response, err := s.client.RevokeUserRole(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }
@@ -316,7 +319,7 @@ func (s *Service) GetUserRoles(ctx *gin.Context) (*pbauth.GetUserRolesResponse, 
 	// Get all the user's roles
 	response, err := s.client.GetUserRoles(ctx, &request)
 	if err != nil {
-		return nil, err
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return response, nil
 }

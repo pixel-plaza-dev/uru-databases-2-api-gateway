@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/flag"
 	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc/client/context"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
 )
@@ -9,12 +10,14 @@ import (
 // Service is the service for user
 type Service struct {
 	client pbuser.UserClient
+	flag   *commonflag.ModeFlag
 }
 
 // NewService creates a new service
-func NewService(client pbuser.UserClient) *Service {
+func NewService(flag *commonflag.ModeFlag, client pbuser.UserClient) *Service {
 	return &Service{
 		client: client,
+		flag:   flag,
 	}
 }
 
@@ -30,7 +33,7 @@ func (s *Service) SignUp(ctx *gin.Context) (*pbuser.SignUpResponse, error) {
 	// Call the client
 	signUpResponse, err := s.client.SignUp(ctx, &signUpRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return signUpResponse, nil
 }
@@ -47,7 +50,7 @@ func (s *Service) UpdateProfile(ctx *gin.Context) (*pbuser.UpdateProfileResponse
 	// Call the client
 	updateProfileResponse, err := s.client.UpdateProfile(ctx, &updateProfileRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return updateProfileResponse, nil
 }
@@ -57,7 +60,7 @@ func (s *Service) GetProfile(ctx *gin.Context) (*pbuser.GetProfileResponse, erro
 	// Call the client
 	getProfileResponse, err := s.client.GetProfile(ctx, &pbuser.GetProfileRequest{})
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return getProfileResponse, nil
 }
@@ -67,7 +70,7 @@ func (s *Service) GetFullProfile(ctx *gin.Context) (*pbuser.GetFullProfileRespon
 	// Call the client
 	getFullProfileResponse, err := s.client.GetFullProfile(ctx, &pbuser.GetFullProfileRequest{})
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return getFullProfileResponse, nil
 }
@@ -84,7 +87,7 @@ func (s *Service) ChangePassword(ctx *gin.Context) (*pbuser.ChangePasswordRespon
 	// Call the client
 	changePasswordResponse, err := s.client.ChangePassword(ctx, &changePasswordRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return changePasswordResponse, nil
 }
@@ -101,7 +104,7 @@ func (s *Service) ChangeUsername(ctx *gin.Context) (*pbuser.ChangeUsernameRespon
 	// Call the client
 	changeUsernameResponse, err := s.client.ChangeUsername(ctx, &changeUsernameRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return changeUsernameResponse, nil
 }
@@ -118,7 +121,7 @@ func (s *Service) AddEmail(ctx *gin.Context) (*pbuser.AddEmailResponse, error) {
 	// Call the client
 	addEmailResponse, err := s.client.AddEmail(ctx, &addEmailRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return addEmailResponse, nil
 }
@@ -135,7 +138,7 @@ func (s *Service) DeleteEmail(ctx *gin.Context) (*pbuser.DeleteEmailResponse, er
 	// Call the client
 	deleteEmailResponse, err := s.client.DeleteEmail(ctx, &deleteEmailRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return deleteEmailResponse, nil
 }
@@ -152,7 +155,7 @@ func (s *Service) ChangePrimaryEmail(ctx *gin.Context) (*pbuser.ChangePrimaryEma
 	// Call the client
 	changePrimaryEmailResponse, err := s.client.ChangePrimaryEmail(ctx, &changePrimaryEmailRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return changePrimaryEmailResponse, nil
 }
@@ -169,7 +172,7 @@ func (s *Service) SendVerificationEmail(ctx *gin.Context) (*pbuser.SendVerificat
 	// Call the client
 	sendVerificationEmailResponse, err := s.client.SendVerificationEmail(ctx, &sendVerificationEmailRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return sendVerificationEmailResponse, nil
 }
@@ -186,7 +189,7 @@ func (s *Service) VerifyEmail(ctx *gin.Context) (*pbuser.VerifyEmailResponse, er
 	// Call the client
 	verifyEmailResponse, err := s.client.VerifyEmail(ctx, &verifyEmailRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return verifyEmailResponse, nil
 }
@@ -196,7 +199,7 @@ func (s *Service) GetPrimaryEmail(ctx *gin.Context) (*pbuser.GetPrimaryEmailResp
 	// Call the client
 	getPrimaryEmailResponse, err := s.client.GetPrimaryEmail(ctx, &pbuser.GetPrimaryEmailRequest{})
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return getPrimaryEmailResponse, nil
 }
@@ -206,7 +209,7 @@ func (s *Service) GetActiveEmails(ctx *gin.Context) (*pbuser.GetActiveEmailsResp
 	// Call the client
 	getActiveEmailsResponse, err := s.client.GetActiveEmails(ctx, &pbuser.GetActiveEmailsRequest{})
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return getActiveEmailsResponse, nil
 }
@@ -223,7 +226,7 @@ func (s *Service) ChangePhoneNumber(ctx *gin.Context) (*pbuser.ChangePhoneNumber
 	// Call the client
 	changePhoneNumberResponse, err := s.client.ChangePhoneNumber(ctx, &changePhoneNumberRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return changePhoneNumberResponse, nil
 }
@@ -240,7 +243,7 @@ func (s *Service) SendVerificationPhoneNumber(ctx *gin.Context) (*pbuser.SendVer
 	// Call the client
 	sendVerificationPhoneNumberResponse, err := s.client.SendVerificationPhoneNumber(ctx, &sendVerificationPhoneNumberRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return sendVerificationPhoneNumberResponse, nil
 }
@@ -257,7 +260,7 @@ func (s *Service) VerifyPhoneNumber(ctx *gin.Context) (*pbuser.VerifyPhoneNumber
 	// Call the client
 	verifyPhoneNumberResponse, err := s.client.VerifyPhoneNumber(ctx, &verifyPhoneNumberRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return verifyPhoneNumberResponse, nil
 }
@@ -267,7 +270,7 @@ func (s *Service) GetPhoneNumber(ctx *gin.Context) (*pbuser.GetPhoneNumberRespon
 	// Call the client
 	getPhoneNumberResponse, err := s.client.GetPhoneNumber(ctx, &pbuser.GetPhoneNumberRequest{})
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return getPhoneNumberResponse, nil
 }
@@ -284,7 +287,7 @@ func (s *Service) ForgotPassword(ctx *gin.Context) (*pbuser.ForgotPasswordRespon
 	// Call the client
 	forgotPasswordResponse, err := s.client.ForgotPassword(ctx, &forgotPasswordRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return forgotPasswordResponse, nil
 }
@@ -301,7 +304,7 @@ func (s *Service) ResetPassword(ctx *gin.Context) (*pbuser.ResetPasswordResponse
 	// Call the client
 	resetPasswordResponse, err := s.client.ResetPassword(ctx, &resetPasswordRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return resetPasswordResponse, nil
 }
@@ -318,7 +321,7 @@ func (s *Service) DeleteUser(ctx *gin.Context) (*pbuser.DeleteUserResponse, erro
 	// Call the client
 	deleteUserResponse, err := s.client.DeleteUser(ctx, &deleteUserRequest)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(err)
+		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
 	return deleteUserResponse, nil
 }

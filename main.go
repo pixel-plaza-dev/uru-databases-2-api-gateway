@@ -97,13 +97,13 @@ func main() {
 	// Create auth client
 	authClient := pbauth.NewAuthClient(authConn)
 
-	// Gin router
-	router := gin.Default()
-
 	// Check if the mode is production
-	if commonflag.Mode.String() == commonflag.ModeProd {
+	if commonflag.Mode.IsProd() {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	// Gin router
+	router := gin.Default()
 
 	// Added secure headers middleware
 	router.Use(commonheader.SecurityHeaders())
@@ -133,11 +133,11 @@ func main() {
 	apiRoute := router.Group("/api/v1")
 
 	// Create user controller
-	userService := user.NewService(userClient)
+	userService := user.NewService(commonflag.Mode, userClient)
 	user.NewController(apiRoute, userService, jwtMiddleware)
 
 	// Create auth controller
-	authService := auth.NewService(authClient)
+	authService := auth.NewService(commonflag.Mode, authClient)
 	auth.NewController(apiRoute, authService, jwtMiddleware)
 
 	// Run the server
