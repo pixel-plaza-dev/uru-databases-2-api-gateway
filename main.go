@@ -97,17 +97,6 @@ func main() {
 	// Create auth client
 	authClient := pbauth.NewAuthClient(authConn)
 
-	// Check if the mode is production
-	if commonflag.Mode.IsProd() {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
-	// Gin router
-	router := gin.Default()
-
-	// Added secure headers middleware
-	router.Use(commonheader.SecurityHeaders())
-
 	// Create JWT validator
 	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(jwtPublicKey, func(claims *jwt.MapClaims) (*jwt.MapClaims, error) {
 		// Get the expiration time
@@ -128,6 +117,17 @@ func main() {
 
 	// Create JWT middleware
 	jwtMiddleware := authmiddleware.NewMiddleware(jwtValidator)
+
+	// Check if the mode is production
+	if commonflag.Mode.IsProd() {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	// Gin router
+	router := gin.Default()
+
+	// Added secure headers middleware
+	router.Use(commonheader.SecurityHeaders())
 
 	// Route group
 	apiRoute := router.Group("/api/v1")
