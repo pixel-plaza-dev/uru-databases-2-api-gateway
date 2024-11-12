@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
-	apigrpc "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc"
-	apijwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
+	appgrpc "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc"
+	appjwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/auth"
@@ -22,7 +22,6 @@ import (
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/auth"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"time"
 )
 
@@ -46,29 +45,28 @@ func main() {
 	}
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.ApiGatewayPortKey)
 
-	// Load auth service URI
-	authUri, err := commongrpc.LoadServiceURI(apigrpc.AuthServiceUriKey)
+	// Get the auth service URI
+	authUri, err := commongrpc.LoadServiceURI(appgrpc.AuthServiceUriKey)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.AuthServiceUriKey)
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(appgrpc.AuthServiceUriKey)
 
-	// Load user service URI
-	userUri, err := commongrpc.LoadServiceURI(apigrpc.UserServiceUriKey)
+	// Get the user service URI
+	userUri, err := commongrpc.LoadServiceURI(appgrpc.UserServiceUriKey)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(apigrpc.UserServiceUriKey)
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(appgrpc.UserServiceUriKey)
 
-	// Load JWT public key
-	jwtPublicKey, err := commonjwt.LoadJwtKey(apijwt.PublicKey)
+	// Load the CA certificate for the Pixel Plaza's services
+	CACredentials, err := commongrpc.LoadTLSCredentials(appgrpc.CACertificatePath)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(apijwt.PublicKey)
 
 	// Connect to user service gRPC server
-	userConn, err := grpc.NewClient(userUri, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	userConn, err := grpc.NewClient(userUri, grpc.WithTransportCredentials(CACredentials))
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +78,7 @@ func main() {
 	}(userConn)
 
 	// Connect to auth service gRPC server
-	authConn, err := grpc.NewClient(authUri, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.NewClient(authUri, grpc.WithTransportCredentials(CACredentials))
 	if err != nil {
 		panic(err)
 	}
@@ -97,8 +95,14 @@ func main() {
 	// Create auth client
 	authClient := pbauth.NewAuthClient(authConn)
 
+	// Read the JWT public key
+	jwtFile, err := commonjwt.ReadJwtKey(appjwt.PublicKeyPath)
+	if err != nil {
+		panic(err)
+	}
+
 	// Create JWT validator
-	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(jwtPublicKey, func(claims *jwt.MapClaims) (*jwt.MapClaims, error) {
+	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(jwtFile, func(claims *jwt.MapClaims) (*jwt.MapClaims, error) {
 		// Get the expiration time
 		exp, err := claims.GetExpirationTime()
 		if err != nil {

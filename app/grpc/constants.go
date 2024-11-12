@@ -6,4 +6,7 @@ const (
 
 	// AuthServiceUriKey is the key of the auth service URI
 	AuthServiceUriKey = "AUTH_SERVICE_HOST"
+
+	// CACertificatePath is the path to the CA certificate
+	CACertificatePath = "certificates/pixel-plaza/ca-cert.pem"
 )

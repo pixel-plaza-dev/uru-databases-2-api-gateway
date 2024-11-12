@@ -1,6 +1,6 @@
 package jwt
 
 const (
-	// PublicKey is the public key for the JWT
-	PublicKey = "JWT_PUBLIC"
+	// PublicKeyPath is the path to the public key
+	PublicKeyPath = "keys/jwt-public.pem"
 )
