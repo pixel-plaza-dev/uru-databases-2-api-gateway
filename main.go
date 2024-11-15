@@ -105,12 +105,12 @@ func main() {
 			panic(err)
 		}
 
-		userConn, err = grpc.NewClient(userUri, grpc.WithPerRPCCredentials(tokenSource), grpc.WithTransportCredentials(systemCredentials), grpc.WithInsecure())
+		userConn, err = grpc.NewClient(userUri, grpc.WithPerRPCCredentials(tokenSource), grpc.WithTransportCredentials(systemCredentials))
 		if err != nil {
 			panic(err)
 		}
 
-		authConn, err = grpc.NewClient(authUri, grpc.WithPerRPCCredentials(tokenSource), grpc.WithTransportCredentials(systemCredentials), grpc.WithInsecure())
+		authConn, err = grpc.NewClient(authUri, grpc.WithPerRPCCredentials(tokenSource), grpc.WithTransportCredentials(systemCredentials))
 		if err != nil {
 			panic(err)
 		}
