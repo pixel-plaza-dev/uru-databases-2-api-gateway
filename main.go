@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -26,6 +27,16 @@ import (
 )
 
 func init() {
+	// Declare flags and parse them
+	commonflag.SetModeFlag()
+	flag.Parse()
+	logger.FlagLogger.ModeFlagSet(commonflag.Mode)
+
+	// Check if the environment is production
+	if commonflag.Mode.IsProd() {
+		return
+	}
+
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		panic(commonenv.FailedToLoadEnvironmentVariablesError)
@@ -33,17 +44,12 @@ func init() {
 }
 
 func main() {
-	// Declare flags and parse them
-	commonflag.SetModeFlag()
-	flag.Parse()
-	logger.FlagLogger.ModeFlagSet(commonflag.Mode)
-
 	// Get the listener port
-	servicePort, err := commonlistener.LoadServicePort(listener.ApiGatewayPortKey)
+	servicePort, err := commonlistener.LoadServicePort("0.0.0.0", listener.PortKey)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.ApiGatewayPortKey)
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.PortKey)
 
 	// Get the auth service URI
 	authUri, err := commongrpc.LoadServiceURI(appgrpc.AuthServiceUriKey)
@@ -59,50 +65,71 @@ func main() {
 	}
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(appgrpc.UserServiceUriKey)
 
-	// Load the CA certificate for the Pixel Plaza's services
-	CACredentials, err := commongrpc.LoadTLSCredentials(appgrpc.CACertificatePath)
+	// Get the JWT public key
+	jwtPublicKey, err := commonjwt.LoadJwtKey(appjwt.PublicKey)
 	if err != nil {
 		panic(err)
 	}
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(appjwt.PublicKey)
 
-	// Connect to user service gRPC server
-	userConn, err := grpc.NewClient(userUri, grpc.WithTransportCredentials(CACredentials))
-	if err != nil {
-		panic(err)
-	}
-	defer func(conn *grpc.ClientConn) {
-		err = conn.Close()
+	// Connect to gRPC servers
+	var userConn *grpc.ClientConn
+	var authConn *grpc.ClientConn
+
+	if commonflag.Mode.IsDev() {
+		// Load the self-signed CA certificates for the Pixel Plaza's services
+		CACredentials, err := commongrpc.LoadTLSCredentials(appgrpc.CACertificatePath)
 		if err != nil {
 			panic(err)
 		}
-	}(userConn)
 
-	// Connect to auth service gRPC server
-	authConn, err := grpc.NewClient(authUri, grpc.WithTransportCredentials(CACredentials))
-	if err != nil {
-		panic(err)
-	}
-	defer func(conn *grpc.ClientConn) {
-		err = conn.Close()
+		userConn, err = grpc.NewClient(userUri, grpc.WithTransportCredentials(CACredentials))
 		if err != nil {
 			panic(err)
 		}
-	}(authConn)
 
-	// Create user client
+		authConn, err = grpc.NewClient(authUri, grpc.WithTransportCredentials(CACredentials))
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		// Load system certificates pool
+		systemCredentials, err := commongrpc.LoadSystemCredentials()
+		if err != nil {
+			panic(err)
+		}
+
+		// Load default account credentials
+		tokenSource, err := commongrpc.LoadServiceAccountCredentials(context.Background(), userUri)
+		if err != nil {
+			panic(err)
+		}
+
+		userConn, err = grpc.NewClient(userUri, grpc.WithPerRPCCredentials(tokenSource), grpc.WithTransportCredentials(systemCredentials), grpc.WithInsecure())
+		if err != nil {
+			panic(err)
+		}
+
+		authConn, err = grpc.NewClient(authUri, grpc.WithPerRPCCredentials(tokenSource), grpc.WithTransportCredentials(systemCredentials), grpc.WithInsecure())
+		if err != nil {
+			panic(err)
+		}
+	}
+	defer func(conns ...*grpc.ClientConn) {
+		for _, conn := range conns {
+			err = conn.Close()
+			if err != nil {
+				panic(err)
+			}
+		}
+	}(userConn, authConn)
+
+	// Create gRPC server clients
 	userClient := pbuser.NewUserClient(userConn)
-
-	// Create auth client
 	authClient := pbauth.NewAuthClient(authConn)
 
-	// Read the JWT public key
-	jwtFile, err := commonjwt.ReadJwtKey(appjwt.PublicKeyPath)
-	if err != nil {
-		panic(err)
-	}
-
 	// Create JWT validator
-	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(jwtFile, func(claims *jwt.MapClaims) (*jwt.MapClaims, error) {
+	jwtValidator, err := commonjwtvalidator.NewDefaultValidator([]byte(jwtPublicKey), func(claims *jwt.MapClaims) (*jwt.MapClaims, error) {
 		// Get the expiration time
 		exp, err := claims.GetExpirationTime()
 		if err != nil {
