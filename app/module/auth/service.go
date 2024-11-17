@@ -2,8 +2,8 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/flag"
-	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc/client/context"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
+	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/auth"
 )
 
@@ -36,7 +36,9 @@ func (s *Service) LogIn(ctx *gin.Context) (*pbauth.LogInResponse, error) {
 }
 
 // RefreshToken refreshes the user's token
-func (s *Service) RefreshToken(ctx *gin.Context) (*pbauth.RefreshTokenResponse, error) {
+func (s *Service) RefreshToken(ctx *gin.Context) (
+	*pbauth.RefreshTokenResponse, error,
+) {
 	var request pbauth.RefreshTokenRequest
 
 	// Bind the request
@@ -70,7 +72,9 @@ func (s *Service) LogOut(ctx *gin.Context) (*pbauth.LogOutResponse, error) {
 }
 
 // CloseSessions closes all the user's sessions
-func (s *Service) CloseSessions(ctx *gin.Context) (*pbauth.CloseSessionsResponse, error) {
+func (s *Service) CloseSessions(ctx *gin.Context) (
+	*pbauth.CloseSessionsResponse, error,
+) {
 	var request pbauth.CloseSessionsRequest
 
 	// Bind the request
@@ -87,7 +91,9 @@ func (s *Service) CloseSessions(ctx *gin.Context) (*pbauth.CloseSessionsResponse
 }
 
 // GetSessions gets all the user's sessions
-func (s *Service) GetSessions(ctx *gin.Context) (*pbauth.GetSessionsResponse, error) {
+func (s *Service) GetSessions(ctx *gin.Context) (
+	*pbauth.GetSessionsResponse, error,
+) {
 	var request pbauth.GetSessionsRequest
 
 	// Bind the request
@@ -104,7 +110,9 @@ func (s *Service) GetSessions(ctx *gin.Context) (*pbauth.GetSessionsResponse, er
 }
 
 // AddPermission adds a permission to the user
-func (s *Service) AddPermission(ctx *gin.Context) (*pbauth.AddPermissionResponse, error) {
+func (s *Service) AddPermission(ctx *gin.Context) (
+	*pbauth.AddPermissionResponse, error,
+) {
 	var request pbauth.AddPermissionRequest
 
 	// Bind the request
@@ -121,7 +129,9 @@ func (s *Service) AddPermission(ctx *gin.Context) (*pbauth.AddPermissionResponse
 }
 
 // RevokePermission revokes a permission from the user
-func (s *Service) RevokePermission(ctx *gin.Context) (*pbauth.RevokePermissionResponse, error) {
+func (s *Service) RevokePermission(ctx *gin.Context) (
+	*pbauth.RevokePermissionResponse, error,
+) {
 	var request pbauth.RevokePermissionRequest
 
 	// Bind the request
@@ -138,7 +148,9 @@ func (s *Service) RevokePermission(ctx *gin.Context) (*pbauth.RevokePermissionRe
 }
 
 // GetPermission gets all the user's permissions
-func (s *Service) GetPermission(ctx *gin.Context) (*pbauth.GetPermissionResponse, error) {
+func (s *Service) GetPermission(ctx *gin.Context) (
+	*pbauth.GetPermissionResponse, error,
+) {
 	var request pbauth.GetPermissionRequest
 
 	// Bind the request
@@ -155,7 +167,9 @@ func (s *Service) GetPermission(ctx *gin.Context) (*pbauth.GetPermissionResponse
 }
 
 // GetPermissions gets all the user's permissions
-func (s *Service) GetPermissions(ctx *gin.Context) (*pbauth.GetPermissionsResponse, error) {
+func (s *Service) GetPermissions(ctx *gin.Context) (
+	*pbauth.GetPermissionsResponse, error,
+) {
 	var request pbauth.GetPermissionsRequest
 
 	// Bind the request
@@ -189,7 +203,9 @@ func (s *Service) AddRole(ctx *gin.Context) (*pbauth.AddRoleResponse, error) {
 }
 
 // RevokeRole revokes a role from the user
-func (s *Service) RevokeRole(ctx *gin.Context) (*pbauth.RevokeRoleResponse, error) {
+func (s *Service) RevokeRole(ctx *gin.Context) (
+	*pbauth.RevokeRoleResponse, error,
+) {
 	var request pbauth.RevokeRoleRequest
 
 	// Bind the request
@@ -223,7 +239,9 @@ func (s *Service) GetRoles(ctx *gin.Context) (*pbauth.GetRolesResponse, error) {
 }
 
 // AddRolePermission adds a permission to the role
-func (s *Service) AddRolePermission(ctx *gin.Context) (*pbauth.AddRolePermissionResponse, error) {
+func (s *Service) AddRolePermission(ctx *gin.Context) (
+	*pbauth.AddRolePermissionResponse, error,
+) {
 	var request pbauth.AddRolePermissionRequest
 
 	// Bind the request
@@ -240,7 +258,9 @@ func (s *Service) AddRolePermission(ctx *gin.Context) (*pbauth.AddRolePermission
 }
 
 // RevokeRolePermission revokes a permission from the role
-func (s *Service) RevokeRolePermission(ctx *gin.Context) (*pbauth.RevokeRolePermissionResponse, error) {
+func (s *Service) RevokeRolePermission(ctx *gin.Context) (
+	*pbauth.RevokeRolePermissionResponse, error,
+) {
 	var request pbauth.RevokeRolePermissionRequest
 
 	// Bind the request
@@ -257,7 +277,9 @@ func (s *Service) RevokeRolePermission(ctx *gin.Context) (*pbauth.RevokeRolePerm
 }
 
 // GetRolePermissions gets all the role's permissions
-func (s *Service) GetRolePermissions(ctx *gin.Context) (*pbauth.GetRolePermissionsResponse, error) {
+func (s *Service) GetRolePermissions(ctx *gin.Context) (
+	*pbauth.GetRolePermissionsResponse, error,
+) {
 	var request pbauth.GetRolePermissionsRequest
 
 	// Bind the request
@@ -274,7 +296,9 @@ func (s *Service) GetRolePermissions(ctx *gin.Context) (*pbauth.GetRolePermissio
 }
 
 // AddUserRole adds a role to the user
-func (s *Service) AddUserRole(ctx *gin.Context) (*pbauth.AddUserRoleResponse, error) {
+func (s *Service) AddUserRole(ctx *gin.Context) (
+	*pbauth.AddUserRoleResponse, error,
+) {
 	var request pbauth.AddUserRoleRequest
 
 	// Bind the request
@@ -291,7 +315,9 @@ func (s *Service) AddUserRole(ctx *gin.Context) (*pbauth.AddUserRoleResponse, er
 }
 
 // RevokeUserRole revokes a role from the user
-func (s *Service) RevokeUserRole(ctx *gin.Context) (*pbauth.RevokeUserRoleResponse, error) {
+func (s *Service) RevokeUserRole(ctx *gin.Context) (
+	*pbauth.RevokeUserRoleResponse, error,
+) {
 	var request pbauth.RevokeUserRoleRequest
 
 	// Bind the request
@@ -308,7 +334,9 @@ func (s *Service) RevokeUserRole(ctx *gin.Context) (*pbauth.RevokeUserRoleRespon
 }
 
 // GetUserRoles gets all the user's roles
-func (s *Service) GetUserRoles(ctx *gin.Context) (*pbauth.GetUserRolesResponse, error) {
+func (s *Service) GetUserRoles(ctx *gin.Context) (
+	*pbauth.GetUserRolesResponse, error,
+) {
 	var request pbauth.GetUserRolesRequest
 
 	// Bind the request

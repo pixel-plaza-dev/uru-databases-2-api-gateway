@@ -2,23 +2,32 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/gin/middleware/auth"
+	jwtmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
+	mdmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/metadata"
 )
 
 type Controller struct {
 	apiRoute      *gin.RouterGroup
 	route         *gin.RouterGroup
 	service       *Service
-	jwtMiddleware authmiddleware.Authentication
+	jwtMiddleware jwtmiddleware.Authentication
+	mdMiddleware  mdmiddleware.Authentication
 }
 
 // NewController creates a new controller
-func NewController(apiRoute *gin.RouterGroup, service *Service, jwtMiddleware authmiddleware.Authentication) *Controller {
+func NewController(
+	apiRoute *gin.RouterGroup, service *Service,
+	jwtMiddleware jwtmiddleware.Authentication,
+	mdMiddleware mdmiddleware.Authentication,
+) *Controller {
 	// Create a new route for the user service
 	route := apiRoute.Group("/user")
 
 	// Create a new user controller
-	instance := &Controller{apiRoute: apiRoute, route: route, service: service, jwtMiddleware: jwtMiddleware}
+	instance := &Controller{
+		apiRoute: apiRoute, route: route, service: service,
+		jwtMiddleware: jwtMiddleware, mdMiddleware: mdMiddleware,
+	}
 
 	// Initialize the routes for the controller
 	instance.initializeRoutes()
@@ -29,25 +38,78 @@ func NewController(apiRoute *gin.RouterGroup, service *Service, jwtMiddleware au
 // initializeRoutes initializes the routes for the controller
 func (c *Controller) initializeRoutes() {
 	c.route.POST("/sign-up", c.signUp)
-	c.route.PATCH("/profile", c.jwtMiddleware.Authenticate(), c.updateProfile)
-	c.route.GET("/profile", c.jwtMiddleware.Authenticate(), c.getProfile)
-	c.route.GET("/full-profile", c.jwtMiddleware.Authenticate(), c.getFullProfile)
-	c.route.PATCH("/password", c.jwtMiddleware.Authenticate(), c.changePassword)
-	c.route.PATCH("/username", c.jwtMiddleware.Authenticate(), c.changeUsername)
-	c.route.PATCH("/email", c.jwtMiddleware.Authenticate(), c.changePrimaryEmail)
-	c.route.POST("/email", c.jwtMiddleware.Authenticate(), c.addEmail)
-	c.route.DELETE("/email", c.jwtMiddleware.Authenticate(), c.deleteEmail)
-	c.route.GET("/email", c.jwtMiddleware.Authenticate(), c.getPrimaryEmail)
-	c.route.GET("/emails", c.jwtMiddleware.Authenticate(), c.getActiveEmails)
-	c.route.POST("/send-verification-email", c.jwtMiddleware.Authenticate(), c.sendVerificationEmail)
-	c.route.POST("/verify-email", c.jwtMiddleware.Authenticate(), c.verifyEmail)
-	c.route.PATCH("/phone-number", c.jwtMiddleware.Authenticate(), c.changePhoneNumber)
-	c.route.GET("/phone-number", c.jwtMiddleware.Authenticate(), c.getPhoneNumber)
-	c.route.POST("/send-verification-phone-number", c.jwtMiddleware.Authenticate(), c.sendVerificationPhoneNumber)
-	c.route.POST("/verify-phone-number", c.jwtMiddleware.Authenticate(), c.verifyPhoneNumber)
+	c.route.PATCH(
+		"/profile", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.updateProfile,
+	)
+	c.route.GET(
+		"/profile", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getProfile,
+	)
+	c.route.GET(
+		"/full-profile", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getFullProfile,
+	)
+	c.route.PATCH(
+		"/password", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.changePassword,
+	)
+	c.route.PATCH(
+		"/username", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.changeUsername,
+	)
+	c.route.PATCH(
+		"/email", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.changePrimaryEmail,
+	)
+	c.route.POST(
+		"/email", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.addEmail,
+	)
+	c.route.DELETE(
+		"/email", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.deleteEmail,
+	)
+	c.route.GET(
+		"/email", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.getPrimaryEmail,
+	)
+	c.route.GET(
+		"/emails", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getActiveEmails,
+	)
+	c.route.POST(
+		"/send-verification-email", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(),
+		c.sendVerificationEmail,
+	)
+	c.route.POST(
+		"/verify-email", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.verifyEmail,
+	)
+	c.route.PATCH(
+		"/phone-number", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.changePhoneNumber,
+	)
+	c.route.GET(
+		"/phone-number", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getPhoneNumber,
+	)
+	c.route.POST(
+		"/send-verification-phone-number", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(),
+		c.sendVerificationPhoneNumber,
+	)
+	c.route.POST(
+		"/verify-phone-number", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.verifyPhoneNumber,
+	)
 	c.route.POST("/forgot-password", c.forgotPassword)
 	c.route.POST("/reset-password", c.resetPassword)
-	c.route.DELETE("/close-account", c.jwtMiddleware.Authenticate(), c.deleteUser)
+	c.route.DELETE(
+		"/close-account", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.deleteUser,
+	)
 }
 
 // signUp creates a new user

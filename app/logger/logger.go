@@ -1,10 +1,10 @@
 package logger
 
 import (
-	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/env"
-	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/flag"
-	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/listener"
-	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/logger"
+	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
+	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/listener"
+	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/logger"
 )
 
 var (

@@ -1,9 +1,10 @@
 package user
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/flag"
-	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/grpc/client/context"
+	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
+	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
 )
 
@@ -31,7 +32,9 @@ func (s *Service) SignUp(ctx *gin.Context) (*pbuser.SignUpResponse, error) {
 	}
 
 	// Call the client
+
 	signUpResponse, err := s.client.SignUp(ctx, &signUpRequest)
+	fmt.Println(err)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -39,7 +42,9 @@ func (s *Service) SignUp(ctx *gin.Context) (*pbuser.SignUpResponse, error) {
 }
 
 // UpdateProfile updates the profile of a user
-func (s *Service) UpdateProfile(ctx *gin.Context) (*pbuser.UpdateProfileResponse, error) {
+func (s *Service) UpdateProfile(ctx *gin.Context) (
+	*pbuser.UpdateProfileResponse, error,
+) {
 	var updateProfileRequest pbuser.UpdateProfileRequest
 
 	// Bind the request
@@ -48,7 +53,9 @@ func (s *Service) UpdateProfile(ctx *gin.Context) (*pbuser.UpdateProfileResponse
 	}
 
 	// Call the client
-	updateProfileResponse, err := s.client.UpdateProfile(ctx, &updateProfileRequest)
+	updateProfileResponse, err := s.client.UpdateProfile(
+		ctx, &updateProfileRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -56,9 +63,13 @@ func (s *Service) UpdateProfile(ctx *gin.Context) (*pbuser.UpdateProfileResponse
 }
 
 // GetProfile gets the profile of a user
-func (s *Service) GetProfile(ctx *gin.Context) (*pbuser.GetProfileResponse, error) {
+func (s *Service) GetProfile(ctx *gin.Context) (
+	*pbuser.GetProfileResponse, error,
+) {
 	// Call the client
-	getProfileResponse, err := s.client.GetProfile(ctx, &pbuser.GetProfileRequest{})
+	getProfileResponse, err := s.client.GetProfile(
+		ctx, &pbuser.GetProfileRequest{},
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -66,9 +77,13 @@ func (s *Service) GetProfile(ctx *gin.Context) (*pbuser.GetProfileResponse, erro
 }
 
 // GetFullProfile gets the full profile of a user
-func (s *Service) GetFullProfile(ctx *gin.Context) (*pbuser.GetFullProfileResponse, error) {
+func (s *Service) GetFullProfile(ctx *gin.Context) (
+	*pbuser.GetFullProfileResponse, error,
+) {
 	// Call the client
-	getFullProfileResponse, err := s.client.GetFullProfile(ctx, &pbuser.GetFullProfileRequest{})
+	getFullProfileResponse, err := s.client.GetFullProfile(
+		ctx, &pbuser.GetFullProfileRequest{},
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -76,7 +91,9 @@ func (s *Service) GetFullProfile(ctx *gin.Context) (*pbuser.GetFullProfileRespon
 }
 
 // ChangePassword changes the password of a user
-func (s *Service) ChangePassword(ctx *gin.Context) (*pbuser.ChangePasswordResponse, error) {
+func (s *Service) ChangePassword(ctx *gin.Context) (
+	*pbuser.ChangePasswordResponse, error,
+) {
 	var changePasswordRequest pbuser.ChangePasswordRequest
 
 	// Bind the request
@@ -85,7 +102,9 @@ func (s *Service) ChangePassword(ctx *gin.Context) (*pbuser.ChangePasswordRespon
 	}
 
 	// Call the client
-	changePasswordResponse, err := s.client.ChangePassword(ctx, &changePasswordRequest)
+	changePasswordResponse, err := s.client.ChangePassword(
+		ctx, &changePasswordRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -93,7 +112,9 @@ func (s *Service) ChangePassword(ctx *gin.Context) (*pbuser.ChangePasswordRespon
 }
 
 // ChangeUsername changes the username of a user
-func (s *Service) ChangeUsername(ctx *gin.Context) (*pbuser.ChangeUsernameResponse, error) {
+func (s *Service) ChangeUsername(ctx *gin.Context) (
+	*pbuser.ChangeUsernameResponse, error,
+) {
 	var changeUsernameRequest pbuser.ChangeUsernameRequest
 
 	// Bind the request
@@ -102,7 +123,9 @@ func (s *Service) ChangeUsername(ctx *gin.Context) (*pbuser.ChangeUsernameRespon
 	}
 
 	// Call the client
-	changeUsernameResponse, err := s.client.ChangeUsername(ctx, &changeUsernameRequest)
+	changeUsernameResponse, err := s.client.ChangeUsername(
+		ctx, &changeUsernameRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -127,7 +150,9 @@ func (s *Service) AddEmail(ctx *gin.Context) (*pbuser.AddEmailResponse, error) {
 }
 
 // DeleteEmail deletes an email from a user
-func (s *Service) DeleteEmail(ctx *gin.Context) (*pbuser.DeleteEmailResponse, error) {
+func (s *Service) DeleteEmail(ctx *gin.Context) (
+	*pbuser.DeleteEmailResponse, error,
+) {
 	var deleteEmailRequest pbuser.DeleteEmailRequest
 
 	// Bind the request
@@ -144,7 +169,9 @@ func (s *Service) DeleteEmail(ctx *gin.Context) (*pbuser.DeleteEmailResponse, er
 }
 
 // ChangePrimaryEmail changes the primary email of a user
-func (s *Service) ChangePrimaryEmail(ctx *gin.Context) (*pbuser.ChangePrimaryEmailResponse, error) {
+func (s *Service) ChangePrimaryEmail(ctx *gin.Context) (
+	*pbuser.ChangePrimaryEmailResponse, error,
+) {
 	var changePrimaryEmailRequest pbuser.ChangePrimaryEmailRequest
 
 	// Bind the request
@@ -153,7 +180,9 @@ func (s *Service) ChangePrimaryEmail(ctx *gin.Context) (*pbuser.ChangePrimaryEma
 	}
 
 	// Call the client
-	changePrimaryEmailResponse, err := s.client.ChangePrimaryEmail(ctx, &changePrimaryEmailRequest)
+	changePrimaryEmailResponse, err := s.client.ChangePrimaryEmail(
+		ctx, &changePrimaryEmailRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -161,7 +190,9 @@ func (s *Service) ChangePrimaryEmail(ctx *gin.Context) (*pbuser.ChangePrimaryEma
 }
 
 // SendVerificationEmail sends a verification email to a user
-func (s *Service) SendVerificationEmail(ctx *gin.Context) (*pbuser.SendVerificationEmailResponse, error) {
+func (s *Service) SendVerificationEmail(ctx *gin.Context) (
+	*pbuser.SendVerificationEmailResponse, error,
+) {
 	var sendVerificationEmailRequest pbuser.SendVerificationEmailRequest
 
 	// Bind the request
@@ -170,7 +201,9 @@ func (s *Service) SendVerificationEmail(ctx *gin.Context) (*pbuser.SendVerificat
 	}
 
 	// Call the client
-	sendVerificationEmailResponse, err := s.client.SendVerificationEmail(ctx, &sendVerificationEmailRequest)
+	sendVerificationEmailResponse, err := s.client.SendVerificationEmail(
+		ctx, &sendVerificationEmailRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -178,7 +211,9 @@ func (s *Service) SendVerificationEmail(ctx *gin.Context) (*pbuser.SendVerificat
 }
 
 // VerifyEmail verifies the email of a user
-func (s *Service) VerifyEmail(ctx *gin.Context) (*pbuser.VerifyEmailResponse, error) {
+func (s *Service) VerifyEmail(ctx *gin.Context) (
+	*pbuser.VerifyEmailResponse, error,
+) {
 	var verifyEmailRequest pbuser.VerifyEmailRequest
 
 	// Bind the request
@@ -195,9 +230,13 @@ func (s *Service) VerifyEmail(ctx *gin.Context) (*pbuser.VerifyEmailResponse, er
 }
 
 // GetPrimaryEmail gets the primary email of a user
-func (s *Service) GetPrimaryEmail(ctx *gin.Context) (*pbuser.GetPrimaryEmailResponse, error) {
+func (s *Service) GetPrimaryEmail(ctx *gin.Context) (
+	*pbuser.GetPrimaryEmailResponse, error,
+) {
 	// Call the client
-	getPrimaryEmailResponse, err := s.client.GetPrimaryEmail(ctx, &pbuser.GetPrimaryEmailRequest{})
+	getPrimaryEmailResponse, err := s.client.GetPrimaryEmail(
+		ctx, &pbuser.GetPrimaryEmailRequest{},
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -205,9 +244,13 @@ func (s *Service) GetPrimaryEmail(ctx *gin.Context) (*pbuser.GetPrimaryEmailResp
 }
 
 // GetActiveEmails gets the active emails of a user
-func (s *Service) GetActiveEmails(ctx *gin.Context) (*pbuser.GetActiveEmailsResponse, error) {
+func (s *Service) GetActiveEmails(ctx *gin.Context) (
+	*pbuser.GetActiveEmailsResponse, error,
+) {
 	// Call the client
-	getActiveEmailsResponse, err := s.client.GetActiveEmails(ctx, &pbuser.GetActiveEmailsRequest{})
+	getActiveEmailsResponse, err := s.client.GetActiveEmails(
+		ctx, &pbuser.GetActiveEmailsRequest{},
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -215,7 +258,9 @@ func (s *Service) GetActiveEmails(ctx *gin.Context) (*pbuser.GetActiveEmailsResp
 }
 
 // ChangePhoneNumber changes the phone number of a user
-func (s *Service) ChangePhoneNumber(ctx *gin.Context) (*pbuser.ChangePhoneNumberResponse, error) {
+func (s *Service) ChangePhoneNumber(ctx *gin.Context) (
+	*pbuser.ChangePhoneNumberResponse, error,
+) {
 	var changePhoneNumberRequest pbuser.ChangePhoneNumberRequest
 
 	// Bind the request
@@ -224,7 +269,9 @@ func (s *Service) ChangePhoneNumber(ctx *gin.Context) (*pbuser.ChangePhoneNumber
 	}
 
 	// Call the client
-	changePhoneNumberResponse, err := s.client.ChangePhoneNumber(ctx, &changePhoneNumberRequest)
+	changePhoneNumberResponse, err := s.client.ChangePhoneNumber(
+		ctx, &changePhoneNumberRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -232,7 +279,9 @@ func (s *Service) ChangePhoneNumber(ctx *gin.Context) (*pbuser.ChangePhoneNumber
 }
 
 // SendVerificationPhoneNumber sends a verification phone number to a user
-func (s *Service) SendVerificationPhoneNumber(ctx *gin.Context) (*pbuser.SendVerificationPhoneNumberResponse, error) {
+func (s *Service) SendVerificationPhoneNumber(ctx *gin.Context) (
+	*pbuser.SendVerificationPhoneNumberResponse, error,
+) {
 	var sendVerificationPhoneNumberRequest pbuser.SendVerificationPhoneNumberRequest
 
 	// Bind the request
@@ -241,7 +290,9 @@ func (s *Service) SendVerificationPhoneNumber(ctx *gin.Context) (*pbuser.SendVer
 	}
 
 	// Call the client
-	sendVerificationPhoneNumberResponse, err := s.client.SendVerificationPhoneNumber(ctx, &sendVerificationPhoneNumberRequest)
+	sendVerificationPhoneNumberResponse, err := s.client.SendVerificationPhoneNumber(
+		ctx, &sendVerificationPhoneNumberRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -249,7 +300,9 @@ func (s *Service) SendVerificationPhoneNumber(ctx *gin.Context) (*pbuser.SendVer
 }
 
 // VerifyPhoneNumber verifies the phone number of a user
-func (s *Service) VerifyPhoneNumber(ctx *gin.Context) (*pbuser.VerifyPhoneNumberResponse, error) {
+func (s *Service) VerifyPhoneNumber(ctx *gin.Context) (
+	*pbuser.VerifyPhoneNumberResponse, error,
+) {
 	var verifyPhoneNumberRequest pbuser.VerifyPhoneNumberRequest
 
 	// Bind the request
@@ -258,7 +311,9 @@ func (s *Service) VerifyPhoneNumber(ctx *gin.Context) (*pbuser.VerifyPhoneNumber
 	}
 
 	// Call the client
-	verifyPhoneNumberResponse, err := s.client.VerifyPhoneNumber(ctx, &verifyPhoneNumberRequest)
+	verifyPhoneNumberResponse, err := s.client.VerifyPhoneNumber(
+		ctx, &verifyPhoneNumberRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -266,9 +321,13 @@ func (s *Service) VerifyPhoneNumber(ctx *gin.Context) (*pbuser.VerifyPhoneNumber
 }
 
 // GetPhoneNumber gets the phone number of a user
-func (s *Service) GetPhoneNumber(ctx *gin.Context) (*pbuser.GetPhoneNumberResponse, error) {
+func (s *Service) GetPhoneNumber(ctx *gin.Context) (
+	*pbuser.GetPhoneNumberResponse, error,
+) {
 	// Call the client
-	getPhoneNumberResponse, err := s.client.GetPhoneNumber(ctx, &pbuser.GetPhoneNumberRequest{})
+	getPhoneNumberResponse, err := s.client.GetPhoneNumber(
+		ctx, &pbuser.GetPhoneNumberRequest{},
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -276,7 +335,9 @@ func (s *Service) GetPhoneNumber(ctx *gin.Context) (*pbuser.GetPhoneNumberRespon
 }
 
 // ForgotPassword sends a forgot password email to a user
-func (s *Service) ForgotPassword(ctx *gin.Context) (*pbuser.ForgotPasswordResponse, error) {
+func (s *Service) ForgotPassword(ctx *gin.Context) (
+	*pbuser.ForgotPasswordResponse, error,
+) {
 	var forgotPasswordRequest pbuser.ForgotPasswordRequest
 
 	// Bind the request
@@ -285,7 +346,9 @@ func (s *Service) ForgotPassword(ctx *gin.Context) (*pbuser.ForgotPasswordRespon
 	}
 
 	// Call the client
-	forgotPasswordResponse, err := s.client.ForgotPassword(ctx, &forgotPasswordRequest)
+	forgotPasswordResponse, err := s.client.ForgotPassword(
+		ctx, &forgotPasswordRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -293,7 +356,9 @@ func (s *Service) ForgotPassword(ctx *gin.Context) (*pbuser.ForgotPasswordRespon
 }
 
 // ResetPassword resets the password of a user
-func (s *Service) ResetPassword(ctx *gin.Context) (*pbuser.ResetPasswordResponse, error) {
+func (s *Service) ResetPassword(ctx *gin.Context) (
+	*pbuser.ResetPasswordResponse, error,
+) {
 	var resetPasswordRequest pbuser.ResetPasswordRequest
 
 	// Bind the request
@@ -302,7 +367,9 @@ func (s *Service) ResetPassword(ctx *gin.Context) (*pbuser.ResetPasswordResponse
 	}
 
 	// Call the client
-	resetPasswordResponse, err := s.client.ResetPassword(ctx, &resetPasswordRequest)
+	resetPasswordResponse, err := s.client.ResetPassword(
+		ctx, &resetPasswordRequest,
+	)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -310,7 +377,9 @@ func (s *Service) ResetPassword(ctx *gin.Context) (*pbuser.ResetPasswordResponse
 }
 
 // DeleteUser deletes a user
-func (s *Service) DeleteUser(ctx *gin.Context) (*pbuser.DeleteUserResponse, error) {
+func (s *Service) DeleteUser(ctx *gin.Context) (
+	*pbuser.DeleteUserResponse, error,
+) {
 	var deleteUserRequest pbuser.DeleteUserRequest
 
 	// Bind the request

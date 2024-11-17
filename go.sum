@@ -101,10 +101,10 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
 github.com/pelletier/go-toml/v2 v2.2.3 h1:YmeHyLY8mFWbdkNWwpr+qIL2bEqT0o95WSdkNHvL12M=
 github.com/pelletier/go-toml/v2 v2.2.3/go.mod h1:MfCQTFTvCcUyyvvwm1+G6H/jORL20Xlb6rzQu9GuUkc=
-github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.0.9 h1:/qAKeiMwhW7kkf6WQTu0tuoIvM++lqQcYyWlOM3gwRs=
-github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.0.9/go.mod h1:+XfWmLW1e6WwIo7Fv3Mn8KqH/6rmw8KvaNTXk4HG8Dc=
-github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.4.22 h1:OcxNTYHcio/h5hfTXYLyGLwkv1mv3EH1qhOlyGHZSgM=
-github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.4.22/go.mod h1:Ym73hlkCAWKeHH4xFkIHAhBJ+CpCnR4Fe8Jul817Gjw=
+github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.1.3 h1:bxlRiQu6RCe1t3RjxYrEloeeW5N5W4+cH/xnEkYo/v0=
+github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.1.3/go.mod h1:+RKMrN7wTEtVEb1SsBLoKdVsqvdB3kpvCjKtas+/QiM=
+github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.1 h1:B1sdiRZd/p/aN2mtek+237MMPhSVfHK5sp12n7O//hs=
+github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.5.1/go.mod h1:Ym73hlkCAWKeHH4xFkIHAhBJ+CpCnR4Fe8Jul817Gjw=
 github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.0.18 h1:bn+sUZ9GXrhYaSL7Olb3qMFco81pbJeWEuIyoJ5RW5M=
 github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.0.18/go.mod h1:Zusz7ZSuk97Cmg7LyyhQSan7qk2P4rZ26xJgYSjbGJ0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

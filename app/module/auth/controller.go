@@ -2,23 +2,32 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/gin/middleware/auth"
+	jwtmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
+	mdmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/metadata"
 )
 
 type Controller struct {
 	apiRoute      *gin.RouterGroup
 	route         *gin.RouterGroup
 	service       *Service
-	jwtMiddleware authmiddleware.Authentication
+	jwtMiddleware jwtmiddleware.Authentication
+	mdMiddleware  mdmiddleware.Authentication
 }
 
 // NewController creates a new controller
-func NewController(apiRoute *gin.RouterGroup, service *Service, jwtMiddleware authmiddleware.Authentication) *Controller {
+func NewController(
+	apiRoute *gin.RouterGroup, service *Service,
+	jwtMiddleware jwtmiddleware.Authentication,
+	mdMiddleware mdmiddleware.Authentication,
+) *Controller {
 	// Create a new route for the auth service
 	route := apiRoute.Group("/auth")
 
 	// Create a new user controller
-	instance := &Controller{apiRoute: apiRoute, route: route, service: service, jwtMiddleware: jwtMiddleware}
+	instance := &Controller{
+		apiRoute: apiRoute, route: route, service: service,
+		jwtMiddleware: jwtMiddleware, mdMiddleware: mdMiddleware,
+	}
 
 	// Initialize the routes for the controller
 	instance.initializeRoutes()
@@ -29,23 +38,75 @@ func NewController(apiRoute *gin.RouterGroup, service *Service, jwtMiddleware au
 // initializeRoutes initializes the routes for the controller
 func (c *Controller) initializeRoutes() {
 	c.route.POST("/log-in", c.logIn)
-	c.route.POST("/refresh-token", c.jwtMiddleware.Authenticate(), c.refreshToken)
-	c.route.POST("/log-out", c.jwtMiddleware.Authenticate(), c.logOut)
-	c.route.GET("/sessions", c.jwtMiddleware.Authenticate(), c.getSessions)
-	c.route.POST("/close-sessions", c.jwtMiddleware.Authenticate(), c.closeSessions)
-	c.route.POST("/permission", c.jwtMiddleware.Authenticate(), c.addPermission)
-	c.route.DELETE("/permission", c.jwtMiddleware.Authenticate(), c.revokePermission)
-	c.route.GET("/permissions", c.jwtMiddleware.Authenticate(), c.getPermissions)
-	c.route.GET("/permission/:permission_id", c.jwtMiddleware.Authenticate(), c.getPermission)
-	c.route.POST("/role-permission", c.jwtMiddleware.Authenticate(), c.addRolePermission)
-	c.route.DELETE("/role-permission", c.jwtMiddleware.Authenticate(), c.revokeRolePermission)
-	c.route.GET("/role-permissions/:role_id", c.jwtMiddleware.Authenticate(), c.getRolePermissions)
-	c.route.POST("/role", c.jwtMiddleware.Authenticate(), c.addRole)
-	c.route.DELETE("/role", c.jwtMiddleware.Authenticate(), c.revokeRole)
-	c.route.GET("/roles", c.jwtMiddleware.Authenticate(), c.getRoles)
-	c.route.POST("/user-role/:user_id", c.jwtMiddleware.Authenticate(), c.addUserRole)
-	c.route.DELETE("/user-role/:user_id", c.jwtMiddleware.Authenticate(), c.revokeUserRole)
-	c.route.GET("/user-roles/:user_id", c.jwtMiddleware.Authenticate(), c.getUserRoles)
+	c.route.POST(
+		"/refresh-token", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.refreshToken,
+	)
+	c.route.POST(
+		"/log-out", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.logOut,
+	)
+	c.route.GET(
+		"/sessions", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getSessions,
+	)
+	c.route.POST(
+		"/close-sessions", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.closeSessions,
+	)
+	c.route.POST(
+		"/permission", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.addPermission,
+	)
+	c.route.DELETE(
+		"/permission", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.revokePermission,
+	)
+	c.route.GET(
+		"/permissions", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getPermissions,
+	)
+	c.route.GET(
+		"/permission/:permission_id", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getPermission,
+	)
+	c.route.POST(
+		"/role-permission", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.addRolePermission,
+	)
+	c.route.DELETE(
+		"/role-permission", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.revokeRolePermission,
+	)
+	c.route.GET(
+		"/role-permissions/:role_id", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(),
+		c.getRolePermissions,
+	)
+	c.route.POST(
+		"/role", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.addRole,
+	)
+	c.route.DELETE(
+		"/role", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.revokeRole,
+	)
+	c.route.GET(
+		"/roles", c.jwtMiddleware.Authenticate(), c.mdMiddleware.Authenticate(),
+		c.getRoles,
+	)
+	c.route.POST(
+		"/user-role/:user_id", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.addUserRole,
+	)
+	c.route.DELETE(
+		"/user-role/:user_id", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.revokeUserRole,
+	)
+	c.route.GET(
+		"/user-roles/:user_id", c.jwtMiddleware.Authenticate(),
+		c.mdMiddleware.Authenticate(), c.getUserRoles,
+	)
 }
 
 // logIn logs in a user

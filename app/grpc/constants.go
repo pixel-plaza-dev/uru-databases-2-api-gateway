@@ -14,11 +14,17 @@ const (
 	BusinessServiceUriKey = "BUSINESS_SERVICE_HOST"
 
 	// OrderServiceUriKey is the key of the order service URI
-	OrderServiceUriKey = "Order_SERVICE_HOST"
+	OrderServiceUriKey = "ORDER_SERVICE_HOST"
 
 	// PaymentServiceUriKey is the key of the payment service URI
 	PaymentServiceUriKey = "PAYMENT_SERVICE_HOST"
 
 	// CACertificatePath is the path to the CA certificate
 	CACertificatePath = "certificates/pixel-plaza/ca-cert.pem"
+
+	// ServerCertPath is the path to the server certificate
+	ServerCertPath = "certificates/server.crt"
+
+	// ServerKeyPath is the path to the server key
+	ServerKeyPath = "certificates/server.key"
 )
