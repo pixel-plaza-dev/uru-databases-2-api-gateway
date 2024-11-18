@@ -119,17 +119,17 @@ func (c *Controller) initializeRoutes() {
 
 // signUp creates a new user
 func (c *Controller) signUp(ctx *gin.Context) {
-	var request *pbuser.SignUpRequest
+	var request pbuser.SignUpRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Create a new user
-	response, err := c.service.SignUp(ctx, grpcCtx, request)
+	response, err := c.service.SignUp(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -139,17 +139,17 @@ func (c *Controller) signUp(ctx *gin.Context) {
 
 // updateProfile updates the user's profile
 func (c *Controller) updateProfile(ctx *gin.Context) {
-	var request *pbuser.UpdateProfileRequest
+	var request pbuser.UpdateProfileRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Update the user's profile
-	response, err := c.service.UpdateProfile(ctx, grpcCtx, request)
+	response, err := c.service.UpdateProfile(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -159,17 +159,17 @@ func (c *Controller) updateProfile(ctx *gin.Context) {
 
 // getProfile gets the user's profile
 func (c *Controller) getProfile(ctx *gin.Context) {
-	var request *pbuser.GetProfileRequest
+	var request pbuser.GetProfileRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Get the user's profile
-	response, err := c.service.GetProfile(ctx, grpcCtx, request)
+	response, err := c.service.GetProfile(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -179,17 +179,17 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 
 // getFullProfile gets the user's full profile
 func (c *Controller) getFullProfile(ctx *gin.Context) {
-	var request *pbuser.GetFullProfileRequest
+	var request pbuser.GetFullProfileRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Get the user's full profile
-	response, err := c.service.GetFullProfile(ctx, grpcCtx, request)
+	response, err := c.service.GetFullProfile(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -199,17 +199,17 @@ func (c *Controller) getFullProfile(ctx *gin.Context) {
 
 // changePassword changes the user's password
 func (c *Controller) changePassword(ctx *gin.Context) {
-	var request *pbuser.ChangePasswordRequest
+	var request pbuser.ChangePasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Change the user's password
-	response, err := c.service.ChangePassword(ctx, grpcCtx, request)
+	response, err := c.service.ChangePassword(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -219,17 +219,17 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 
 // changeUsername changes the user's username
 func (c *Controller) changeUsername(ctx *gin.Context) {
-	var request *pbuser.ChangeUsernameRequest
+	var request pbuser.ChangeUsernameRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Change the user's username
-	response, err := c.service.ChangeUsername(ctx, grpcCtx, request)
+	response, err := c.service.ChangeUsername(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -239,17 +239,17 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 
 // changePrimaryEmail changes the user's primary email
 func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
-	var request *pbuser.ChangePrimaryEmailRequest
+	var request pbuser.ChangePrimaryEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Change the user's primary email
-	response, err := c.service.ChangePrimaryEmail(ctx, grpcCtx, request)
+	response, err := c.service.ChangePrimaryEmail(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -259,17 +259,17 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 
 // addEmail adds an email to the user's account
 func (c *Controller) addEmail(ctx *gin.Context) {
-	var request *pbuser.AddEmailRequest
+	var request pbuser.AddEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Add an email to the user's account
-	response, err := c.service.AddEmail(ctx, grpcCtx, request)
+	response, err := c.service.AddEmail(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -279,17 +279,17 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 
 // deleteEmail deletes an email from the user's account
 func (c *Controller) deleteEmail(ctx *gin.Context) {
-	var request *pbuser.DeleteEmailRequest
+	var request pbuser.DeleteEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Delete an email from the user's account
-	response, err := c.service.DeleteEmail(ctx, grpcCtx, request)
+	response, err := c.service.DeleteEmail(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -299,17 +299,17 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 
 // getPrimaryEmail gets the user's primary email
 func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
-	var request *pbuser.GetPrimaryEmailRequest
+	var request pbuser.GetPrimaryEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Get the user's primary email
-	response, err := c.service.GetPrimaryEmail(ctx, grpcCtx, request)
+	response, err := c.service.GetPrimaryEmail(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -319,17 +319,17 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 
 // getActiveEmails gets the user's active emails
 func (c *Controller) getActiveEmails(ctx *gin.Context) {
-	var request *pbuser.GetActiveEmailsRequest
+	var request pbuser.GetActiveEmailsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Get the user's active emails
-	response, err := c.service.GetActiveEmails(ctx, grpcCtx, request)
+	response, err := c.service.GetActiveEmails(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -339,17 +339,17 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 
 // sendVerificationEmail sends a verification email
 func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
-	var request *pbuser.SendVerificationEmailRequest
+	var request pbuser.SendVerificationEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Send a verification email
-	response, err := c.service.SendVerificationEmail(ctx, grpcCtx, request)
+	response, err := c.service.SendVerificationEmail(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -359,17 +359,17 @@ func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 
 // verifyEmail verifies the user's email
 func (c *Controller) verifyEmail(ctx *gin.Context) {
-	var request *pbuser.VerifyEmailRequest
+	var request pbuser.VerifyEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Verify the user's email
-	response, err := c.service.VerifyEmail(ctx, grpcCtx, request)
+	response, err := c.service.VerifyEmail(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -379,17 +379,17 @@ func (c *Controller) verifyEmail(ctx *gin.Context) {
 
 // changePhoneNumber changes the user's phone number
 func (c *Controller) changePhoneNumber(ctx *gin.Context) {
-	var request *pbuser.ChangePhoneNumberRequest
+	var request pbuser.ChangePhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Change the user's phone number
-	response, err := c.service.ChangePhoneNumber(ctx, grpcCtx, request)
+	response, err := c.service.ChangePhoneNumber(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -399,17 +399,17 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 
 // getPhoneNumber gets the user's phone number
 func (c *Controller) getPhoneNumber(ctx *gin.Context) {
-	var request *pbuser.GetPhoneNumberRequest
+	var request pbuser.GetPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Get the user's active phone numbers
-	response, err := c.service.GetPhoneNumber(ctx, grpcCtx, request)
+	response, err := c.service.GetPhoneNumber(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -419,17 +419,17 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 
 // sendVerificationPhoneNumber sends a verification phone number
 func (c *Controller) sendVerificationPhoneNumber(ctx *gin.Context) {
-	var request *pbuser.SendVerificationPhoneNumberRequest
+	var request pbuser.SendVerificationPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Send a verification phone number
-	response, err := c.service.SendVerificationPhoneNumber(ctx, grpcCtx, request)
+	response, err := c.service.SendVerificationPhoneNumber(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -439,17 +439,17 @@ func (c *Controller) sendVerificationPhoneNumber(ctx *gin.Context) {
 
 // verifyPhoneNumber verifies the user's phone number
 func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
-	var request *pbuser.VerifyPhoneNumberRequest
+	var request pbuser.VerifyPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Verify the user's phone number
-	response, err := c.service.VerifyPhoneNumber(ctx, grpcCtx, request)
+	response, err := c.service.VerifyPhoneNumber(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -459,17 +459,17 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 
 // forgotPassword sends a reset password email
 func (c *Controller) forgotPassword(ctx *gin.Context) {
-	var request *pbuser.ForgotPasswordRequest
+	var request pbuser.ForgotPasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Send a reset password email
-	response, err := c.service.ForgotPassword(ctx, grpcCtx, request)
+	response, err := c.service.ForgotPassword(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -479,17 +479,17 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 
 // resetPassword resets the user's password
 func (c *Controller) resetPassword(ctx *gin.Context) {
-	var request *pbuser.ResetPasswordRequest
+	var request pbuser.ResetPasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Reset the user's password
-	response, err := c.service.ResetPassword(ctx, grpcCtx, request)
+	response, err := c.service.ResetPassword(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -499,17 +499,17 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 
 // deleteUser deletes the user's account
 func (c *Controller) deleteUser(ctx *gin.Context) {
-	var request *pbuser.DeleteUserRequest
+	var request pbuser.DeleteUserRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, request)
+	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
 	}
 
 	// Delete the user's account
-	response, err := c.service.DeleteUser(ctx, grpcCtx, request)
+	response, err := c.service.DeleteUser(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

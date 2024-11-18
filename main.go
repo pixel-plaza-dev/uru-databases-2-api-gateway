@@ -57,6 +57,13 @@ func main() {
 	}
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.PortKey)
 
+	// Get the API gateway URI
+	apiUri, err := commongrpc.LoadServiceURI(appgrpc.ApiGatewayUriKey)
+	if err != nil {
+		panic(err)
+	}
+	logger.EnvironmentLogger.EnvironmentVariableLoaded(appgrpc.ApiGatewayUriKey)
+
 	// Get the auth service URI
 	authUri, err := commongrpc.LoadServiceURI(appgrpc.AuthServiceUriKey)
 	if err != nil {
@@ -78,9 +85,12 @@ func main() {
 	}
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(appjwt.PublicKey)
 
-	// Get the API Gateway service account token source
+	// gRPC servers URI
+	var uris = []string{authUri, userUri}
+
+	// Get the API gateway account token source
 	tokenSource, err := commongcloud.LoadServiceAccountCredentials(
-		context.Background(), userUri,
+		context.Background(), "https://"+apiUri,
 	)
 	if err != nil {
 		panic(err)
@@ -104,40 +114,36 @@ func main() {
 		}
 	}
 
-	// Create client authentication interceptor
+	// Create client authentication interceptors
 	clientAuthInterceptor, err := clientauth.NewInterceptor(tokenSource)
 	if err != nil {
 		panic(err)
 	}
 
 	// Create gRPC connections
-	userConn, err := grpc.NewClient(
-		userUri, grpc.WithTransportCredentials(transportCredentials),
-		grpc.WithChainUnaryInterceptor(clientAuthInterceptor.Authenticate()),
-	)
-	if err != nil {
-		panic(err)
+	var conns = make(map[string]*grpc.ClientConn)
+	for _, uri := range uris {
+		conn, err := grpc.NewClient(
+			uri, grpc.WithTransportCredentials(transportCredentials),
+			grpc.WithChainUnaryInterceptor(clientAuthInterceptor.Authenticate()),
+		)
+		if err != nil {
+			panic(err)
+		}
+		conns[uri] = conn
 	}
-
-	authConn, err := grpc.NewClient(
-		authUri, grpc.WithTransportCredentials(transportCredentials),
-		grpc.WithChainUnaryInterceptor(clientAuthInterceptor.Authenticate()),
-	)
-	if err != nil {
-		panic(err)
-	}
-	defer func(conns ...*grpc.ClientConn) {
+	defer func(conns map[string]*grpc.ClientConn) {
 		for _, conn := range conns {
 			err = conn.Close()
 			if err != nil {
 				panic(err)
 			}
 		}
-	}(userConn, authConn)
+	}(conns)
 
 	// Create gRPC server clients
-	userClient := pbuser.NewUserClient(userConn)
-	authClient := pbauth.NewAuthClient(authConn)
+	userClient := pbuser.NewUserClient(conns[userUri])
+	authClient := pbauth.NewAuthClient(conns[authUri])
 
 	// Create JWT validator
 	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(
