@@ -19,9 +19,6 @@ const (
 	// PaymentServiceUriKey is the key of the payment service URI
 	PaymentServiceUriKey = "PAYMENT_SERVICE_HOST"
 
-	// CACertificatePath is the path to the CA certificate
-	CACertificatePath = "certificates/pixel-plaza/ca-cert.pem"
-
 	// ServerCertPath is the path to the server certificate
 	ServerCertPath = "certificates/server.crt"
 

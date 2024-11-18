@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
@@ -19,16 +20,8 @@ func NewService(flag *commonflag.ModeFlag, client pbauth.AuthClient) *Service {
 }
 
 // LogIn logs in the user
-func (s *Service) LogIn(ctx *gin.Context) (*pbauth.LogInResponse, error) {
-	var request pbauth.LogInRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Log in the user
-	response, err := s.client.LogIn(ctx, &request)
+func (s *Service) LogIn(ctx *gin.Context, grpcCtx context.Context, request *pbauth.LogInRequest) (*pbauth.LogInResponse, error) {
+	response, err := s.client.LogIn(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -36,18 +29,10 @@ func (s *Service) LogIn(ctx *gin.Context) (*pbauth.LogInResponse, error) {
 }
 
 // RefreshToken refreshes the user's token
-func (s *Service) RefreshToken(ctx *gin.Context) (
+func (s *Service) RefreshToken(ctx *gin.Context, grpcCtx context.Context, request *pbauth.RefreshTokenRequest) (
 	*pbauth.RefreshTokenResponse, error,
 ) {
-	var request pbauth.RefreshTokenRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Refresh the token
-	response, err := s.client.RefreshToken(ctx, &request)
+	response, err := s.client.RefreshToken(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -55,16 +40,8 @@ func (s *Service) RefreshToken(ctx *gin.Context) (
 }
 
 // LogOut logs out the user
-func (s *Service) LogOut(ctx *gin.Context) (*pbauth.LogOutResponse, error) {
-	var request pbauth.LogOutRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Log out the user
-	response, err := s.client.LogOut(ctx, &request)
+func (s *Service) LogOut(ctx *gin.Context, grpcCtx context.Context, request *pbauth.LogOutRequest) (*pbauth.LogOutResponse, error) {
+	response, err := s.client.LogOut(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -72,18 +49,10 @@ func (s *Service) LogOut(ctx *gin.Context) (*pbauth.LogOutResponse, error) {
 }
 
 // CloseSessions closes all the user's sessions
-func (s *Service) CloseSessions(ctx *gin.Context) (
+func (s *Service) CloseSessions(ctx *gin.Context, grpcCtx context.Context, request *pbauth.CloseSessionsRequest) (
 	*pbauth.CloseSessionsResponse, error,
 ) {
-	var request pbauth.CloseSessionsRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Close all the user's sessions
-	response, err := s.client.CloseSessions(ctx, &request)
+	response, err := s.client.CloseSessions(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -91,18 +60,10 @@ func (s *Service) CloseSessions(ctx *gin.Context) (
 }
 
 // GetSessions gets all the user's sessions
-func (s *Service) GetSessions(ctx *gin.Context) (
+func (s *Service) GetSessions(ctx *gin.Context, grpcCtx context.Context, request *pbauth.GetSessionsRequest) (
 	*pbauth.GetSessionsResponse, error,
 ) {
-	var request pbauth.GetSessionsRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Get all the user's sessions
-	response, err := s.client.GetSessions(ctx, &request)
+	response, err := s.client.GetSessions(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -110,18 +71,10 @@ func (s *Service) GetSessions(ctx *gin.Context) (
 }
 
 // AddPermission adds a permission to the user
-func (s *Service) AddPermission(ctx *gin.Context) (
+func (s *Service) AddPermission(ctx *gin.Context, grpcCtx context.Context, request *pbauth.AddPermissionRequest) (
 	*pbauth.AddPermissionResponse, error,
 ) {
-	var request pbauth.AddPermissionRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Add a permission to the user
-	response, err := s.client.AddPermission(ctx, &request)
+	response, err := s.client.AddPermission(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -129,18 +82,10 @@ func (s *Service) AddPermission(ctx *gin.Context) (
 }
 
 // RevokePermission revokes a permission from the user
-func (s *Service) RevokePermission(ctx *gin.Context) (
+func (s *Service) RevokePermission(ctx *gin.Context, grpcCtx context.Context, request *pbauth.RevokePermissionRequest) (
 	*pbauth.RevokePermissionResponse, error,
 ) {
-	var request pbauth.RevokePermissionRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Revoke a permission from the user
-	response, err := s.client.RevokePermission(ctx, &request)
+	response, err := s.client.RevokePermission(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -148,18 +93,10 @@ func (s *Service) RevokePermission(ctx *gin.Context) (
 }
 
 // GetPermission gets all the user's permissions
-func (s *Service) GetPermission(ctx *gin.Context) (
+func (s *Service) GetPermission(ctx *gin.Context, grpcCtx context.Context, request *pbauth.GetPermissionRequest) (
 	*pbauth.GetPermissionResponse, error,
 ) {
-	var request pbauth.GetPermissionRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Get all the user's permissions
-	response, err := s.client.GetPermission(ctx, &request)
+	response, err := s.client.GetPermission(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -167,18 +104,10 @@ func (s *Service) GetPermission(ctx *gin.Context) (
 }
 
 // GetPermissions gets all the user's permissions
-func (s *Service) GetPermissions(ctx *gin.Context) (
+func (s *Service) GetPermissions(ctx *gin.Context, grpcCtx context.Context, request *pbauth.GetPermissionsRequest) (
 	*pbauth.GetPermissionsResponse, error,
 ) {
-	var request pbauth.GetPermissionsRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Get all the user's permissions
-	response, err := s.client.GetPermissions(ctx, &request)
+	response, err := s.client.GetPermissions(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -186,16 +115,8 @@ func (s *Service) GetPermissions(ctx *gin.Context) (
 }
 
 // AddRole adds a role to the user
-func (s *Service) AddRole(ctx *gin.Context) (*pbauth.AddRoleResponse, error) {
-	var request pbauth.AddRoleRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Add a role to the user
-	response, err := s.client.AddRole(ctx, &request)
+func (s *Service) AddRole(ctx *gin.Context, grpcCtx context.Context, request *pbauth.AddRoleRequest) (*pbauth.AddRoleResponse, error) {
+	response, err := s.client.AddRole(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -203,18 +124,10 @@ func (s *Service) AddRole(ctx *gin.Context) (*pbauth.AddRoleResponse, error) {
 }
 
 // RevokeRole revokes a role from the user
-func (s *Service) RevokeRole(ctx *gin.Context) (
+func (s *Service) RevokeRole(ctx *gin.Context, grpcCtx context.Context, request *pbauth.RevokeRoleRequest) (
 	*pbauth.RevokeRoleResponse, error,
 ) {
-	var request pbauth.RevokeRoleRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Revoke a role from the user
-	response, err := s.client.RevokeRole(ctx, &request)
+	response, err := s.client.RevokeRole(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -222,16 +135,8 @@ func (s *Service) RevokeRole(ctx *gin.Context) (
 }
 
 // GetRoles gets all the user's roles
-func (s *Service) GetRoles(ctx *gin.Context) (*pbauth.GetRolesResponse, error) {
-	var request pbauth.GetRolesRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Get all the user's roles
-	response, err := s.client.GetRoles(ctx, &request)
+func (s *Service) GetRoles(ctx *gin.Context, grpcCtx context.Context, request *pbauth.GetRolesRequest) (*pbauth.GetRolesResponse, error) {
+	response, err := s.client.GetRoles(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -239,18 +144,10 @@ func (s *Service) GetRoles(ctx *gin.Context) (*pbauth.GetRolesResponse, error) {
 }
 
 // AddRolePermission adds a permission to the role
-func (s *Service) AddRolePermission(ctx *gin.Context) (
+func (s *Service) AddRolePermission(ctx *gin.Context, grpcCtx context.Context, request *pbauth.AddRolePermissionRequest) (
 	*pbauth.AddRolePermissionResponse, error,
 ) {
-	var request pbauth.AddRolePermissionRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Add a permission to the role
-	response, err := s.client.AddRolePermission(ctx, &request)
+	response, err := s.client.AddRolePermission(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -258,18 +155,10 @@ func (s *Service) AddRolePermission(ctx *gin.Context) (
 }
 
 // RevokeRolePermission revokes a permission from the role
-func (s *Service) RevokeRolePermission(ctx *gin.Context) (
+func (s *Service) RevokeRolePermission(ctx *gin.Context, grpcCtx context.Context, request *pbauth.RevokeRolePermissionRequest) (
 	*pbauth.RevokeRolePermissionResponse, error,
 ) {
-	var request pbauth.RevokeRolePermissionRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Revoke a permission from the role
-	response, err := s.client.RevokeRolePermission(ctx, &request)
+	response, err := s.client.RevokeRolePermission(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -277,18 +166,10 @@ func (s *Service) RevokeRolePermission(ctx *gin.Context) (
 }
 
 // GetRolePermissions gets all the role's permissions
-func (s *Service) GetRolePermissions(ctx *gin.Context) (
+func (s *Service) GetRolePermissions(ctx *gin.Context, grpcCtx context.Context, request *pbauth.GetRolePermissionsRequest) (
 	*pbauth.GetRolePermissionsResponse, error,
 ) {
-	var request pbauth.GetRolePermissionsRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Get all the role's permissions
-	response, err := s.client.GetRolePermissions(ctx, &request)
+	response, err := s.client.GetRolePermissions(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -296,18 +177,10 @@ func (s *Service) GetRolePermissions(ctx *gin.Context) (
 }
 
 // AddUserRole adds a role to the user
-func (s *Service) AddUserRole(ctx *gin.Context) (
+func (s *Service) AddUserRole(ctx *gin.Context, grpcCtx context.Context, request *pbauth.AddUserRoleRequest) (
 	*pbauth.AddUserRoleResponse, error,
 ) {
-	var request pbauth.AddUserRoleRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Add a role to the user
-	response, err := s.client.AddUserRole(ctx, &request)
+	response, err := s.client.AddUserRole(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -315,18 +188,10 @@ func (s *Service) AddUserRole(ctx *gin.Context) (
 }
 
 // RevokeUserRole revokes a role from the user
-func (s *Service) RevokeUserRole(ctx *gin.Context) (
+func (s *Service) RevokeUserRole(ctx *gin.Context, grpcCtx context.Context, request *pbauth.RevokeUserRoleRequest) (
 	*pbauth.RevokeUserRoleResponse, error,
 ) {
-	var request pbauth.RevokeUserRoleRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Revoke a role from the user
-	response, err := s.client.RevokeUserRole(ctx, &request)
+	response, err := s.client.RevokeUserRole(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
@@ -334,18 +199,10 @@ func (s *Service) RevokeUserRole(ctx *gin.Context) (
 }
 
 // GetUserRoles gets all the user's roles
-func (s *Service) GetUserRoles(ctx *gin.Context) (
+func (s *Service) GetUserRoles(ctx *gin.Context, grpcCtx context.Context, request *pbauth.GetUserRolesRequest) (
 	*pbauth.GetUserRolesResponse, error,
 ) {
-	var request pbauth.GetUserRolesRequest
-
-	// Bind the request
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		return nil, err
-	}
-
-	// Get all the user's roles
-	response, err := s.client.GetUserRoles(ctx, &request)
+	response, err := s.client.GetUserRoles(grpcCtx, request)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}
