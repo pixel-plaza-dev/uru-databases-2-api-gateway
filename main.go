@@ -27,6 +27,7 @@ import (
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/oauth"
 	"time"
 )
 
@@ -81,14 +82,18 @@ func main() {
 	// gRPC servers URI
 	var uris = []string{authUri, userUri}
 
-	// Get the API gateway account token source
-	_, tokenSource, err := commongcloud.LoadServiceAccountCredentials(
-		context.Background(), "https://"+userUri,
-	)
-	if err != nil {
-		panic(err)
+	// Get the account token source for each gRPC server URI
+	var tokenSources = make(map[string]*oauth.TokenSource)
+	for _, uri := range uris {
+		_, tokenSource, err := commongcloud.LoadServiceAccountCredentials(
+			context.Background(), "https://"+uri,
+		)
+		if err != nil {
+			panic(err)
+		}
+		tokenSources[uri] = tokenSource
+		// logger.GCloudLogger.LoadedTokenSource(tokenSource)
 	}
-	logger.GCloudLogger.LoadedTokenSource(tokenSource)
 
 	// Load transport credentials
 	var transportCredentials credentials.TransportCredentials
@@ -108,10 +113,14 @@ func main() {
 		}
 	}
 
-	// Create client authentication interceptor
-	clientAuthInterceptor, err := clientauth.NewInterceptor(tokenSource)
-	if err != nil {
-		panic(err)
+	// Create client authentication interceptors
+	var clientAuthInterceptors = make(map[string]*clientauth.Interceptor)
+	for uri, tokenSource := range tokenSources {
+		clientAuthInterceptor, err := clientauth.NewInterceptor(tokenSource)
+		if err != nil {
+			panic(err)
+		}
+		clientAuthInterceptors[uri] = clientAuthInterceptor
 	}
 
 	// Create gRPC connections
@@ -119,7 +128,7 @@ func main() {
 	for _, uri := range uris {
 		conn, err := grpc.NewClient(
 			uri, grpc.WithTransportCredentials(transportCredentials),
-			grpc.WithChainUnaryInterceptor(clientAuthInterceptor.Authenticate()),
+			grpc.WithChainUnaryInterceptor(clientAuthInterceptors[uri].Authenticate()),
 		)
 		if err != nil {
 			panic(err)
