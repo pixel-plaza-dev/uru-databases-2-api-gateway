@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
 	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
@@ -26,7 +25,6 @@ func NewService(flag *commonflag.ModeFlag, client pbuser.UserClient) *Service {
 // SignUp signs up a user
 func (s *Service) SignUp(ctx *gin.Context, grpcCtx context.Context, request *pbuser.SignUpRequest) (*pbuser.SignUpResponse, error) {
 	response, err := s.client.SignUp(grpcCtx, request)
-	fmt.Println(err)
 	if err != nil {
 		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
 	}

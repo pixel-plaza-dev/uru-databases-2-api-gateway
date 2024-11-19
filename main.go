@@ -57,13 +57,6 @@ func main() {
 	}
 	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.PortKey)
 
-	// Get the API gateway URI
-	apiUri, err := commongrpc.LoadServiceURI(appgrpc.ApiGatewayUriKey)
-	if err != nil {
-		panic(err)
-	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(appgrpc.ApiGatewayUriKey)
-
 	// Get the auth service URI
 	authUri, err := commongrpc.LoadServiceURI(appgrpc.AuthServiceUriKey)
 	if err != nil {
@@ -89,12 +82,13 @@ func main() {
 	var uris = []string{authUri, userUri}
 
 	// Get the API gateway account token source
-	tokenSource, err := commongcloud.LoadServiceAccountCredentials(
-		context.Background(), "https://"+apiUri,
+	_, tokenSource, err := commongcloud.LoadServiceAccountCredentials(
+		context.Background(), "https://"+userUri,
 	)
 	if err != nil {
 		panic(err)
 	}
+	logger.GCloudLogger.LoadedTokenSource(tokenSource)
 
 	// Load transport credentials
 	var transportCredentials credentials.TransportCredentials
@@ -114,7 +108,7 @@ func main() {
 		}
 	}
 
-	// Create client authentication interceptors
+	// Create client authentication interceptor
 	clientAuthInterceptor, err := clientauth.NewInterceptor(tokenSource)
 	if err != nil {
 		panic(err)
