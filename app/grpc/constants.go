@@ -1,9 +1,6 @@
 package grpc
 
 const (
-	// ApiGatewayUriKey is the key of the API gateway URI
-	ApiGatewayUriKey = "API_GATEWAY_HOST"
-
 	// UserServiceUriKey is the key of the user service URI
 	UserServiceUriKey = "USER_SERVICE_HOST"
 

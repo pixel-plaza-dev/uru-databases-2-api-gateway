@@ -2,24 +2,24 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	jwtmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
-	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/grpc/context"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/auth"
+	authMiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
+	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
 	"net/http"
 )
 
 type Controller struct {
-	apiRoute      *gin.RouterGroup
-	route         *gin.RouterGroup
-	service       *Service
-	jwtMiddleware jwtmiddleware.Authentication
+	apiRoute       *gin.RouterGroup
+	route          *gin.RouterGroup
+	service        *Service
+	authMiddleware authMiddleware.Authentication
 }
 
 // NewController creates a new controller
 func NewController(
 	apiRoute *gin.RouterGroup, service *Service,
-	jwtMiddleware jwtmiddleware.Authentication,
+	authMiddleware authMiddleware.Authentication,
 ) *Controller {
 	// Create a new route for the auth service
 	route := apiRoute.Group("/auth")
@@ -27,7 +27,7 @@ func NewController(
 	// Create a new user controller
 	instance := &Controller{
 		apiRoute: apiRoute, route: route, service: service,
-		jwtMiddleware: jwtMiddleware,
+		authMiddleware: authMiddleware,
 	}
 
 	// Initialize the routes for the controller
@@ -40,72 +40,72 @@ func NewController(
 func (c *Controller) initializeRoutes() {
 	c.route.POST("/log-in", c.logIn)
 	c.route.POST(
-		"/refresh-token", c.jwtMiddleware.Authenticate(),
+		"/refresh-token", c.authMiddleware.AuthenticateRefreshToken(),
 		c.refreshToken,
 	)
 	c.route.POST(
-		"/log-out", c.jwtMiddleware.Authenticate(),
+		"/log-out", c.authMiddleware.AuthenticateAccessToken(),
 		c.logOut,
 	)
 	c.route.GET(
-		"/sessions", c.jwtMiddleware.Authenticate(),
+		"/sessions", c.authMiddleware.AuthenticateAccessToken(),
 		c.getSessions,
 	)
 	c.route.POST(
-		"/close-sessions", c.jwtMiddleware.Authenticate(),
+		"/close-sessions", c.authMiddleware.AuthenticateAccessToken(),
 		c.closeSessions,
 	)
 	c.route.POST(
-		"/permission", c.jwtMiddleware.Authenticate(),
+		"/permission", c.authMiddleware.AuthenticateAccessToken(),
 		c.addPermission,
 	)
 	c.route.DELETE(
-		"/permission", c.jwtMiddleware.Authenticate(),
+		"/permission", c.authMiddleware.AuthenticateAccessToken(),
 		c.revokePermission,
 	)
 	c.route.GET(
-		"/permissions", c.jwtMiddleware.Authenticate(),
+		"/permissions", c.authMiddleware.AuthenticateAccessToken(),
 		c.getPermissions,
 	)
 	c.route.GET(
-		"/permission/:permission_id", c.jwtMiddleware.Authenticate(),
+		"/permission/:permission_id", c.authMiddleware.AuthenticateAccessToken(),
 		c.getPermission,
 	)
 	c.route.POST(
-		"/role-permission", c.jwtMiddleware.Authenticate(),
+		"/role-permission", c.authMiddleware.AuthenticateAccessToken(),
 		c.addRolePermission,
 	)
 	c.route.DELETE(
-		"/role-permission", c.jwtMiddleware.Authenticate(),
+		"/role-permission", c.authMiddleware.AuthenticateAccessToken(),
 		c.revokeRolePermission,
 	)
 	c.route.GET(
-		"/role-permissions/:role_id", c.jwtMiddleware.Authenticate(),
+		"/role-permissions/:role_id", c.authMiddleware.AuthenticateAccessToken(),
 
 		c.getRolePermissions,
 	)
 	c.route.POST(
-		"/role", c.jwtMiddleware.Authenticate(),
+		"/role", c.authMiddleware.AuthenticateAccessToken(),
 		c.addRole,
 	)
 	c.route.DELETE(
-		"/role", c.jwtMiddleware.Authenticate(),
+		"/role", c.authMiddleware.AuthenticateAccessToken(),
 		c.revokeRole,
 	)
 	c.route.GET(
-		"/roles", c.jwtMiddleware.Authenticate(),
+		"/roles", c.authMiddleware.AuthenticateAccessToken(),
 		c.getRoles,
 	)
 	c.route.POST(
-		"/user-role/:user_id", c.jwtMiddleware.Authenticate(),
+		"/user-role/:user_id", c.authMiddleware.AuthenticateAccessToken(),
 		c.addUserRole,
 	)
 	c.route.DELETE(
-		"/user-role/:user_id", c.jwtMiddleware.Authenticate(),
+		"/user-role/:user_id", c.authMiddleware.AuthenticateAccessToken(),
 		c.revokeUserRole,
 	)
 	c.route.GET(
-		"/user-roles/:user_id", c.jwtMiddleware.Authenticate(),
+		"/user-roles/:user_id", c.authMiddleware.AuthenticateAccessToken(),
 		c.getUserRoles,
 	)
 }
@@ -115,7 +115,7 @@ func (c *Controller) logIn(ctx *gin.Context) {
 	var request pbauth.LogInRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -135,7 +135,7 @@ func (c *Controller) refreshToken(ctx *gin.Context) {
 	var request pbauth.RefreshTokenRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -155,7 +155,7 @@ func (c *Controller) logOut(ctx *gin.Context) {
 	var request pbauth.LogOutRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -175,7 +175,7 @@ func (c *Controller) closeSessions(ctx *gin.Context) {
 	var request pbauth.CloseSessionsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -195,7 +195,7 @@ func (c *Controller) getSessions(ctx *gin.Context) {
 	var request pbauth.GetSessionsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -215,7 +215,7 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 	var request pbauth.AddPermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -235,7 +235,7 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 	var request pbauth.RevokePermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -255,7 +255,7 @@ func (c *Controller) getPermission(ctx *gin.Context) {
 	var request pbauth.GetPermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -275,7 +275,7 @@ func (c *Controller) getPermissions(ctx *gin.Context) {
 	var request pbauth.GetPermissionsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -295,7 +295,7 @@ func (c *Controller) addRole(ctx *gin.Context) {
 	var request pbauth.AddRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -315,7 +315,7 @@ func (c *Controller) revokeRole(ctx *gin.Context) {
 	var request pbauth.RevokeRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -335,7 +335,7 @@ func (c *Controller) getRoles(ctx *gin.Context) {
 	var request pbauth.GetRolesRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -355,7 +355,7 @@ func (c *Controller) addRolePermission(ctx *gin.Context) {
 	var request pbauth.AddRolePermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -375,7 +375,7 @@ func (c *Controller) revokeRolePermission(ctx *gin.Context) {
 	var request pbauth.RevokeRolePermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -395,7 +395,7 @@ func (c *Controller) getRolePermissions(ctx *gin.Context) {
 	var request pbauth.GetRolePermissionsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -415,7 +415,7 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 	var request pbauth.AddUserRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -435,7 +435,7 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	var request pbauth.RevokeUserRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -455,7 +455,7 @@ func (c *Controller) getUserRoles(ctx *gin.Context) {
 	var request pbauth.GetUserRolesRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return

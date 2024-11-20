@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
-	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc/client/context"
-	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
+	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
+	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
 )
 
 // Service is the service for user

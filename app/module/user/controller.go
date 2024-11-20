@@ -2,10 +2,10 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	jwtmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/gin/middleware/jwt"
-	commongrpcctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/server/grpc/context"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/server/grpc"
-	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled-protobuf/user"
+	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
+	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
+	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
+	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
 	"net/http"
 )
 
@@ -13,13 +13,13 @@ type Controller struct {
 	apiRoute      *gin.RouterGroup
 	route         *gin.RouterGroup
 	service       *Service
-	jwtMiddleware jwtmiddleware.Authentication
+	jwtMiddleware authmiddleware.Authentication
 }
 
 // NewController creates a new controller
 func NewController(
 	apiRoute *gin.RouterGroup, service *Service,
-	jwtMiddleware jwtmiddleware.Authentication,
+	jwtMiddleware authmiddleware.Authentication,
 ) *Controller {
 	// Create a new route for the user service
 	route := apiRoute.Group("/user")
@@ -40,69 +40,69 @@ func NewController(
 func (c *Controller) initializeRoutes() {
 	c.route.POST("/sign-up", c.signUp)
 	c.route.PATCH(
-		"/profile", c.jwtMiddleware.Authenticate(),
+		"/profile", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.updateProfile,
 	)
 	c.route.GET(
-		"/profile", c.jwtMiddleware.Authenticate(),
+		"/profile", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.getProfile,
 	)
 	c.route.GET(
-		"/full-profile", c.jwtMiddleware.Authenticate(),
+		"/full-profile", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.getFullProfile,
 	)
 	c.route.PATCH(
-		"/password", c.jwtMiddleware.Authenticate(),
+		"/password", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.changePassword,
 	)
 	c.route.PATCH(
-		"/username", c.jwtMiddleware.Authenticate(),
+		"/username", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.changeUsername,
 	)
 	c.route.PATCH(
-		"/email", c.jwtMiddleware.Authenticate(),
+		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.changePrimaryEmail,
 	)
 	c.route.POST(
-		"/email", c.jwtMiddleware.Authenticate(),
+		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.addEmail,
 	)
 	c.route.DELETE(
-		"/email", c.jwtMiddleware.Authenticate(),
+		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.deleteEmail,
 	)
 	c.route.GET(
-		"/email", c.jwtMiddleware.Authenticate(),
+		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.getPrimaryEmail,
 	)
 	c.route.GET(
-		"/emails", c.jwtMiddleware.Authenticate(),
+		"/emails", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.getActiveEmails,
 	)
 	c.route.POST(
-		"/send-verification-email", c.jwtMiddleware.Authenticate(),
+		"/send-verification-email", c.jwtMiddleware.AuthenticateAccessToken(),
 
 		c.sendVerificationEmail,
 	)
 	c.route.POST(
-		"/verify-email", c.jwtMiddleware.Authenticate(),
+		"/verify-email", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.verifyEmail,
 	)
 	c.route.PATCH(
-		"/phone-number", c.jwtMiddleware.Authenticate(),
+		"/phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.changePhoneNumber,
 	)
 	c.route.GET(
-		"/phone-number", c.jwtMiddleware.Authenticate(),
+		"/phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.getPhoneNumber,
 	)
 	c.route.POST(
-		"/send-verification-phone-number", c.jwtMiddleware.Authenticate(),
+		"/send-verification-phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
 
 		c.sendVerificationPhoneNumber,
 	)
 	c.route.POST(
-		"/verify-phone-number", c.jwtMiddleware.Authenticate(),
+		"/verify-phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.verifyPhoneNumber,
 	)
 	c.route.POST(
@@ -112,7 +112,7 @@ func (c *Controller) initializeRoutes() {
 		"/reset-password", c.resetPassword,
 	)
 	c.route.DELETE(
-		"/close-account", c.jwtMiddleware.Authenticate(),
+		"/close-account", c.jwtMiddleware.AuthenticateAccessToken(),
 		c.deleteUser,
 	)
 }
@@ -122,7 +122,7 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	var request pbuser.SignUpRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -142,7 +142,7 @@ func (c *Controller) updateProfile(ctx *gin.Context) {
 	var request pbuser.UpdateProfileRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -162,7 +162,7 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 	var request pbuser.GetProfileRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -182,7 +182,7 @@ func (c *Controller) getFullProfile(ctx *gin.Context) {
 	var request pbuser.GetFullProfileRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -202,7 +202,7 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	var request pbuser.ChangePasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -222,7 +222,7 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 	var request pbuser.ChangeUsernameRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -242,7 +242,7 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 	var request pbuser.ChangePrimaryEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -262,7 +262,7 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 	var request pbuser.AddEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -282,7 +282,7 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 	var request pbuser.DeleteEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -302,7 +302,7 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 	var request pbuser.GetPrimaryEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -322,7 +322,7 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 	var request pbuser.GetActiveEmailsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -342,7 +342,7 @@ func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 	var request pbuser.SendVerificationEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -362,7 +362,7 @@ func (c *Controller) verifyEmail(ctx *gin.Context) {
 	var request pbuser.VerifyEmailRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -382,7 +382,7 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 	var request pbuser.ChangePhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -402,7 +402,7 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	var request pbuser.GetPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -422,7 +422,7 @@ func (c *Controller) sendVerificationPhoneNumber(ctx *gin.Context) {
 	var request pbuser.SendVerificationPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -442,7 +442,7 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	var request pbuser.VerifyPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -462,7 +462,7 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 	var request pbuser.ForgotPasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -482,7 +482,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 	var request pbuser.ResetPasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
@@ -502,7 +502,7 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 	var request pbuser.DeleteUserRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
 		return
