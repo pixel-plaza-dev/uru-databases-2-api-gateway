@@ -16,10 +16,8 @@ import (
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
-	commonjwt "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	clientauthinterceptor "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/auth"
 	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/listener"
 	commontls "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/tls"
@@ -67,7 +65,7 @@ func main() {
 		appgrpc.AuthServiceUriKey,
 		appgrpc.UserServiceUriKey,
 	} {
-		uri, err := commongrpc.LoadServiceURI(key)
+		uri, err := commonenv.LoadVariable(key)
 		if err != nil {
 			panic(err)
 		}
@@ -76,7 +74,7 @@ func main() {
 	}
 
 	// Get the JWT public key
-	jwtPublicKey, err := commonjwt.LoadJwtKey(appjwt.PublicKey)
+	jwtPublicKey, err := commonenv.LoadVariable(appjwt.PublicKey)
 	if err != nil {
 		panic(err)
 	}
@@ -157,7 +155,7 @@ func main() {
 
 	// Create token validator
 	tokenValidator, err := commonjwtvalidatorgrpc.NewDefaultTokenValidator(
-		tokenSources[appgrpc.AuthServiceUriKey], &authClient,
+		tokenSources[appgrpc.AuthServiceUriKey], &authClient, nil,
 	)
 	if err != nil {
 		panic(err)

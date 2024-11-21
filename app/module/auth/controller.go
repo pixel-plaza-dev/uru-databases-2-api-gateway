@@ -64,8 +64,8 @@ func NewController(
 // initializeRoutes initializes the routes for the controller
 func (c *Controller) initializeRoutes() {
 	c.route.POST(pbauthapi.LogIn.String(), c.logIn)
-	c.route.GET(pbauthapi.AccessTokenByToken.String(), c.isAccessTokenValid)
-	c.route.GET(pbauthapi.RefreshTokenByToken.String(), c.isRefreshTokenValid)
+	c.route.GET(pbauthapi.AccessTokenByJwtId.String(), c.isAccessTokenValid)
+	c.route.GET(pbauthapi.RefreshTokenByJwtId.String(), c.isRefreshTokenValid)
 	c.route.POST(pbauthapi.RefreshToken.String(), c.refreshToken)
 	c.route.POST(pbauthapi.LogOut.String(), c.logOut)
 	c.route.GET(pbauthapi.Sessions.String(), c.getSessions)
@@ -126,8 +126,8 @@ func (c *Controller) isAccessTokenValid(ctx *gin.Context) {
 		return
 	}
 
-	// Add the access token to the request
-	request.AccessToken = ctx.Param(pbtypes.Token.String())
+	// Add the JWT Identifier to the request
+	request.JwtId = ctx.Param(pbtypes.JwtId.String())
 
 	// Check if the access token is valid
 	response, err := c.service.IsAccessTokenValid(ctx, grpcCtx, &request)
@@ -152,8 +152,8 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 		return
 	}
 
-	// Add the refresh token to the request
-	request.RefreshToken = ctx.Param(pbtypes.Token.String())
+	// Add the JWT Identifier to the request
+	request.JwtId = ctx.Param(pbtypes.Token.String())
 
 	// Check if the refresh token is valid
 	response, err := c.service.IsRefreshTokenValid(ctx, grpcCtx, &request)
