@@ -1,6 +1,7 @@
 package logger
 
 import (
+	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
@@ -20,4 +21,7 @@ var (
 
 	// GCloudLogger is the logger for the Google Cloud
 	GCloudLogger = commongcloud.NewLogger(commonlogger.NewDefaultLogger("Google Cloud"))
+
+	// AuthMiddlewareLogger is the logger for the Auth middleware
+	AuthMiddlewareLogger = authmiddleware.NewLogger(commonlogger.NewDefaultLogger("Auth Middleware"))
 )

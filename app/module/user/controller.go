@@ -4,117 +4,94 @@ import (
 	"github.com/gin-gonic/gin"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
+	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
+	pbtypes "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/types"
+	pbuserapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/user/api"
 	"net/http"
 )
 
 type Controller struct {
-	apiRoute      *gin.RouterGroup
-	route         *gin.RouterGroup
-	service       *Service
-	jwtMiddleware authmiddleware.Authentication
+	apiRoute *gin.RouterGroup
+	route    *gin.RouterGroup
+	service  *Service
+	restMap  *map[string]map[pbtypes.
+			RESTMethod]pbtypes.GRPCMethod
+	grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception
+	authMiddleware    authmiddleware.Authentication
 }
 
 // NewController creates a new controller
 func NewController(
 	apiRoute *gin.RouterGroup, service *Service,
-	jwtMiddleware authmiddleware.Authentication,
-) *Controller {
+	jwtValidator commonjwtvalidator.Validator,
+	restMap *map[string]map[pbtypes.RESTMethod]pbtypes.
+		GRPCMethod,
+	grpcInterceptions *map[pbtypes.GRPCMethod]pbtypes.Interception,
+	authLogger authmiddleware.Logger,
+) (*Controller, error) {
 	// Create a new route for the user service
-	route := apiRoute.Group("/user")
+	route := apiRoute.Group(RelativeUri)
+
+	// Create the auth middleware
+	authMiddleware, err := authmiddleware.NewMiddleware(
+		route.BasePath(),
+		jwtValidator,
+		restMap,
+		grpcInterceptions,
+		authLogger,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add the auth middleware to the route
+	route.Use(authMiddleware.Authenticate())
 
 	// Create a new user controller
 	instance := &Controller{
 		apiRoute: apiRoute, route: route, service: service,
-		jwtMiddleware: jwtMiddleware,
+		authMiddleware: authMiddleware,
 	}
 
 	// Initialize the routes for the controller
 	instance.initializeRoutes()
 
-	return instance
+	return instance, nil
 }
 
 // initializeRoutes initializes the routes for the controller
 func (c *Controller) initializeRoutes() {
-	c.route.POST("/sign-up", c.signUp)
-	c.route.PATCH(
-		"/profile", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.updateProfile,
-	)
-	c.route.GET(
-		"/profile", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.getProfile,
-	)
-	c.route.GET(
-		"/full-profile", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.getFullProfile,
-	)
-	c.route.PATCH(
-		"/password", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.changePassword,
-	)
-	c.route.PATCH(
-		"/username", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.changeUsername,
-	)
-	c.route.PATCH(
-		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.changePrimaryEmail,
-	)
+	c.route.POST(pbuserapi.SignUp.String(), c.signUp)
+	c.route.GET(pbuserapi.Profile.String(), c.getProfile)
+	c.route.PATCH(pbuserapi.Profile.String(), c.updateProfile)
+	c.route.GET(pbuserapi.FullProfile.String(), c.getFullProfile)
+	c.route.GET(pbuserapi.GetIdByUsername.String(), c.getUserIdByUsername)
+	c.route.PUT(pbuserapi.Password.String(), c.changePassword)
+	c.route.GET(pbuserapi.UsernameExistsByUsername.String(), c.usernameExists)
+	c.route.GET(pbuserapi.GetUsernameById.String(), c.getUsernameByUserId)
+	c.route.PATCH(pbuserapi.Username.String(), c.changeUsername)
+	c.route.GET(pbuserapi.Email.String(), c.getPrimaryEmail)
+	c.route.PUT(pbuserapi.Email.String(), c.changePrimaryEmail)
+	c.route.POST(pbuserapi.Email.String(), c.addEmail)
+	c.route.DELETE(pbuserapi.EmailByEmail.String(), c.deleteEmail)
+	c.route.GET(pbuserapi.Emails.String(), c.getActiveEmails)
 	c.route.POST(
-		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.addEmail,
-	)
-	c.route.DELETE(
-		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.deleteEmail,
-	)
-	c.route.GET(
-		"/email", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.getPrimaryEmail,
-	)
-	c.route.GET(
-		"/emails", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.getActiveEmails,
-	)
-	c.route.POST(
-		"/send-verification-email", c.jwtMiddleware.AuthenticateAccessToken(),
-
+		pbuserapi.SendVerificationEmail.String(),
 		c.sendVerificationEmail,
 	)
+	c.route.POST(pbuserapi.VerifyEmailByToken.String(), c.verifyEmail)
+	c.route.GET(pbuserapi.PhoneNumber.String(), c.getPhoneNumber)
+	c.route.PUT(pbuserapi.PhoneNumber.String(), c.changePhoneNumber)
+	c.route.POST(pbuserapi.SendVerificationSMS.String(), c.sendVerificationSMS)
 	c.route.POST(
-		"/verify-email", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.verifyEmail,
-	)
-	c.route.PATCH(
-		"/phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.changePhoneNumber,
-	)
-	c.route.GET(
-		"/phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.getPhoneNumber,
-	)
-	c.route.POST(
-		"/send-verification-phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
-
-		c.sendVerificationPhoneNumber,
-	)
-	c.route.POST(
-		"/verify-phone-number", c.jwtMiddleware.AuthenticateAccessToken(),
+		pbuserapi.VerifyPhoneNumberByToken.String(),
 		c.verifyPhoneNumber,
 	)
-	c.route.POST(
-		"/forgot-password", c.forgotPassword,
-	)
-	c.route.POST(
-		"/reset-password", c.resetPassword,
-	)
-	c.route.DELETE(
-		"/close-account", c.jwtMiddleware.AuthenticateAccessToken(),
-		c.deleteUser,
-	)
+	c.route.POST(pbuserapi.ForgotPassword.String(), c.forgotPassword)
+	c.route.POST(pbuserapi.ResetPasswordByToken.String(), c.resetPassword)
+	c.route.DELETE(pbuserapi.DeleteAccount.String(), c.deleteUser)
 }
 
 // signUp creates a new user
@@ -124,7 +101,10 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -144,7 +124,10 @@ func (c *Controller) updateProfile(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -164,7 +147,10 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -184,12 +170,41 @@ func (c *Controller) getFullProfile(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
 	// Get the user's full profile
 	response, err := c.service.GetFullProfile(ctx, grpcCtx, &request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+// getUserIdByUsername gets the user's ID by username
+func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
+	var request pbuser.GetUserIdByUsernameRequest
+
+	// Prepare the gRPC context
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	if err != nil {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
+		return
+	}
+
+	// Add the username to the request
+	request.Username = ctx.Param(pbtypes.Username.String())
+
+	// Get the user's ID by username
+	response, err := c.service.GetUserIdByUsername(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -204,7 +219,10 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -217,6 +235,52 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": response})
 }
 
+// usernameExists checks if a username exists
+func (c *Controller) usernameExists(ctx *gin.Context) {
+	var request pbuser.UsernameExistsRequest
+
+	// Prepare the gRPC context
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	if err != nil {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
+		return
+	}
+
+	// Check if the username exists
+	response, err := c.service.UsernameExists(ctx, grpcCtx, &request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+// getUsernameByUserId gets the username by user ID
+func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
+	var request pbuser.GetUsernameByUserIdRequest
+
+	// Prepare the gRPC context
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	if err != nil {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
+		return
+	}
+
+	// Get the username by user ID
+	response, err := c.service.GetUsernameByUserId(ctx, grpcCtx, &request)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
 // changeUsername changes the user's username
 func (c *Controller) changeUsername(ctx *gin.Context) {
 	var request pbuser.ChangeUsernameRequest
@@ -224,7 +288,10 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -244,7 +311,10 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -264,7 +334,10 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -284,9 +357,15 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
+
+	// Add the email to the request
+	request.Email = ctx.Param(pbtypes.Email.String())
 
 	// Delete an email from the user's account
 	response, err := c.service.DeleteEmail(ctx, grpcCtx, &request)
@@ -304,7 +383,10 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -324,7 +406,10 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -337,19 +422,25 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": response})
 }
 
-// sendVerificationEmail sends a verification email
+// sendVerificationEmail sends a verification email to a user
 func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 	var request pbuser.SendVerificationEmailRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
 	// Send a verification email
-	response, err := c.service.SendVerificationEmail(ctx, grpcCtx, &request)
+	response, err := c.service.SendVerificationEmail(
+		ctx, grpcCtx,
+		&request,
+	)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -364,9 +455,15 @@ func (c *Controller) verifyEmail(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
+
+	// Add the token to the request
+	request.Token = ctx.Param(pbtypes.Token.String())
 
 	// Verify the user's email
 	response, err := c.service.VerifyEmail(ctx, grpcCtx, &request)
@@ -384,7 +481,10 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -404,7 +504,10 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -417,19 +520,26 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": response})
 }
 
-// sendVerificationPhoneNumber sends a verification phone number
-func (c *Controller) sendVerificationPhoneNumber(ctx *gin.Context) {
-	var request pbuser.SendVerificationPhoneNumberRequest
+// sendVerificationSMS sends a verification SMS to a user
+func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
+	var request pbuser.SendVerificationSMSRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
 	// Send a verification phone number
-	response, err := c.service.SendVerificationPhoneNumber(ctx, grpcCtx, &request)
+	response, err := c.service.SendVerificationSMS(
+		ctx,
+		grpcCtx,
+		&request,
+	)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -444,9 +554,15 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
+
+	// Add the token to the request
+	request.Token = ctx.Param(pbtypes.Token.String())
 
 	// Verify the user's phone number
 	response, err := c.service.VerifyPhoneNumber(ctx, grpcCtx, &request)
@@ -457,14 +573,17 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": response})
 }
 
-// forgotPassword sends a reset password email
+// forgotPassword sends a reset password email to a user
 func (c *Controller) forgotPassword(ctx *gin.Context) {
 	var request pbuser.ForgotPasswordRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 
@@ -484,9 +603,15 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
+
+	// Add the token to the request
+	request.Token = ctx.Param(pbtypes.Token.String())
 
 	// Reset the user's password
 	response, err := c.service.ResetPassword(ctx, grpcCtx, &request)
@@ -504,7 +629,10 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": commongrpc.InternalServerError.Error()})
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": commongrpc.InternalServerError.Error()},
+		)
 		return
 	}
 

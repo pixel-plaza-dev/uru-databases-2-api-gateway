@@ -9,9 +9,9 @@ import (
 	appjwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
+	appmodule "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/auth"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/user"
-	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
@@ -25,6 +25,10 @@ import (
 	commontls "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/tls"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
+	pbdetailsauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/auth"
+	pbauthapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/auth/api"
+	pbdetailsuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/user"
+	pbuserapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/user/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/oauth"
@@ -59,7 +63,10 @@ func main() {
 
 	// Get the gRPC services URI
 	var uris = make(map[string]string)
-	for _, key := range []string{appgrpc.AuthServiceUriKey, appgrpc.UserServiceUriKey} {
+	for _, key := range []string{
+		appgrpc.AuthServiceUriKey,
+		appgrpc.UserServiceUriKey,
+	} {
 		uri, err := commongrpc.LoadServiceURI(key)
 		if err != nil {
 			panic(err)
@@ -150,7 +157,8 @@ func main() {
 
 	// Create token validator
 	tokenValidator, err := commonjwtvalidatorgrpc.NewDefaultTokenValidator(
-		tokenSources[appgrpc.AuthServiceUriKey], &authClient)
+		tokenSources[appgrpc.AuthServiceUriKey], &authClient,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -158,13 +166,11 @@ func main() {
 	// Create JWT validator
 	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(
 		[]byte(jwtPublicKey),
-		tokenValidator)
+		tokenValidator,
+	)
 	if err != nil {
 		panic(err)
 	}
-
-	// Create JWT middleware
-	jwtMiddleware := authmiddleware.NewMiddleware(jwtValidator)
 
 	// Check if the mode is production
 	if commonflag.Mode.IsProd() {
@@ -178,15 +184,30 @@ func main() {
 	router.Use(commonheader.SecurityHeaders())
 
 	// Route group
-	apiRoute := router.Group("/api/v1")
+	apiRoute := router.Group(appmodule.BaseUri)
 
 	// Create user controller
 	userService := user.NewService(commonflag.Mode, userClient)
-	user.NewController(apiRoute, userService, jwtMiddleware)
+	_, err = user.NewController(
+		apiRoute, userService, jwtValidator,
+		&pbuserapi.RESTMap,
+		&pbdetailsuser.GRPCInterceptions, logger.AuthMiddlewareLogger,
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	// Create auth controller
 	authService := auth.NewService(commonflag.Mode, authClient)
-	auth.NewController(apiRoute, authService, jwtMiddleware)
+	_, err = auth.NewController(
+		apiRoute, authService, jwtValidator,
+		&pbauthapi.RESTMap,
+		&pbdetailsauth.GRPCInterceptions,
+		logger.AuthMiddlewareLogger,
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	// Run the server
 	if err = router.Run(servicePort.FormattedPort); err != nil {
