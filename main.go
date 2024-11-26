@@ -13,6 +13,7 @@ import (
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/auth"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/user"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
+	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
@@ -184,8 +185,11 @@ func main() {
 	// Route group
 	apiRoute := router.Group(appmodule.BaseUri)
 
+	// Create the request handler
+	requestHandler := commonclientrequest.NewDefaultHandler(commonflag.Mode)
+
 	// Create user controller
-	userService := user.NewService(commonflag.Mode, userClient)
+	userService := user.NewService(userClient, requestHandler)
 	_, err = user.NewController(
 		apiRoute, userService, jwtValidator,
 		&pbuserapi.RESTMap,
@@ -196,7 +200,7 @@ func main() {
 	}
 
 	// Create auth controller
-	authService := auth.NewService(commonflag.Mode, authClient)
+	authService := auth.NewService(authClient, requestHandler)
 	_, err = auth.NewController(
 		apiRoute, authService, jwtValidator,
 		&pbauthapi.RESTMap,

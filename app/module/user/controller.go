@@ -2,10 +2,10 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
 	pbtypes "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/types"
 	pbuserapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/user/api"
@@ -67,10 +67,10 @@ func (c *Controller) initializeRoutes() {
 	c.route.GET(pbuserapi.Profile.String(), c.getProfile)
 	c.route.PATCH(pbuserapi.Profile.String(), c.updateProfile)
 	c.route.GET(pbuserapi.FullProfile.String(), c.getFullProfile)
-	c.route.GET(pbuserapi.GetIdByUsername.String(), c.getUserIdByUsername)
+	c.route.GET(pbuserapi.IdByUsername.String(), c.getUserIdByUsername)
 	c.route.PUT(pbuserapi.Password.String(), c.changePassword)
 	c.route.GET(pbuserapi.UsernameExistsByUsername.String(), c.usernameExists)
-	c.route.GET(pbuserapi.GetUsernameById.String(), c.getUsernameByUserId)
+	c.route.GET(pbuserapi.UsernameById.String(), c.getUsernameByUserId)
 	c.route.PATCH(pbuserapi.Username.String(), c.changeUsername)
 	c.route.GET(pbuserapi.Email.String(), c.getPrimaryEmail)
 	c.route.PUT(pbuserapi.Email.String(), c.changePrimaryEmail)
@@ -103,7 +103,7 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -114,7 +114,7 @@ func (c *Controller) signUp(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"message": response})
+	ctx.JSON(http.StatusCreated, response)
 }
 
 // updateProfile updates the user's profile
@@ -126,7 +126,7 @@ func (c *Controller) updateProfile(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -137,7 +137,7 @@ func (c *Controller) updateProfile(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // getProfile gets the user's profile
@@ -149,7 +149,7 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -160,7 +160,7 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // getFullProfile gets the user's full profile
@@ -172,7 +172,7 @@ func (c *Controller) getFullProfile(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -195,7 +195,7 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -221,7 +221,7 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -232,7 +232,7 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // usernameExists checks if a username exists
@@ -244,7 +244,7 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -267,7 +267,7 @@ func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -290,7 +290,7 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -301,7 +301,7 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // changePrimaryEmail changes the user's primary email
@@ -313,7 +313,7 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -324,7 +324,7 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // addEmail adds an email to the user's account
@@ -336,7 +336,7 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -347,7 +347,7 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"message": response})
+	ctx.JSON(http.StatusCreated, response)
 }
 
 // deleteEmail deletes an email from the user's account
@@ -359,7 +359,7 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -373,7 +373,7 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // getPrimaryEmail gets the user's primary email
@@ -385,7 +385,7 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -396,7 +396,7 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // getActiveEmails gets the user's active emails
@@ -408,7 +408,7 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -419,7 +419,7 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // sendVerificationEmail sends a verification email to a user
@@ -431,7 +431,7 @@ func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -445,7 +445,7 @@ func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // verifyEmail verifies the user's email
@@ -457,7 +457,7 @@ func (c *Controller) verifyEmail(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -471,7 +471,7 @@ func (c *Controller) verifyEmail(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // changePhoneNumber changes the user's phone number
@@ -483,7 +483,7 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -494,7 +494,7 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // getPhoneNumber gets the user's phone number
@@ -506,7 +506,7 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -517,7 +517,7 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // sendVerificationSMS sends a verification SMS to a user
@@ -529,7 +529,7 @@ func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -544,7 +544,7 @@ func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // verifyPhoneNumber verifies the user's phone number
@@ -556,7 +556,7 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -570,7 +570,7 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // forgotPassword sends a reset password email to a user
@@ -582,7 +582,7 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -593,7 +593,7 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // resetPassword resets the user's password
@@ -605,7 +605,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -619,7 +619,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }
 
 // deleteUser deletes the user's account
@@ -631,7 +631,7 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -642,5 +642,5 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": response})
+	ctx.JSON(http.StatusOK, response)
 }

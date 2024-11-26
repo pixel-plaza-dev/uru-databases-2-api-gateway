@@ -2,10 +2,10 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
-	commongrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
 	pbauthapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/auth/api"
 	pbtypes "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/types"
@@ -98,7 +98,7 @@ func (c *Controller) logIn(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -121,7 +121,7 @@ func (c *Controller) isAccessTokenValid(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -147,7 +147,7 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -173,7 +173,7 @@ func (c *Controller) refreshToken(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -196,7 +196,7 @@ func (c *Controller) logOut(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -219,7 +219,7 @@ func (c *Controller) getSessions(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -242,7 +242,7 @@ func (c *Controller) closeSession(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -268,7 +268,7 @@ func (c *Controller) closeSessions(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -291,7 +291,7 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -314,7 +314,7 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -340,7 +340,7 @@ func (c *Controller) getPermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -366,7 +366,7 @@ func (c *Controller) getPermissions(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -389,7 +389,7 @@ func (c *Controller) revokeRolePermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -415,7 +415,7 @@ func (c *Controller) addRolePermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -441,7 +441,7 @@ func (c *Controller) getRolePermissions(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -467,7 +467,7 @@ func (c *Controller) addRole(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -490,7 +490,7 @@ func (c *Controller) revokeRole(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -516,7 +516,7 @@ func (c *Controller) getRoles(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -539,7 +539,7 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -565,7 +565,7 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}
@@ -591,7 +591,7 @@ func (c *Controller) getUserRoles(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongrpc.InternalServerError.Error()},
+			gin.H{"error": module.InternalServerError},
 		)
 		return
 	}

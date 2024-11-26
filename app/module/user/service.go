@@ -3,22 +3,21 @@ package user
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
-	commonclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
+	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
 )
 
 // Service is the service for user
 type Service struct {
-	client pbuser.UserClient
-	flag   *commonflag.ModeFlag
+	client  pbuser.UserClient
+	handler commonclientrequest.Handler
 }
 
 // NewService creates a new service
-func NewService(flag *commonflag.ModeFlag, client pbuser.UserClient) *Service {
+func NewService(client pbuser.UserClient, handler commonclientrequest.Handler) *Service {
 	return &Service{
-		client: client,
-		flag:   flag,
+		client:  client,
+		handler: handler,
 	}
 }
 
@@ -30,7 +29,7 @@ func (s *Service) SignUp(
 ) (*pbuser.SignUpResponse, error) {
 	response, err := s.client.SignUp(grpcCtx, request)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -47,7 +46,7 @@ func (s *Service) UpdateProfile(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -64,7 +63,7 @@ func (s *Service) GetProfile(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -81,7 +80,7 @@ func (s *Service) GetFullProfile(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -98,7 +97,7 @@ func (s *Service) GetUserIdByUsername(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -115,7 +114,7 @@ func (s *Service) ChangePassword(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -132,7 +131,7 @@ func (s *Service) UsernameExists(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -149,7 +148,7 @@ func (s *Service) GetUsernameByUserId(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -166,7 +165,7 @@ func (s *Service) ChangeUsername(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -179,7 +178,7 @@ func (s *Service) AddEmail(
 ) (*pbuser.AddEmailResponse, error) {
 	response, err := s.client.AddEmail(grpcCtx, request)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -194,7 +193,7 @@ func (s *Service) DeleteEmail(
 ) {
 	response, err := s.client.DeleteEmail(grpcCtx, request)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -211,7 +210,7 @@ func (s *Service) ChangePrimaryEmail(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -228,7 +227,7 @@ func (s *Service) SendVerificationEmail(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -243,7 +242,7 @@ func (s *Service) VerifyEmail(
 ) {
 	response, err := s.client.VerifyEmail(grpcCtx, request)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -260,7 +259,7 @@ func (s *Service) GetPrimaryEmail(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -277,7 +276,7 @@ func (s *Service) GetActiveEmails(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -294,7 +293,7 @@ func (s *Service) ChangePhoneNumber(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -311,7 +310,7 @@ func (s *Service) SendVerificationSMS(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -328,7 +327,7 @@ func (s *Service) VerifyPhoneNumber(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -345,7 +344,7 @@ func (s *Service) GetPhoneNumber(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -362,7 +361,7 @@ func (s *Service) ForgotPassword(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -379,7 +378,7 @@ func (s *Service) ResetPassword(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -394,7 +393,7 @@ func (s *Service) DeleteUser(
 ) {
 	response, err := s.client.DeleteUser(grpcCtx, request)
 	if err != nil {
-		return nil, commonclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }

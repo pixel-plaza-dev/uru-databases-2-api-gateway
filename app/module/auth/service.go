@@ -3,20 +3,19 @@ package auth
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
-	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/context"
+	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
 )
 
 // Service is the service for auth
 type Service struct {
-	client pbauth.AuthClient
-	flag   *commonflag.ModeFlag
+	client  pbauth.AuthClient
+	handler commonclientrequest.Handler
 }
 
 // NewService creates a new service
-func NewService(flag *commonflag.ModeFlag, client pbauth.AuthClient) *Service {
-	return &Service{client: client, flag: flag}
+func NewService(client pbauth.AuthClient, handler commonclientrequest.Handler) *Service {
+	return &Service{client: client, handler: handler}
 }
 
 // LogIn logs in q user
@@ -27,7 +26,7 @@ func (s *Service) LogIn(
 ) (*pbauth.LogInResponse, error) {
 	response, err := s.client.LogIn(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -42,7 +41,7 @@ func (s *Service) IsAccessTokenValid(
 ) {
 	response, err := s.client.IsAccessTokenValid(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -57,7 +56,7 @@ func (s *Service) IsRefreshTokenValid(
 ) {
 	response, err := s.client.IsRefreshTokenValid(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -72,7 +71,7 @@ func (s *Service) RefreshToken(
 ) {
 	response, err := s.client.RefreshToken(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -85,7 +84,7 @@ func (s *Service) LogOut(
 ) (*pbauth.LogOutResponse, error) {
 	response, err := s.client.LogOut(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -100,7 +99,7 @@ func (s *Service) GetSessions(
 ) {
 	response, err := s.client.GetSessions(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -115,7 +114,7 @@ func (s *Service) CloseSession(
 ) {
 	response, err := s.client.CloseSession(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -130,7 +129,7 @@ func (s *Service) CloseSessions(
 ) {
 	response, err := s.client.CloseSessions(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -145,7 +144,7 @@ func (s *Service) AddPermission(
 ) {
 	response, err := s.client.AddPermission(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -160,7 +159,7 @@ func (s *Service) RevokePermission(
 ) {
 	response, err := s.client.RevokePermission(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -175,7 +174,7 @@ func (s *Service) GetPermission(
 ) {
 	response, err := s.client.GetPermission(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -190,7 +189,7 @@ func (s *Service) GetPermissions(
 ) {
 	response, err := s.client.GetPermissions(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -205,7 +204,7 @@ func (s *Service) AddRolePermission(
 ) {
 	response, err := s.client.AddRolePermission(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -220,7 +219,7 @@ func (s *Service) RevokeRolePermission(
 ) {
 	response, err := s.client.RevokeRolePermission(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -235,7 +234,7 @@ func (s *Service) GetRolePermissions(
 ) {
 	response, err := s.client.GetRolePermissions(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -248,7 +247,7 @@ func (s *Service) AddRole(
 ) (*pbauth.AddRoleResponse, error) {
 	response, err := s.client.AddRole(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -263,7 +262,7 @@ func (s *Service) RevokeRole(
 ) {
 	response, err := s.client.RevokeRole(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -276,7 +275,7 @@ func (s *Service) GetRoles(
 ) (*pbauth.GetRolesResponse, error) {
 	response, err := s.client.GetRoles(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -291,7 +290,7 @@ func (s *Service) AddUserRole(
 ) {
 	response, err := s.client.AddUserRole(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -306,7 +305,7 @@ func (s *Service) RevokeUserRole(
 ) {
 	response, err := s.client.RevokeUserRole(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
@@ -321,7 +320,7 @@ func (s *Service) GetUserRoles(
 ) {
 	response, err := s.client.GetUserRoles(grpcCtx, request)
 	if err != nil {
-		return nil, commongrpcclientctx.ExtractErrorFromStatus(s.flag, err)
+		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
