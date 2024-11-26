@@ -66,7 +66,7 @@ func (c *Controller) initializeRoutes() {
 	c.route.POST(pbuserapi.SignUp.String(), c.signUp)
 	c.route.GET(pbuserapi.Profile.String(), c.getProfile)
 	c.route.PATCH(pbuserapi.Profile.String(), c.updateProfile)
-	c.route.GET(pbuserapi.FullProfile.String(), c.getFullProfile)
+	c.route.GET(pbuserapi.MyProfile.String(), c.getMyProfile)
 	c.route.GET(pbuserapi.IdByUsername.String(), c.getUserIdByUsername)
 	c.route.PUT(pbuserapi.Password.String(), c.changePassword)
 	c.route.GET(pbuserapi.UsernameExistsByUsername.String(), c.usernameExists)
@@ -163,9 +163,9 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// getFullProfile gets the user's full profile
-func (c *Controller) getFullProfile(ctx *gin.Context) {
-	var request pbuser.GetFullProfileRequest
+// getMyProfile gets the user's profile
+func (c *Controller) getMyProfile(ctx *gin.Context) {
+	var request pbuser.GetMyProfileRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -177,8 +177,8 @@ func (c *Controller) getFullProfile(ctx *gin.Context) {
 		return
 	}
 
-	// Get the user's full profile
-	response, err := c.service.GetFullProfile(ctx, grpcCtx, &request)
+	// Get the user's profile
+	response, err := c.service.GetMyProfile(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -68,15 +68,15 @@ func (s *Service) GetProfile(
 	return response, nil
 }
 
-// GetFullProfile gets the user's full profile
-func (s *Service) GetFullProfile(
+// GetMyProfile gets the user's profile
+func (s *Service) GetMyProfile(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbuser.GetFullProfileRequest,
+	request *pbuser.GetMyProfileRequest,
 ) (
-	*pbuser.GetFullProfileResponse, error,
+	*pbuser.GetMyProfileResponse, error,
 ) {
-	response, err := s.client.GetFullProfile(
+	response, err := s.client.GetMyProfile(
 		grpcCtx, request,
 	)
 	if err != nil {
