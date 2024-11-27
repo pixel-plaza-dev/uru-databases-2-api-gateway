@@ -215,4 +215,5 @@ func main() {
 	if err = router.Run(servicePort.FormattedPort); err != nil {
 		panic(err)
 	}
+	logger.ListenerLogger.ServerStarted(servicePort.Port)
 }

@@ -35,7 +35,7 @@ func (s *Service) SignUp(
 }
 
 // UpdateUser updates the user
-func (s *Service) UpdateProfile(
+func (s *Service) UpdateUser(
 	ctx *gin.Context,
 	grpcCtx context.Context,
 	request *pbuser.UpdateUserRequest,
