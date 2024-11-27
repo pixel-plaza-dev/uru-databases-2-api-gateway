@@ -34,15 +34,15 @@ func (s *Service) SignUp(
 	return response, nil
 }
 
-// UpdateProfile updates the user's profile
+// UpdateUser updates the user
 func (s *Service) UpdateProfile(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbuser.UpdateProfileRequest,
+	request *pbuser.UpdateUserRequest,
 ) (
-	*pbuser.UpdateProfileResponse, error,
+	*pbuser.UpdateUserResponse, error,
 ) {
-	response, err := s.client.UpdateProfile(
+	response, err := s.client.UpdateUser(
 		grpcCtx, request,
 	)
 	if err != nil {

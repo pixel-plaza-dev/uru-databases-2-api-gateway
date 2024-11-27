@@ -64,8 +64,8 @@ func NewController(
 // initializeRoutes initializes the routes for the controller
 func (c *Controller) initializeRoutes() {
 	c.route.POST(pbuserapi.SignUp.String(), c.signUp)
+	c.route.PATCH(pbuserapi.User.String(), c.updateUser)
 	c.route.GET(pbuserapi.Profile.String(), c.getProfile)
-	c.route.PATCH(pbuserapi.Profile.String(), c.updateProfile)
 	c.route.GET(pbuserapi.MyProfile.String(), c.getMyProfile)
 	c.route.GET(pbuserapi.IdByUsername.String(), c.getUserIdByUsername)
 	c.route.PUT(pbuserapi.Password.String(), c.changePassword)
@@ -117,9 +117,9 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, response)
 }
 
-// updateProfile updates the user's profile
-func (c *Controller) updateProfile(ctx *gin.Context) {
-	var request pbuser.UpdateProfileRequest
+// updateUser updates the user
+func (c *Controller) updateUser(ctx *gin.Context) {
+	var request pbuser.UpdateUserRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -131,8 +131,8 @@ func (c *Controller) updateProfile(ctx *gin.Context) {
 		return
 	}
 
-	// Update the user's profile
-	response, err := c.service.UpdateProfile(ctx, grpcCtx, &request)
+	// Update the user
+	response, err := c.service.UpdateUser(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
