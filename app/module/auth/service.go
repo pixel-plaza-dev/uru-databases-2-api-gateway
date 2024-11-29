@@ -14,7 +14,10 @@ type Service struct {
 }
 
 // NewService creates a new service
-func NewService(client pbauth.AuthClient, handler commonclientrequest.Handler) *Service {
+func NewService(
+	client pbauth.AuthClient,
+	handler commonclientrequest.Handler,
+) *Service {
 	return &Service{client: client, handler: handler}
 }
 
@@ -89,45 +92,60 @@ func (s *Service) LogOut(
 	return response, nil
 }
 
-// GetSessions gets all the user' sessions
-func (s *Service) GetSessions(
+// GetRefreshTokenInformation gets the refresh token information
+func (s *Service) GetRefreshTokenInformation(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.GetSessionsRequest,
+	request *pbauth.GetRefreshTokenInformationRequest,
 ) (
-	*pbauth.GetSessionsResponse, error,
+	response *pbauth.GetRefreshTokenInformationResponse, err error,
 ) {
-	response, err := s.client.GetSessions(grpcCtx, request)
+	response, err = s.client.GetRefreshTokenInformation(grpcCtx, request)
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
 
-// CloseSession closes the user' session
-func (s *Service) CloseSession(
+// GetRefreshTokensInformation gets all refresh tokens information
+func (s *Service) GetRefreshTokensInformation(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.CloseSessionRequest,
+	request *pbauth.GetRefreshTokensInformationRequest,
 ) (
-	*pbauth.CloseSessionResponse, error,
+	*pbauth.GetRefreshTokensInformationResponse, error,
 ) {
-	response, err := s.client.CloseSession(grpcCtx, request)
+	response, err := s.client.GetRefreshTokensInformation(grpcCtx, request)
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
 	return response, nil
 }
 
-// CloseSessions closes all the user' sessions
-func (s *Service) CloseSessions(
+// RevokeRefreshToken revokes a user's refresh token
+func (s *Service) RevokeRefreshToken(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.CloseSessionsRequest,
+	request *pbauth.RevokeRefreshTokenRequest,
 ) (
-	*pbauth.CloseSessionsResponse, error,
+	*pbauth.RevokeRefreshTokenResponse, error,
 ) {
-	response, err := s.client.CloseSessions(grpcCtx, request)
+	response, err := s.client.RevokeRefreshToken(grpcCtx, request)
+	if err != nil {
+		return nil, s.handler.HandleError(err)
+	}
+	return response, nil
+}
+
+// RevokeRefreshTokens revokes all the user's refresh tokens
+func (s *Service) RevokeRefreshTokens(
+	ctx *gin.Context,
+	grpcCtx context.Context,
+	request *pbauth.RevokeRefreshTokensRequest,
+) (
+	*pbauth.RevokeRefreshTokensResponse, error,
+) {
+	response, err := s.client.RevokeRefreshTokens(grpcCtx, request)
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}

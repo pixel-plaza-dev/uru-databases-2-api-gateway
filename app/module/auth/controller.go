@@ -64,13 +64,23 @@ func NewController(
 // initializeRoutes initializes the routes for the controller
 func (c *Controller) initializeRoutes() {
 	c.route.POST(pbauthapi.LogIn.String(), c.logIn)
-	c.route.GET(pbauthapi.AccessTokenByJwtId.String(), c.isAccessTokenValid)
-	c.route.GET(pbauthapi.RefreshTokenByJwtId.String(), c.isRefreshTokenValid)
-	c.route.POST(pbauthapi.RefreshToken.String(), c.refreshToken)
+	c.route.GET(
+		pbauthapi.IsAccessTokenValidByJwtId.String(),
+		c.isAccessTokenValid,
+	)
+	c.route.GET(
+		pbauthapi.IsRefreshTokenValidByJwtId.String(),
+		c.isRefreshTokenValid,
+	)
 	c.route.POST(pbauthapi.LogOut.String(), c.logOut)
-	c.route.GET(pbauthapi.Sessions.String(), c.getSessions)
-	c.route.DELETE(pbauthapi.Sessions.String(), c.closeSessions)
-	c.route.DELETE(pbauthapi.SessionByToken.String(), c.closeSession)
+	c.route.POST(pbauthapi.RefreshToken.String(), c.refreshToken)
+	c.route.GET(
+		pbauthapi.RefreshTokenByJwtId.String(),
+		c.getRefreshTokenInformation,
+	)
+	c.route.DELETE(pbauthapi.RefreshTokenByJwtId.String(), c.revokeRefreshToken)
+	c.route.GET(pbauthapi.RefreshTokens.String(), c.getRefreshTokensInformation)
+	c.route.DELETE(pbauthapi.RefreshTokens.String(), c.revokeRefreshTokens)
 	c.route.POST(pbauthapi.Permission.String(), c.addPermission)
 	c.route.DELETE(pbauthapi.PermissionById.String(), c.revokePermission)
 	c.route.GET(pbauthapi.PermissionById.String(), c.getPermission)
@@ -153,7 +163,7 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	}
 
 	// Add the JWT Identifier to the request
-	request.JwtId = ctx.Param(pbtypes.Token.String())
+	request.JwtId = ctx.Param(pbtypes.JwtId.String())
 
 	// Check if the refresh token is valid
 	response, err := c.service.IsRefreshTokenValid(ctx, grpcCtx, &request)
@@ -210,9 +220,39 @@ func (c *Controller) logOut(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// getSessions gets all user' sessions
-func (c *Controller) getSessions(ctx *gin.Context) {
-	var request pbauth.GetSessionsRequest
+// getRefreshTokenInformation gets a refresh token information
+func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
+	var request pbauth.GetRefreshTokenInformationRequest
+
+	// Prepare the gRPC context
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	if err != nil {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"error": module.InternalServerError},
+		)
+		return
+	}
+
+	// Add the JWT Identifier to the request
+	request.JwtId = ctx.Param(pbtypes.JwtId.String())
+
+	// Get the refresh token information
+	response, err := c.service.GetRefreshTokenInformation(
+		ctx,
+		grpcCtx,
+		&request,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+// getRefreshTokensInformation gets all refresh tokens information
+func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
+	var request pbauth.GetRefreshTokensInformationRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -225,7 +265,11 @@ func (c *Controller) getSessions(ctx *gin.Context) {
 	}
 
 	// Get all user' sessions
-	response, err := c.service.GetSessions(ctx, grpcCtx, &request)
+	response, err := c.service.GetRefreshTokensInformation(
+		ctx,
+		grpcCtx,
+		&request,
+	)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -233,9 +277,9 @@ func (c *Controller) getSessions(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// closeSession closes a given user' session
-func (c *Controller) closeSession(ctx *gin.Context) {
-	var request pbauth.CloseSessionRequest
+// revokeRefreshToken revokes a user's refresh token
+func (c *Controller) revokeRefreshToken(ctx *gin.Context) {
+	var request pbauth.RevokeRefreshTokenRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -247,11 +291,11 @@ func (c *Controller) closeSession(ctx *gin.Context) {
 		return
 	}
 
-	// Add the refresh token to the request
-	request.RefreshToken = ctx.Param(pbtypes.Token.String())
+	// Add the JWT ID to the request
+	request.JwtId = ctx.Param(pbtypes.JwtId.String())
 
-	// Close a given user' session
-	response, err := c.service.CloseSession(ctx, grpcCtx, &request)
+	// Revoke the given refresh token
+	response, err := c.service.RevokeRefreshToken(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -259,9 +303,9 @@ func (c *Controller) closeSession(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// closeSessions closes all user' sessions
-func (c *Controller) closeSessions(ctx *gin.Context) {
-	var request pbauth.CloseSessionsRequest
+// revokeRefreshTokens revokes all user's refresh tokens
+func (c *Controller) revokeRefreshTokens(ctx *gin.Context) {
+	var request pbauth.RevokeRefreshTokensRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -273,8 +317,8 @@ func (c *Controller) closeSessions(ctx *gin.Context) {
 		return
 	}
 
-	// Close all user' sessions
-	response, err := c.service.CloseSessions(ctx, grpcCtx, &request)
+	// Revoke all user's refresh tokens
+	response, err := c.service.RevokeRefreshTokens(ctx, grpcCtx, &request)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

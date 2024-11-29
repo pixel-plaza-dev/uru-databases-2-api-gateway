@@ -5,9 +5,9 @@ go 1.23.2
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.2.5
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.6.21
-	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.31
+	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.2.6
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.6.37
+	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.1.41
 	google.golang.org/grpc v1.67.1
 )
 
