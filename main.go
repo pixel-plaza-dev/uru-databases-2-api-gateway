@@ -9,9 +9,8 @@ import (
 	appjwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
-	appmodule "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/auth"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/user"
+	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/v1"
+	commonginmiddlewareauth "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
 	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
@@ -24,10 +23,8 @@ import (
 	commontls "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/tls"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
-	pbdetailsauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/auth"
-	pbauthapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/auth/api"
-	pbdetailsuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/user"
-	pbuserapi "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/details/user/api"
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/oauth"
@@ -50,6 +47,17 @@ func init() {
 	}
 }
 
+// @title           Pixel Plaza REST API
+// @version         1.0
+// @description     The REST API Gateway to the Auth, User, Business, Payment and Order microservices
+
+// @license.name  GPL-3.0
+// @license.url   http://www.gnu.org/licenses/gpl-3.0.html
+
+// @host      uru-databases-2-api-gateway-246064477369.us-central1.run.app
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
 func main() {
 	// Get the listener port
 	servicePort, err := commonlistener.LoadServicePort(
@@ -176,40 +184,31 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	// Create the authentication middleware
+	authMiddleware, err := commonginmiddlewareauth.NewMiddleware(jwtValidator, logger.AuthMiddlewareLogger)
+	if err != nil {
+		panic(err)
+	}
+
 	// Gin router
 	router := gin.Default()
 
 	// Added secure headers middleware
 	router.Use(commonheader.SecurityHeaders())
 
-	// Route group
-	apiRoute := router.Group(appmodule.BaseUri)
+	// Use ginSwagger middleware to serve the API docs
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Create the request handler
 	requestHandler := commonclientrequest.NewDefaultHandler(commonflag.Mode)
 
-	// Create user controller
-	userService := user.NewService(userClient, requestHandler)
-	_, err = user.NewController(
-		apiRoute, userService, jwtValidator,
-		&pbuserapi.RESTMap,
-		&pbdetailsuser.GRPCInterceptions, logger.AuthMiddlewareLogger,
+	// Create the module controller
+	mainModule := v1.NewController(
+		router, userClient, authClient, authMiddleware, requestHandler,
 	)
-	if err != nil {
-		panic(err)
-	}
 
-	// Create auth controller
-	authService := auth.NewService(authClient, requestHandler)
-	_, err = auth.NewController(
-		apiRoute, authService, jwtValidator,
-		&pbauthapi.RESTMap,
-		&pbdetailsauth.GRPCInterceptions,
-		logger.AuthMiddlewareLogger,
-	)
-	if err != nil {
-		panic(err)
-	}
+	// Initialize the module controllers
+	mainModule.Initialize()
 
 	// Run the server
 	if err = router.Run(servicePort.FormattedPort); err != nil {
