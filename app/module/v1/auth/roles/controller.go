@@ -18,7 +18,7 @@ import (
 // @Tags v1 auth roles
 // @Accept json
 // @Produce json
-// @Router /roles [group]
+// @Router /api/v1/auth/roles [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcauth.Service
@@ -52,14 +52,14 @@ func (c *Controller) Initialize() {
 // addRole adds a role
 // @Summary Add a role
 // @Description Add a new role
-// @Tags auth
+// @Tags v1 auth roles
 // @Accept json
 // @Produce json
 // @Param request body pbauth.AddRoleRequest true "Add Role Request"
 // @Success 201 {object} pbauth.AddRoleResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/roles/ [post]
 func (c *Controller) addRole(ctx *gin.Context) {
 	var request pbauth.AddRoleRequest
 
@@ -85,13 +85,13 @@ func (c *Controller) addRole(ctx *gin.Context) {
 // getRoles gets all roles
 // @Summary Get all roles
 // @Description Get information about all roles
-// @Tags auth
+// @Tags v1 auth roles
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetRolesResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/roles/ [get]
 func (c *Controller) getRoles(ctx *gin.Context) {
 	var request pbauth.GetRolesRequest
 
@@ -117,15 +117,15 @@ func (c *Controller) getRoles(ctx *gin.Context) {
 // addRolePermission adds a permission to a role
 // @Summary Add a permission to a role
 // @Description Add a new permission to a role by its ID
-// @Tags auth
+// @Tags v1 auth roles
 // @Accept json
 // @Produce json
 // @Param id path string true "Role ID"
 // @Param request body pbauth.AddRolePermissionRequest true "Add Role Permission Request"
 // @Success 201 {object} pbauth.AddRolePermissionResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{id} [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/roles/{id} [post]
 func (c *Controller) addRolePermission(ctx *gin.Context) {
 	var request pbauth.AddRolePermissionRequest
 
@@ -154,14 +154,14 @@ func (c *Controller) addRolePermission(ctx *gin.Context) {
 // getRolePermissions gets all permissions for a role
 // @Summary Get all permissions for a role
 // @Description Get information about all permissions for a specific role by its ID
-// @Tags auth
+// @Tags v1 auth roles
 // @Accept json
 // @Produce json
 // @Param id path string true "Role ID"
 // @Success 200 {object} pbauth.GetRolePermissionsResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{id} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/roles/{id} [get]
 func (c *Controller) getRolePermissions(ctx *gin.Context) {
 	var request pbauth.GetRolePermissionsRequest
 
@@ -190,14 +190,14 @@ func (c *Controller) getRolePermissions(ctx *gin.Context) {
 // revokeRole revokes a role
 // @Summary Revoke a role
 // @Description Revoke a specific role by its ID
-// @Tags auth
+// @Tags v1 auth roles
 // @Accept json
 // @Produce json
 // @Param id path string true "Role ID"
 // @Success 200 {object} pbauth.RevokeRoleResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{id} [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/roles/{id} [delete]
 func (c *Controller) revokeRole(ctx *gin.Context) {
 	var request pbauth.RevokeRoleRequest
 

@@ -18,7 +18,7 @@ import (
 // @Tags v1 auth role-permissions
 // @Accept json
 // @Produce json
-// @Router /role-permissions [group]
+// @Router /api/v1/auth/role-permissions [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcauth.Service
@@ -51,14 +51,14 @@ func (c *Controller) Initialize() {
 // revokeRolePermission revokes a permission from a role
 // @Summary Revoke a permission from a role
 // @Description Revoke a specific permission from a role by its ID
-// @Tags auth
+// @Tags v1 auth role-permissions
 // @Accept json
 // @Produce json
 // @Param id path string true "Role ID"
 // @Success 200 {object} pbauth.RevokeRolePermissionResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{id} [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/role-permissions/{id} [delete]
 func (c *Controller) revokeRolePermission(ctx *gin.Context) {
 	var request pbauth.RevokeRolePermissionRequest
 

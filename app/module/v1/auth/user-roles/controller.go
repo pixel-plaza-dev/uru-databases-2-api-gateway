@@ -18,7 +18,7 @@ import (
 // @Tags v1 auth user-roles
 // @Accept json
 // @Produce json
-// @Router /user-roles [group]
+// @Router /api/v1/auth/user-roles [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcauth.Service
@@ -50,15 +50,15 @@ func (c *Controller) Initialize() {
 // addUserRole adds a role to a user
 // @Summary Add a role to a user
 // @Description Add a new role to a user by their ID
-// @Tags auth
+// @Tags v1 auth user-roles
 // @Accept json
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Param request body pbauth.AddUserRoleRequest true "Add User Role Request"
 // @Success 201 {object} pbauth.AddUserRoleResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{user-id} [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/user-roles/{user-id} [post]
 func (c *Controller) addUserRole(ctx *gin.Context) {
 	var request pbauth.AddUserRoleRequest
 
@@ -87,14 +87,14 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 // revokeUserRole revokes a role from a user
 // @Summary Revoke a role from a user
 // @Description Revoke a specific role from a user by their ID
-// @Tags auth
+// @Tags v1 auth user-roles
 // @Accept json
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbauth.RevokeUserRoleResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{user-id} [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/user-roles/{user-id} [delete]
 func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	var request pbauth.RevokeUserRoleRequest
 
@@ -128,9 +128,9 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbauth.GetUserRolesResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{user-id} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/user-roles/{user-id} [get]
 func (c *Controller) getUserRoles(ctx *gin.Context) {
 	var request pbauth.GetUserRolesRequest
 

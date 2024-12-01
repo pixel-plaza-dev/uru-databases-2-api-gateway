@@ -26,7 +26,7 @@ import (
 // @Tags v1 users
 // @Accept json
 // @Produce json
-// @Router /users [group]
+// @Router /api/v1/users [group]
 type Controller struct {
 	route          *gin.RouterGroup
 	client         pbuser.UserClient
@@ -110,9 +110,9 @@ func (c *Controller) initializeChildren() {
 // @Produce json
 // @Param request body pbuser.SignUpRequest true "Sign Up Request"
 // @Success 201 {object} pbuser.SignUpResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /sign-up [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/sign-up [post]
 func (c *Controller) signUp(ctx *gin.Context) {
 	var request pbuser.SignUpRequest
 
@@ -143,9 +143,9 @@ func (c *Controller) signUp(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.UpdateUserRequest true "Update User Request"
 // @Success 200 {object} pbuser.UpdateUserResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [patch]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users [patch]
 func (c *Controller) updateUser(ctx *gin.Context) {
 	var request pbuser.UpdateUserRequest
 
@@ -176,9 +176,9 @@ func (c *Controller) updateUser(ctx *gin.Context) {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.GetUserIdByUsernameResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} gin.H{"error": string}
-// @Router /users/user-id/{username} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/user-id/{username} [get]
 func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	var request pbuser.GetUserIdByUsernameRequest
 
@@ -212,9 +212,9 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangePasswordRequest true "Change Password Request"
 // @Success 200 {object} pbuser.ChangePasswordResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /password [put]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/password [put]
 func (c *Controller) changePassword(ctx *gin.Context) {
 	var request pbuser.ChangePasswordRequest
 
@@ -245,9 +245,9 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangeUsernameRequest true "Change Username Request"
 // @Success 200 {object} pbuser.ChangeUsernameResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /username [patch]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/username [patch]
 func (c *Controller) changeUsername(ctx *gin.Context) {
 	var request pbuser.ChangeUsernameRequest
 
@@ -278,9 +278,9 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ForgotPasswordRequest true "Forgot Password Request"
 // @Success 200 {object} pbuser.ForgotPasswordResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /forgot-password [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/forgot-password [post]
 func (c *Controller) forgotPassword(ctx *gin.Context) {
 	var request pbuser.ForgotPasswordRequest
 
@@ -312,9 +312,9 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 // @Param token path string true "Verification Token"
 // @Param request body pbuser.ResetPasswordRequest true "Reset Password Request"
 // @Success 200 {object} pbuser.ResetPasswordResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /users/reset-password/{token} [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/reset-password/{token} [post]
 func (c *Controller) resetPassword(ctx *gin.Context) {
 	var request pbuser.ResetPasswordRequest
 
@@ -348,9 +348,9 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.DeleteUserRequest true "Delete User Request"
 // @Success 200 {object} pbuser.DeleteUserResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /delete-account [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/delete-account [delete]
 func (c *Controller) deleteUser(ctx *gin.Context) {
 	var request pbuser.DeleteUserRequest
 

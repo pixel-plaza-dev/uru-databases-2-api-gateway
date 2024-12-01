@@ -18,7 +18,7 @@ import (
 // @Tags v1 users profiles
 // @Accept json
 // @Produce json
-// @Router /profiles [group]
+// @Router /api/v1/users/profiles [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcuser.Service
@@ -53,9 +53,9 @@ func (c *Controller) Initialize() {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbuser.GetMyProfileResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/profiles [get]
 func (c *Controller) getMyProfile(ctx *gin.Context) {
 	var request pbuser.GetMyProfileRequest
 
@@ -86,9 +86,9 @@ func (c *Controller) getMyProfile(ctx *gin.Context) {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.GetProfileResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{username} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/profiles/{username} [get]
 func (c *Controller) getProfile(ctx *gin.Context) {
 	var request pbuser.GetProfileRequest
 

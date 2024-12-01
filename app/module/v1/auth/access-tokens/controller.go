@@ -18,7 +18,7 @@ import (
 // @Tags v1 auth access-tokens
 // @Accept json
 // @Produce json
-// @Router /access-tokens [group]
+// @Router /api/v1/auth/access-tokens [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcauth.Service
@@ -55,10 +55,10 @@ func (c *Controller) Initialize() {
 // @Accept json
 // @Produce json
 // @Param jwtId path string true "JWT ID"
-// @Success 200 {object} IsAccessTokenValidResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /valid/{jwtId} [get]
+// @Success 200 {object} pbauth.IsAccessTokenValidResponse
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/access-tokens/valid/{jwtId} [get]
 func (c *Controller) isAccessTokenValid(ctx *gin.Context) {
 	var request pbauth.IsAccessTokenValidRequest
 

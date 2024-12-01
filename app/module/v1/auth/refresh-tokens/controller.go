@@ -18,7 +18,7 @@ import (
 // @Tags v1 auth refresh-tokens
 // @Accept json
 // @Produce json
-// @Router /refresh-tokens [group]
+// @Router /api/v1/auth/refresh-tokens [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcauth.Service
@@ -64,9 +64,9 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param jwtId path string true "JWT ID"
 // @Success 200 {object} pbauth.IsRefreshTokenValidResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /valid/{jwtId} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/refresh-tokens/valid/{jwtId} [get]
 func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	var request pbauth.IsRefreshTokenValidRequest
 
@@ -99,9 +99,9 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetRefreshTokensInformationResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/refresh-tokens [get]
 func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
 	var request pbauth.GetRefreshTokensInformationRequest
 
@@ -135,9 +135,9 @@ func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.RefreshTokenResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/refresh-tokens [post]
 func (c *Controller) refreshToken(ctx *gin.Context) {
 	var request pbauth.RefreshTokenRequest
 
@@ -167,9 +167,9 @@ func (c *Controller) refreshToken(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.RevokeRefreshTokensResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/refresh-tokens [delete]
 func (c *Controller) revokeRefreshTokens(ctx *gin.Context) {
 	var request pbauth.RevokeRefreshTokensRequest
 
@@ -200,9 +200,9 @@ func (c *Controller) revokeRefreshTokens(ctx *gin.Context) {
 // @Produce json
 // @Param jwtId path string true "JWT ID"
 // @Success 200 {object} pbauth.GetRefreshTokenInformationResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{jwtId} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/refresh-tokens/{jwtId} [get]
 func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 	var request pbauth.GetRefreshTokenInformationRequest
 
@@ -240,9 +240,9 @@ func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 // @Produce json
 // @Param jwtId path string true "JWT ID"
 // @Success 200 {object} pbauth.RevokeRefreshTokenResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{jwtId} [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/refresh-tokens/{jwtId} [delete]
 func (c *Controller) revokeRefreshToken(ctx *gin.Context) {
 	var request pbauth.RevokeRefreshTokenRequest
 

@@ -28,6 +28,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/oauth"
+
+	_ "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/docs"
 )
 
 func init() {

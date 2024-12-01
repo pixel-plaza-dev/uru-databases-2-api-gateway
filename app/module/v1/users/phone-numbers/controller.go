@@ -18,7 +18,7 @@ import (
 // @Tags v1 users phone-numbers
 // @Accept json
 // @Produce json
-// @Router /phone-numbers [group]
+// @Router /api/v1/users/phone-numbers [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcuser.Service
@@ -58,9 +58,9 @@ func (c *Controller) Initialize() {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbuser.GetPhoneNumberResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/phone-numbers [get]
 func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	var request pbuser.GetPhoneNumberRequest
 
@@ -91,9 +91,9 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangePhoneNumberRequest true "Change Phone Number Request"
 // @Success 200 {object} pbuser.ChangePhoneNumberResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /phone-numbers [put]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/phone-numbers [put]
 func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 	var request pbuser.ChangePhoneNumberRequest
 
@@ -124,9 +124,9 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.SendVerificationSMSRequest true "Send Verification SMS Request"
 // @Success 200 {object} pbuser.SendVerificationSMSResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /send-verification [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/phone-numbers/send-verification [post]
 func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 	var request pbuser.SendVerificationSMSRequest
 
@@ -153,17 +153,17 @@ func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// verifyEmail verifies the user's email
-// @Summary Verify email
-// @Description Verify the user's email
-// @Tags v1 profiles
+// verifyEmail verifies the user's phone number
+// @Summary Verify phone number
+// @Description Verify the user's phone number
+// @Tags v1 users phone-numbers
 // @Accept json
 // @Produce json
 // @Param token path string true "Verification Token"
-// @Success 200 {object} pbuser.VerifyEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /verify/{token} [post]
+// @Success 200 {object} pbuser.VerifyPhoneNumberResponse
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/phone-numbers/verify/{token} [post]
 func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	var request pbuser.VerifyPhoneNumberRequest
 

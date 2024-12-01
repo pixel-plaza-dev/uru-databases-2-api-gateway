@@ -18,7 +18,7 @@ import (
 // @Tags v1 auth permissions
 // @Accept json
 // @Produce json
-// @Router /permissions [group]
+// @Router /api/v1/auth/permissions [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcauth.Service
@@ -56,9 +56,9 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param request body pbauth.AddPermissionRequest true "Add Permission Request"
 // @Success 201 {object} pbauth.AddPermissionResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/permissions/ [post]
 func (c *Controller) addPermission(ctx *gin.Context) {
 	var request pbauth.AddPermissionRequest
 
@@ -88,9 +88,9 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetPermissionsResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/permissions/ [get]
 func (c *Controller) getPermissions(ctx *gin.Context) {
 	var request pbauth.GetPermissionsRequest
 
@@ -121,9 +121,9 @@ func (c *Controller) getPermissions(ctx *gin.Context) {
 // @Produce json
 // @Param id path string true "Permission ID"
 // @Success 200 {object} pbauth.RevokePermissionResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{id} [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/permissions/{id} [delete]
 func (c *Controller) revokePermission(ctx *gin.Context) {
 	var request pbauth.RevokePermissionRequest
 
@@ -157,9 +157,9 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 // @Produce json
 // @Param id path string true "Permission ID"
 // @Success 200 {object} pbauth.GetPermissionResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{id} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/permissions/{id} [get]
 func (c *Controller) getPermission(ctx *gin.Context) {
 	var request pbauth.GetPermissionRequest
 

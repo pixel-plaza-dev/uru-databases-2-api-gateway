@@ -18,7 +18,7 @@ import (
 // @Tags v1 users emails
 // @Accept json
 // @Produce json
-// @Router /emails [group]
+// @Router /api/v1/users/emails [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcuser.Service
@@ -61,9 +61,9 @@ func (c *Controller) Initialize() {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbuser.GetActiveEmailsResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails [get]
 func (c *Controller) getActiveEmails(ctx *gin.Context) {
 	var request pbuser.GetActiveEmailsRequest
 
@@ -94,9 +94,9 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.AddEmailRequest true "Add Email Request"
 // @Success 201 {object} pbuser.AddEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router / [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails [post]
 func (c *Controller) addEmail(ctx *gin.Context) {
 	var request pbuser.AddEmailRequest
 
@@ -126,9 +126,9 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbuser.GetPrimaryEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /primary [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails/primary [get]
 func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 	var request pbuser.GetPrimaryEmailRequest
 
@@ -159,9 +159,9 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangePrimaryEmailRequest true "Change Primary Email Request"
 // @Success 200 {object} pbuser.ChangePrimaryEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /primary [put]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails/primary [put]
 func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 	var request pbuser.ChangePrimaryEmailRequest
 
@@ -192,9 +192,9 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 // @Produce json
 // @Param email path string true "Email"
 // @Success 200 {object} pbuser.DeleteEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{email} [delete]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails/{email} [delete]
 func (c *Controller) deleteEmail(ctx *gin.Context) {
 	var request pbuser.DeleteEmailRequest
 
@@ -228,9 +228,9 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.SendVerificationEmailRequest true "Send Verification Email Request"
 // @Success 200 {object} pbuser.SendVerificationEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /send-verification [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails/send-verification [post]
 func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 	var request pbuser.SendVerificationEmailRequest
 
@@ -264,9 +264,9 @@ func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 // @Produce json
 // @Param token path string true "Verification Token"
 // @Success 200 {object} pbuser.VerifyEmailResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /verify/{token} [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/emails/verify/{token} [post]
 func (c *Controller) verifyEmail(ctx *gin.Context) {
 	var request pbuser.VerifyEmailRequest
 

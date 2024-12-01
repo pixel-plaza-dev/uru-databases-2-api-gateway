@@ -27,7 +27,7 @@ import (
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Router /auth [group]
+// @Router /api/v1/auth [group]
 type Controller struct {
 	route          *gin.RouterGroup
 	client         pbauth.AuthClient
@@ -109,9 +109,9 @@ func (c *Controller) initializeChildren() {
 // @Produce json
 // @Param request body LogInRequest true "Log In Request"
 // @Success 200 {object} LogInResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /log-in [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/log-in [post]
 func (c *Controller) logIn(ctx *gin.Context) {
 	var request pbauth.LogInRequest
 
@@ -144,9 +144,9 @@ func (c *Controller) logIn(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbauth.LogOutRequest true "Log Out Request"
 // @Success 200 {object} pbauth.LogOutResponse
-// @Failure 400 {object} module.BadRequest
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /auth/log-out [post]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/auth/log-out [post]
 func (c *Controller) logOut(ctx *gin.Context) {
 	var request pbauth.LogOutRequest
 

@@ -18,7 +18,7 @@ import (
 // @Tags v1 users usernames
 // @Accept json
 // @Produce json
-// @Router /usernames [group]
+// @Router /api/v1/users/usernames [group]
 type Controller struct {
 	route   *gin.RouterGroup
 	service *appgrpcuser.Service
@@ -54,9 +54,9 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.UsernameExistsResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /exists/{username} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/usernames/exists/{username} [get]
 func (c *Controller) usernameExists(ctx *gin.Context) {
 	var request pbuser.UsernameExistsRequest
 
@@ -90,9 +90,9 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbuser.GetUsernameByUserIdResponse
-// @Failure 400 {object} gin.H{"error": string}
-// @Failure 500 {object} commongin.InternalServerError
-// @Router /{user-id} [get]
+// @Failure 400 {object} map[string]any
+// @Failure 500 {object} map[string]any
+// @Router /api/v1/users/usernames/{user-id} [get]
 func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 	var request pbuser.GetUsernameByUserIdRequest
 
