@@ -4,7 +4,8 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Service is the service for auth
@@ -68,11 +69,10 @@ func (s *Service) IsRefreshTokenValid(
 func (s *Service) RefreshToken(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.RefreshTokenRequest,
 ) (
 	*pbauth.RefreshTokenResponse, error,
 ) {
-	response, err := s.client.RefreshToken(grpcCtx, request)
+	response, err := s.client.RefreshToken(grpcCtx, &emptypb.Empty{})
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
@@ -83,9 +83,8 @@ func (s *Service) RefreshToken(
 func (s *Service) LogOut(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.LogOutRequest,
 ) (*pbauth.LogOutResponse, error) {
-	response, err := s.client.LogOut(grpcCtx, request)
+	response, err := s.client.LogOut(grpcCtx, &emptypb.Empty{})
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
@@ -111,11 +110,10 @@ func (s *Service) GetRefreshTokenInformation(
 func (s *Service) GetRefreshTokensInformation(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.GetRefreshTokensInformationRequest,
 ) (
 	*pbauth.GetRefreshTokensInformationResponse, error,
 ) {
-	response, err := s.client.GetRefreshTokensInformation(grpcCtx, request)
+	response, err := s.client.GetRefreshTokensInformation(grpcCtx, &emptypb.Empty{})
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
@@ -141,11 +139,10 @@ func (s *Service) RevokeRefreshToken(
 func (s *Service) RevokeRefreshTokens(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.RevokeRefreshTokensRequest,
 ) (
 	*pbauth.RevokeRefreshTokensResponse, error,
 ) {
-	response, err := s.client.RevokeRefreshTokens(grpcCtx, request)
+	response, err := s.client.RevokeRefreshTokens(grpcCtx, &emptypb.Empty{})
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
@@ -201,11 +198,10 @@ func (s *Service) GetPermission(
 func (s *Service) GetPermissions(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.GetPermissionsRequest,
 ) (
 	*pbauth.GetPermissionsResponse, error,
 ) {
-	response, err := s.client.GetPermissions(grpcCtx, request)
+	response, err := s.client.GetPermissions(grpcCtx, &emptypb.Empty{})
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}
@@ -289,9 +285,8 @@ func (s *Service) RevokeRole(
 func (s *Service) GetRoles(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbauth.GetRolesRequest,
 ) (*pbauth.GetRolesResponse, error) {
-	response, err := s.client.GetRoles(grpcCtx, request)
+	response, err := s.client.GetRoles(grpcCtx, &emptypb.Empty{})
 	if err != nil {
 		return nil, s.handler.HandleError(err)
 	}

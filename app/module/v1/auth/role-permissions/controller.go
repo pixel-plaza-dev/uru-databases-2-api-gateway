@@ -3,12 +3,12 @@ package role_permissions
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth"
-	pbconfigrestrolepermissions "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth/role-permissions"
-	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
+	pbconfigrestrolepermissions "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth/role-permissions"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
 
@@ -43,7 +43,7 @@ func NewController(
 func (c *Controller) Initialize() {
 	// Initialize the routes
 	c.route.DELETE(
-		pbconfigrestrolepermissions.ById.String(),
+		pbconfigrestrolepermissions.ByRoleId.String(),
 		c.revokeRolePermission,
 	)
 }
@@ -54,11 +54,11 @@ func (c *Controller) Initialize() {
 // @Tags v1 auth role-permissions
 // @Accept json
 // @Produce json
-// @Param id path string true "Role ID"
+// @Param role-id path string true "Role ID"
 // @Success 200 {object} pbauth.RevokeRolePermissionResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
-// @Router /api/v1/auth/role-permissions/{id} [delete]
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
+// @Router /api/v1/auth/role-permissions/{role-id} [delete]
 func (c *Controller) revokeRolePermission(ctx *gin.Context) {
 	var request pbauth.RevokeRolePermissionRequest
 
@@ -67,18 +67,18 @@ func (c *Controller) revokeRolePermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Add the role ID to the request
-	request.RoleId = ctx.Param(pbtypesrest.Id.String())
+	request.RoleId = ctx.Param(pbtypesrest.RoleId.String())
 
 	// Revoke a permission from the role
 	response, err := c.service.RevokeRolePermission(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

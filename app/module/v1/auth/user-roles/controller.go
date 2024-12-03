@@ -3,12 +3,12 @@ package user_roles
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth"
-	pbconfigrestuserroles "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth/user-roles"
-	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
+	pbconfigrestuserroles "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth/user-roles"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
 
@@ -56,8 +56,8 @@ func (c *Controller) Initialize() {
 // @Param user-id path string true "User ID"
 // @Param request body pbauth.AddUserRoleRequest true "Add User Role Request"
 // @Success 201 {object} pbauth.AddUserRoleResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/user-roles/{user-id} [post]
 func (c *Controller) addUserRole(ctx *gin.Context) {
 	var request pbauth.AddUserRoleRequest
@@ -67,7 +67,7 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -78,7 +78,7 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 	// Add a role to a user
 	response, err := c.service.AddUserRole(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, response)
@@ -92,8 +92,8 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbauth.RevokeUserRoleResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/user-roles/{user-id} [delete]
 func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	var request pbauth.RevokeUserRoleRequest
@@ -103,7 +103,7 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -114,7 +114,7 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	// Revoke a role from the user
 	response, err := c.service.RevokeUserRole(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -128,8 +128,8 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbauth.GetUserRolesResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/user-roles/{user-id} [get]
 func (c *Controller) getUserRoles(ctx *gin.Context) {
 	var request pbauth.GetUserRolesRequest
@@ -139,7 +139,7 @@ func (c *Controller) getUserRoles(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -150,7 +150,7 @@ func (c *Controller) getUserRoles(ctx *gin.Context) {
 	// Get all user's roles
 	response, err := c.service.GetUserRoles(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

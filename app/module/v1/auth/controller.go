@@ -10,14 +10,14 @@ import (
 	moduleauthroles "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/v1/auth/roles"
 	moduleauthuserroles "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/v1/auth/user-roles"
 	apptypescontroller "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types/controller"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
-	pbconfiggrpcauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/grpc/auth"
-	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	pbconfiggrpcauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/auth"
+	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1"
+	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
 	"net/http"
 )
 
@@ -109,8 +109,8 @@ func (c *Controller) initializeChildren() {
 // @Produce json
 // @Param request body LogInRequest true "Log In Request"
 // @Success 200 {object} LogInResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/log-in [post]
 func (c *Controller) logIn(ctx *gin.Context) {
 	var request pbauth.LogInRequest
@@ -120,7 +120,7 @@ func (c *Controller) logIn(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -130,7 +130,7 @@ func (c *Controller) logIn(ctx *gin.Context) {
 		ctx, grpcCtx, &request,
 	)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -142,28 +142,25 @@ func (c *Controller) logIn(ctx *gin.Context) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body pbauth.LogOutRequest true "Log Out Request"
 // @Success 200 {object} pbauth.LogOutResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/log-out [post]
 func (c *Controller) logOut(ctx *gin.Context) {
-	var request pbauth.LogOutRequest
-
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Log out the user
-	response, err := c.service.LogOut(ctx, grpcCtx, &request)
+	response, err := c.service.LogOut(ctx, grpcCtx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

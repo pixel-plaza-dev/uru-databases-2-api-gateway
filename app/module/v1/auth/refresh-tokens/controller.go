@@ -3,12 +3,12 @@ package refresh_tokens
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth"
-	pbconfigrestrefreshtokens "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth/refresh-tokens"
-	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
+	pbconfigrestrefreshtokens "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth/refresh-tokens"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
 
@@ -51,7 +51,7 @@ func (c *Controller) Initialize() {
 	)
 	c.route.DELETE(pbconfigrestrefreshtokens.ByJwtId.String(), c.revokeRefreshToken)
 	c.route.GET(
-		pbconfigrestrefreshtokens.Valid.String(),
+		pbconfigrestrefreshtokens.ValidByJwtId.String(),
 		c.isRefreshTokenValid,
 	)
 }
@@ -62,11 +62,11 @@ func (c *Controller) Initialize() {
 // @Tags v1 auth refresh-tokens
 // @Accept json
 // @Produce json
-// @Param jwtId path string true "JWT ID"
+// @Param jwt-id path string true "JWT ID"
 // @Success 200 {object} pbauth.IsRefreshTokenValidResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
-// @Router /api/v1/auth/refresh-tokens/valid/{jwtId} [get]
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
+// @Router /api/v1/auth/refresh-tokens/valid/{jwt-id} [get]
 func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	var request pbauth.IsRefreshTokenValidRequest
 
@@ -75,7 +75,7 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -86,7 +86,7 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	// Check if the refresh token is valid
 	response, err := c.service.IsRefreshTokenValid(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -99,18 +99,16 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetRefreshTokensInformationResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/refresh-tokens [get]
 func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
-	var request pbauth.GetRefreshTokensInformationRequest
-
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -119,10 +117,9 @@ func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
 	response, err := c.service.GetRefreshTokensInformation(
 		ctx,
 		grpcCtx,
-		&request,
 	)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -135,26 +132,24 @@ func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.RefreshTokenResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/refresh-tokens [post]
 func (c *Controller) refreshToken(ctx *gin.Context) {
-	var request pbauth.RefreshTokenRequest
-
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Refresh the token
-	response, err := c.service.RefreshToken(ctx, grpcCtx, &request)
+	response, err := c.service.RefreshToken(ctx, grpcCtx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -167,26 +162,24 @@ func (c *Controller) refreshToken(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.RevokeRefreshTokensResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/refresh-tokens [delete]
 func (c *Controller) revokeRefreshTokens(ctx *gin.Context) {
-	var request pbauth.RevokeRefreshTokensRequest
-
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Revoke all user's refresh tokens
-	response, err := c.service.RevokeRefreshTokens(ctx, grpcCtx, &request)
+	response, err := c.service.RevokeRefreshTokens(ctx, grpcCtx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -198,11 +191,11 @@ func (c *Controller) revokeRefreshTokens(ctx *gin.Context) {
 // @Tags v1 auth refresh-tokens
 // @Accept json
 // @Produce json
-// @Param jwtId path string true "JWT ID"
+// @Param jwt-id path string true "JWT ID"
 // @Success 200 {object} pbauth.GetRefreshTokenInformationResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
-// @Router /api/v1/auth/refresh-tokens/{jwtId} [get]
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
+// @Router /api/v1/auth/refresh-tokens/{jwt-id} [get]
 func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 	var request pbauth.GetRefreshTokenInformationRequest
 
@@ -211,7 +204,7 @@ func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -226,7 +219,7 @@ func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 		&request,
 	)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -238,11 +231,11 @@ func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 // @Tags v1 auth refresh-tokens
 // @Accept json
 // @Produce json
-// @Param jwtId path string true "JWT ID"
+// @Param jwt-id path string true "JWT ID"
 // @Success 200 {object} pbauth.RevokeRefreshTokenResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
-// @Router /api/v1/auth/refresh-tokens/{jwtId} [delete]
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
+// @Router /api/v1/auth/refresh-tokens/{jwt-id} [delete]
 func (c *Controller) revokeRefreshToken(ctx *gin.Context) {
 	var request pbauth.RevokeRefreshTokenRequest
 
@@ -251,7 +244,7 @@ func (c *Controller) revokeRefreshToken(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -262,7 +255,7 @@ func (c *Controller) revokeRefreshToken(ctx *gin.Context) {
 	// Revoke the given refresh token
 	response, err := c.service.RevokeRefreshToken(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

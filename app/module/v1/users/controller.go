@@ -8,15 +8,15 @@ import (
 	moduleusersprofiles "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/v1/users/profiles"
 	moduleusersusernames "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/v1/users/usernames"
 	apptypescontroller "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types/controller"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
-	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
-	pbconfiggrpcuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/grpc/user"
-	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1"
-	pbconfigrestusers "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/users"
-	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
+	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
+	pbconfiggrpcuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/user"
+	pbconfigrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1"
+	pbconfigrestusers "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/users"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
 
@@ -110,8 +110,8 @@ func (c *Controller) initializeChildren() {
 // @Produce json
 // @Param request body pbuser.SignUpRequest true "Sign Up Request"
 // @Success 201 {object} pbuser.SignUpResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/sign-up [post]
 func (c *Controller) signUp(ctx *gin.Context) {
 	var request pbuser.SignUpRequest
@@ -121,7 +121,7 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -129,7 +129,7 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	// Create a new user
 	response, err := c.service.SignUp(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, response)
@@ -143,8 +143,8 @@ func (c *Controller) signUp(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.UpdateUserRequest true "Update User Request"
 // @Success 200 {object} pbuser.UpdateUserResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users [patch]
 func (c *Controller) updateUser(ctx *gin.Context) {
 	var request pbuser.UpdateUserRequest
@@ -154,7 +154,7 @@ func (c *Controller) updateUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -162,7 +162,7 @@ func (c *Controller) updateUser(ctx *gin.Context) {
 	// Update the user
 	response, err := c.service.UpdateUser(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -176,8 +176,8 @@ func (c *Controller) updateUser(ctx *gin.Context) {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.GetUserIdByUsernameResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/user-id/{username} [get]
 func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	var request pbuser.GetUserIdByUsernameRequest
@@ -187,7 +187,7 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -198,7 +198,7 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	// Get the user's ID by username
 	response, err := c.service.GetUserIdByUsername(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -212,8 +212,8 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangePasswordRequest true "Change Password Request"
 // @Success 200 {object} pbuser.ChangePasswordResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/password [put]
 func (c *Controller) changePassword(ctx *gin.Context) {
 	var request pbuser.ChangePasswordRequest
@@ -223,7 +223,7 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -231,7 +231,7 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	// Change the user's password
 	response, err := c.service.ChangePassword(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -245,8 +245,8 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangeUsernameRequest true "Change Username Request"
 // @Success 200 {object} pbuser.ChangeUsernameResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/username [patch]
 func (c *Controller) changeUsername(ctx *gin.Context) {
 	var request pbuser.ChangeUsernameRequest
@@ -256,7 +256,7 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -264,7 +264,7 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 	// Change the user's username
 	response, err := c.service.ChangeUsername(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -278,8 +278,8 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ForgotPasswordRequest true "Forgot Password Request"
 // @Success 200 {object} pbuser.ForgotPasswordResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/forgot-password [post]
 func (c *Controller) forgotPassword(ctx *gin.Context) {
 	var request pbuser.ForgotPasswordRequest
@@ -289,7 +289,7 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -297,7 +297,7 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 	// Send a reset password email
 	response, err := c.service.ForgotPassword(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -312,8 +312,8 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 // @Param token path string true "Verification Token"
 // @Param request body pbuser.ResetPasswordRequest true "Reset Password Request"
 // @Success 200 {object} pbuser.ResetPasswordResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/reset-password/{token} [post]
 func (c *Controller) resetPassword(ctx *gin.Context) {
 	var request pbuser.ResetPasswordRequest
@@ -323,7 +323,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -334,7 +334,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 	// Reset the user's password
 	response, err := c.service.ResetPassword(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -348,8 +348,8 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.DeleteUserRequest true "Delete User Request"
 // @Success 200 {object} pbuser.DeleteUserResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/users/delete-account [delete]
 func (c *Controller) deleteUser(ctx *gin.Context) {
 	var request pbuser.DeleteUserRequest
@@ -359,7 +359,7 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			gin.H{"error": commongin.InternalServerError},
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -367,7 +367,7 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 	// Delete the user's account
 	response, err := c.service.DeleteUser(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

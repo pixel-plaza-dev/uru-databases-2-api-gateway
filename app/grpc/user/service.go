@@ -4,7 +4,8 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
-	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/user"
+	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Service is the service for user
@@ -72,12 +73,11 @@ func (s *Service) GetProfile(
 func (s *Service) GetMyProfile(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbuser.GetMyProfileRequest,
 ) (
 	*pbuser.GetMyProfileResponse, error,
 ) {
 	response, err := s.client.GetMyProfile(
-		grpcCtx, request,
+		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
 		return nil, s.handler.HandleError(err)
@@ -251,12 +251,11 @@ func (s *Service) VerifyEmail(
 func (s *Service) GetPrimaryEmail(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbuser.GetPrimaryEmailRequest,
 ) (
 	*pbuser.GetPrimaryEmailResponse, error,
 ) {
 	response, err := s.client.GetPrimaryEmail(
-		grpcCtx, request,
+		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
 		return nil, s.handler.HandleError(err)
@@ -268,12 +267,11 @@ func (s *Service) GetPrimaryEmail(
 func (s *Service) GetActiveEmails(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbuser.GetActiveEmailsRequest,
 ) (
 	*pbuser.GetActiveEmailsResponse, error,
 ) {
 	response, err := s.client.GetActiveEmails(
-		grpcCtx, request,
+		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
 		return nil, s.handler.HandleError(err)
@@ -336,12 +334,11 @@ func (s *Service) VerifyPhoneNumber(
 func (s *Service) GetPhoneNumber(
 	ctx *gin.Context,
 	grpcCtx context.Context,
-	request *pbuser.GetPhoneNumberRequest,
 ) (
 	*pbuser.GetPhoneNumberResponse, error,
 ) {
 	response, err := s.client.GetPhoneNumber(
-		grpcCtx, request,
+		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
 		return nil, s.handler.HandleError(err)

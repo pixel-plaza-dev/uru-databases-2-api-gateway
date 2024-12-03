@@ -3,12 +3,12 @@ package permissions
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
-	commongin "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin"
+	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
-	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/compiled/auth"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth"
-	pbconfigrestpermissions "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/config/rest/v1/auth/permissions"
-	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/protobuf/types/rest"
+	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
+	pbconfigrestpermissions "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth/permissions"
+	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
 
@@ -44,8 +44,8 @@ func (c *Controller) Initialize() {
 	// Initialize the routes
 	c.route.POST(pbconfigrestpermissions.Relative.String(), c.addPermission)
 	c.route.GET(pbconfigrestpermissions.Relative.String(), c.getPermissions)
-	c.route.DELETE(pbconfigrestpermissions.ById.String(), c.revokePermission)
-	c.route.GET(pbconfigrestpermissions.ById.String(), c.getPermission)
+	c.route.DELETE(pbconfigrestpermissions.ByPermissionId.String(), c.revokePermission)
+	c.route.GET(pbconfigrestpermissions.ByPermissionId.String(), c.getPermission)
 }
 
 // addPermission adds a permission
@@ -56,8 +56,8 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param request body pbauth.AddPermissionRequest true "Add Permission Request"
 // @Success 201 {object} pbauth.AddPermissionResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/permissions/ [post]
 func (c *Controller) addPermission(ctx *gin.Context) {
 	var request pbauth.AddPermissionRequest
@@ -67,7 +67,7 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
@@ -75,7 +75,7 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 	// Add a permission
 	response, err := c.service.AddPermission(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, response)
@@ -88,26 +88,24 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetPermissionsResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
 // @Router /api/v1/auth/permissions/ [get]
 func (c *Controller) getPermissions(ctx *gin.Context) {
-	var request pbauth.GetPermissionsRequest
-
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Get all permissions
-	response, err := c.service.GetPermissions(ctx, grpcCtx, &request)
+	response, err := c.service.GetPermissions(ctx, grpcCtx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -119,11 +117,11 @@ func (c *Controller) getPermissions(ctx *gin.Context) {
 // @Tags v1 auth permissions
 // @Accept json
 // @Produce json
-// @Param id path string true "Permission ID"
+// @Param permission-id path string true "Permission ID"
 // @Success 200 {object} pbauth.RevokePermissionResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
-// @Router /api/v1/auth/permissions/{id} [delete]
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
+// @Router /api/v1/auth/permissions/{permission-id} [delete]
 func (c *Controller) revokePermission(ctx *gin.Context) {
 	var request pbauth.RevokePermissionRequest
 
@@ -132,18 +130,18 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Add the permission ID to the request
-	request.PermissionId = ctx.Param(pbtypesrest.Id.String())
+	request.PermissionId = ctx.Param(pbtypesrest.PermissionId.String())
 
 	// Revoke a permission
 	response, err := c.service.RevokePermission(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -155,11 +153,11 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 // @Tags v1 auth permissions
 // @Accept json
 // @Produce json
-// @Param id path string true "Permission ID"
+// @Param permission-id path string true "Permission ID"
 // @Success 200 {object} pbauth.GetPermissionResponse
-// @Failure 400 {object} map[string]any
-// @Failure 500 {object} map[string]any
-// @Router /api/v1/auth/permissions/{id} [get]
+// @Failure 400 {object} commongintypes.BadRequest
+// @Failure 500 {object} commongintypes.InternalServerError
+// @Router /api/v1/auth/permissions/{permission-id} [get]
 func (c *Controller) getPermission(ctx *gin.Context) {
 	var request pbauth.GetPermissionRequest
 
@@ -168,18 +166,18 @@ func (c *Controller) getPermission(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongin.InternalServerError,
+			commongintypes.NewInternalServerError(),
 		)
 		return
 	}
 
 	// Add the permission ID to the request
-	request.PermissionId = ctx.Param(pbtypesrest.Id.String())
+	request.PermissionId = ctx.Param(pbtypesrest.PermissionId.String())
 
 	// Get the permission
 	response, err := c.service.GetPermission(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
