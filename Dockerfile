@@ -10,8 +10,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
-RUN swag init --parseDependency --parseInternal
 RUN go build -v -o /bin/api .
 
 FROM alpine:latest AS api

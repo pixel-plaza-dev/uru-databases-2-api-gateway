@@ -1,0 +1,1745 @@
+basePath: /api/v1
+definitions:
+  auth.AddPermissionRequest:
+    properties:
+      permission:
+        type: string
+    type: object
+  auth.AddPermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.AddRolePermissionRequest:
+    properties:
+      permission_id:
+        type: string
+      role_id:
+        type: string
+    type: object
+  auth.AddRolePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.AddRoleRequest:
+    properties:
+      role:
+        type: string
+    type: object
+  auth.AddRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.AddUserRoleRequest:
+    properties:
+      role_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  auth.AddUserRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.GetPermissionResponse:
+    properties:
+      message:
+        type: string
+      permission:
+        $ref: '#/definitions/auth.Permission'
+    type: object
+  auth.GetPermissionsResponse:
+    properties:
+      message:
+        type: string
+      permission:
+        items:
+          $ref: '#/definitions/auth.Permission'
+        type: array
+    type: object
+  auth.GetRefreshTokenInformationResponse:
+    properties:
+      message:
+        type: string
+      refresh_token_information:
+        $ref: '#/definitions/auth.RefreshTokenInformation'
+    type: object
+  auth.GetRefreshTokensInformationResponse:
+    properties:
+      message:
+        type: string
+      refresh_tokens_information:
+        items:
+          $ref: '#/definitions/auth.RefreshTokenInformation'
+        type: array
+    type: object
+  auth.GetRolePermissionsResponse:
+    properties:
+      message:
+        type: string
+      permissions_id:
+        items:
+          type: string
+        type: array
+    type: object
+  auth.GetRolesResponse:
+    properties:
+      message:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/auth.Role'
+        type: array
+    type: object
+  auth.GetUserRolesResponse:
+    properties:
+      message:
+        type: string
+      roles_id:
+        items:
+          type: string
+        type: array
+    type: object
+  auth.IsAccessTokenValidResponse:
+    properties:
+      is_valid:
+        type: boolean
+      message:
+        type: string
+    type: object
+  auth.IsRefreshTokenValidResponse:
+    properties:
+      is_valid:
+        type: boolean
+      message:
+        type: string
+    type: object
+  auth.LogInRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  auth.LogInResponse:
+    properties:
+      access_token:
+        type: string
+      message:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  auth.LogOutResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.Permission:
+    properties:
+      action:
+        type: string
+      description:
+        type: string
+      permission_id:
+        type: string
+      resource:
+        type: string
+    type: object
+  auth.RefreshTokenInformation:
+    properties:
+      expires_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      id:
+        type: string
+      ipv4_address:
+        type: string
+      issued_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+    type: object
+  auth.RefreshTokenResponse:
+    properties:
+      access_token:
+        type: string
+      message:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  auth.RevokePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.RevokeRefreshTokenResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.RevokeRefreshTokensResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.RevokeRolePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.RevokeRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.RevokeUserRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  auth.Role:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      role_id:
+        type: string
+    type: object
+  timestamppb.Timestamp:
+    properties:
+      nanos:
+        description: |-
+          Non-negative fractions of a second at nanosecond resolution. Negative
+          second values with fractions must still have non-negative nanos values
+          that count forward in time. Must be from 0 to 999,999,999
+          inclusive.
+        type: integer
+      seconds:
+        description: |-
+          Represents seconds of UTC time since Unix epoch
+          1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
+          9999-12-31T23:59:59Z inclusive.
+        type: integer
+    type: object
+  types.BadRequest:
+    properties:
+      error:
+        type: string
+    type: object
+  types.InternalServerError:
+    properties:
+      error:
+        type: string
+    type: object
+  user.AddEmailRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  user.AddEmailResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.ChangePasswordRequest:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
+  user.ChangePasswordResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.ChangePhoneNumberRequest:
+    properties:
+      phone_number:
+        type: string
+    type: object
+  user.ChangePhoneNumberResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.ChangePrimaryEmailRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  user.ChangePrimaryEmailResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.ChangeUsernameRequest:
+    properties:
+      username:
+        type: string
+    type: object
+  user.ChangeUsernameResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.DeleteEmailResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.DeleteUserRequest:
+    properties:
+      password:
+        type: string
+    type: object
+  user.DeleteUserResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.ForgotPasswordRequest:
+    properties:
+      username:
+        type: string
+    type: object
+  user.ForgotPasswordResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.GetActiveEmailsResponse:
+    properties:
+      emails:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  user.GetMyProfileResponse:
+    properties:
+      birthdate:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      emails:
+        items:
+          type: string
+        type: array
+      first_name:
+        type: string
+      joined_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      last_name:
+        type: string
+      message:
+        type: string
+      phone_number:
+        type: string
+      username:
+        type: string
+    type: object
+  user.GetPhoneNumberResponse:
+    properties:
+      message:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  user.GetPrimaryEmailResponse:
+    properties:
+      email:
+        type: string
+      message:
+        type: string
+    type: object
+  user.GetProfileResponse:
+    properties:
+      first_name:
+        type: string
+      joined_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      last_name:
+        type: string
+      message:
+        type: string
+    type: object
+  user.GetUserIdByUsernameResponse:
+    properties:
+      message:
+        type: string
+      user_id:
+        type: string
+    type: object
+  user.GetUsernameByUserIdResponse:
+    properties:
+      message:
+        type: string
+      username:
+        type: string
+    type: object
+  user.ResetPasswordRequest:
+    properties:
+      new_password:
+        type: string
+      token:
+        type: string
+    type: object
+  user.ResetPasswordResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.SendVerificationEmailRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  user.SendVerificationEmailResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.SendVerificationSMSRequest:
+    properties:
+      phone_number:
+        type: string
+    type: object
+  user.SendVerificationSMSResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.SignUpRequest:
+    properties:
+      birthdate:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      username:
+        type: string
+    type: object
+  user.SignUpResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.UpdateUserRequest:
+    properties:
+      birthdate:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      first_name:
+        type: string
+      last_name:
+        type: string
+    type: object
+  user.UpdateUserResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.UsernameExistsResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.VerifyEmailResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  user.VerifyPhoneNumberResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: uru-databases-2-api-gateway-246064477369.us-central1.run.app
+info:
+  contact: {}
+  description: The REST API Gateway to the Auth, User, Business, Payment and Order
+    microservices
+  license:
+    name: GPL-3.0
+    url: http://www.gnu.org/licenses/gpl-3.0.html
+  title: Pixel Plaza REST API
+  version: "1.0"
+paths:
+  /api/v1/auth/access-tokens/valid/{jwt-id}:
+    get:
+      consumes:
+      - application/json
+      description: Check if an access token is valid by its JWT ID
+      parameters:
+      - description: JWT ID
+        in: path
+        name: jwt-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.IsAccessTokenValidResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Check if an access token is valid
+      tags:
+      - v1 auth access-tokens
+  /api/v1/auth/log-in:
+    post:
+      consumes:
+      - application/json
+      description: Log in a user with their credentials
+      parameters:
+      - description: Log In Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LogInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LogInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Log in a user
+      tags:
+      - auth
+  /api/v1/auth/log-out:
+    post:
+      consumes:
+      - application/json
+      description: Log out a user by invalidating their access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LogOutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Log out a user
+      tags:
+      - auth
+  /api/v1/auth/permissions/:
+    get:
+      consumes:
+      - application/json
+      description: Get information about all permissions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetPermissionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get all permissions
+      tags:
+      - v1 auth permissions
+    post:
+      consumes:
+      - application/json
+      description: Add a new permission
+      parameters:
+      - description: Add Permission Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AddPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.AddPermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Add a permission
+      tags:
+      - v1 auth permissions
+  /api/v1/auth/permissions/{permission-id}:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke a specific permission by its ID
+      parameters:
+      - description: Permission ID
+        in: path
+        name: permission-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RevokePermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Revoke a permission
+      tags:
+      - v1 auth permissions
+    get:
+      consumes:
+      - application/json
+      description: Get information about a specific permission by its ID
+      parameters:
+      - description: Permission ID
+        in: path
+        name: permission-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetPermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get a permission
+      tags:
+      - v1 auth permissions
+  /api/v1/auth/refresh-tokens:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke all refresh tokens for a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RevokeRefreshTokensResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Revoke all refresh tokens
+      tags:
+      - v1 auth refresh-tokens
+    get:
+      consumes:
+      - application/json
+      description: Get information about all refresh tokens for a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetRefreshTokensInformationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get all refresh tokens information
+      tags:
+      - v1 auth refresh-tokens
+    post:
+      consumes:
+      - application/json
+      description: Refresh a user's token using a refresh token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RefreshTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Refresh a user's token
+      tags:
+      - v1 auth refresh-tokens
+  /api/v1/auth/refresh-tokens/{jwt-id}:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke a specific refresh token by its JWT ID
+      parameters:
+      - description: JWT ID
+        in: path
+        name: jwt-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RevokeRefreshTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Revoke a refresh token
+      tags:
+      - v1 auth refresh-tokens
+    get:
+      consumes:
+      - application/json
+      description: Get information about a specific refresh token by its JWT ID
+      parameters:
+      - description: JWT ID
+        in: path
+        name: jwt-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetRefreshTokenInformationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get refresh token information
+      tags:
+      - v1 auth refresh-tokens
+  /api/v1/auth/refresh-tokens/valid/{jwt-id}:
+    get:
+      consumes:
+      - application/json
+      description: Check if a refresh token is valid by its JWT ID
+      parameters:
+      - description: JWT ID
+        in: path
+        name: jwt-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.IsRefreshTokenValidResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Check if a refresh token is valid
+      tags:
+      - v1 auth refresh-tokens
+  /api/v1/auth/role-permissions/{role-id}:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke a specific permission from a role by its ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: role-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RevokeRolePermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Revoke a permission from a role
+      tags:
+      - v1 auth role-permissions
+  /api/v1/auth/roles/:
+    get:
+      consumes:
+      - application/json
+      description: Get information about all roles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetRolesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get all roles
+      tags:
+      - v1 auth roles
+    post:
+      consumes:
+      - application/json
+      description: Add a new role
+      parameters:
+      - description: Add Role Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AddRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.AddRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Add a role
+      tags:
+      - v1 auth roles
+  /api/v1/auth/roles/{role-id}:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke a specific role by its ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: role-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RevokeRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Revoke a role
+      tags:
+      - v1 auth roles
+    get:
+      consumes:
+      - application/json
+      description: Get information about all permissions for a specific role by its
+        ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: role-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetRolePermissionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get all permissions for a role
+      tags:
+      - v1 auth roles
+    post:
+      consumes:
+      - application/json
+      description: Add a new permission to a role by its ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: role-id
+        required: true
+        type: string
+      - description: Add Role Permission Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AddRolePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.AddRolePermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Add a permission to a role
+      tags:
+      - v1 auth roles
+  /api/v1/auth/user-roles/{user-id}:
+    delete:
+      consumes:
+      - application/json
+      description: Revoke a specific role from a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RevokeUserRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Revoke a role from a user
+      tags:
+      - v1 auth user-roles
+    get:
+      consumes:
+      - application/json
+      description: Get information about all roles for a specific user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.GetUserRolesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get all user's roles
+      tags:
+      - v1 auth user-roles
+    post:
+      consumes:
+      - application/json
+      description: Add a new role to a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user-id
+        required: true
+        type: string
+      - description: Add User Role Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AddUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.AddUserRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Add a role to a user
+      tags:
+      - v1 auth user-roles
+  /api/v1/users:
+    patch:
+      consumes:
+      - application/json
+      description: Update the user
+      parameters:
+      - description: Update User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UpdateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Update user
+      tags:
+      - v1 users
+  /api/v1/users/delete-account:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the user's account
+      parameters:
+      - description: Delete User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.DeleteUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.DeleteUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Delete user account
+      tags:
+      - v1 users
+  /api/v1/users/emails:
+    get:
+      consumes:
+      - application/json
+      description: Get the user's active emails
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetActiveEmailsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get active emails
+      tags:
+      - v1 users emails
+    post:
+      consumes:
+      - application/json
+      description: Add an email to the user's account
+      parameters:
+      - description: Add Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.AddEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.AddEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Add email
+      tags:
+      - v1 users emails
+  /api/v1/users/emails/{email}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an email from the user's account
+      parameters:
+      - description: Email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.DeleteEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Delete email
+      tags:
+      - v1 users emails
+  /api/v1/users/emails/primary:
+    get:
+      consumes:
+      - application/json
+      description: Get the user's primary email
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetPrimaryEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get primary email
+      tags:
+      - v1 users emails
+    put:
+      consumes:
+      - application/json
+      description: Change the user's primary email
+      parameters:
+      - description: Change Primary Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.ChangePrimaryEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ChangePrimaryEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Change primary email
+      tags:
+      - v1 users emails
+  /api/v1/users/emails/send-verification:
+    post:
+      consumes:
+      - application/json
+      description: Send a verification email to a user
+      parameters:
+      - description: Send Verification Email Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.SendVerificationEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.SendVerificationEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Send verification email
+      tags:
+      - v1 users emails
+  /api/v1/users/emails/verify/{token}:
+    post:
+      consumes:
+      - application/json
+      description: Verify the user's email
+      parameters:
+      - description: Verification Token
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.VerifyEmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Verify email
+      tags:
+      - v1 users emails
+  /api/v1/users/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Send a reset password email to a user
+      parameters:
+      - description: Forgot Password Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ForgotPasswordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Send reset password email
+      tags:
+      - v1 users
+  /api/v1/users/password:
+    put:
+      consumes:
+      - application/json
+      description: Change the user's password
+      parameters:
+      - description: Change Password Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ChangePasswordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Change user password
+      tags:
+      - v1 users
+  /api/v1/users/phone-numbers:
+    get:
+      consumes:
+      - application/json
+      description: Get the user's phone number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetPhoneNumberResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get user phone number
+      tags:
+      - v1 users phone-numbers
+    put:
+      consumes:
+      - application/json
+      description: Change the user's phone number
+      parameters:
+      - description: Change Phone Number Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.ChangePhoneNumberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ChangePhoneNumberResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Change user phone number
+      tags:
+      - v1 users phone-numbers
+  /api/v1/users/phone-numbers/send-verification:
+    post:
+      consumes:
+      - application/json
+      description: Send a verification SMS to a user
+      parameters:
+      - description: Send Verification SMS Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.SendVerificationSMSRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.SendVerificationSMSResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Send verification SMS
+      tags:
+      - v1 users phone-numbers
+  /api/v1/users/phone-numbers/verify/{token}:
+    post:
+      consumes:
+      - application/json
+      description: Verify the user's phone number
+      parameters:
+      - description: Verification Token
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.VerifyPhoneNumberResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Verify phone number
+      tags:
+      - v1 users phone-numbers
+  /api/v1/users/profiles:
+    get:
+      consumes:
+      - application/json
+      description: Get the profile information of the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetMyProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get the user's profile
+      tags:
+      - v1 users profiles
+  /api/v1/users/profiles/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Get the profile information of a user by their username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get a user's profile
+      tags:
+      - v1 users profiles
+  /api/v1/users/reset-password/{token}:
+    post:
+      consumes:
+      - application/json
+      description: Reset the user's password
+      parameters:
+      - description: Verification Token
+        in: path
+        name: token
+        required: true
+        type: string
+      - description: Reset Password Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ResetPasswordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Reset user password
+      tags:
+      - v1 users
+  /api/v1/users/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: Sign Up Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.SignUpResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Create a new user
+      tags:
+      - v1 users
+  /api/v1/users/user-id/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Get the user's ID by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetUserIdByUsernameResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get user ID by username
+      tags:
+      - v1 users
+  /api/v1/users/username:
+    patch:
+      consumes:
+      - application/json
+      description: Change the user's username
+      parameters:
+      - description: Change Username Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.ChangeUsernameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ChangeUsernameResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Change user username
+      tags:
+      - v1 users
+  /api/v1/users/usernames/{user-id}:
+    get:
+      consumes:
+      - application/json
+      description: Get username by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.GetUsernameByUserIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Get username by user ID
+      tags:
+      - v1 users usernames
+  /api/v1/users/usernames/exists/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Check if a username exists
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UsernameExistsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerError'
+      summary: Check if a username exists
+      tags:
+      - v1 users usernames
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
