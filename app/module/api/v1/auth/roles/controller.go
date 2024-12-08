@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
-	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
@@ -74,30 +74,23 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param request body pbauth.AddRoleRequest true "Add Role Request"
 // @Success 201 {object} pbauth.AddRoleResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/roles/ [post]
 func (c *Controller) addRole(ctx *gin.Context) {
 	var request pbauth.AddRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Add a role
 	response, err := c.service.AddRole(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusCreated, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
 // getRoles gets all roles
@@ -107,28 +100,21 @@ func (c *Controller) addRole(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetRolesResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/roles/ [get]
 func (c *Controller) getRoles(ctx *gin.Context) {
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Get all roles
 	response, err := c.service.GetRoles(ctx, grpcCtx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // addRolePermission adds a permission to a role
@@ -140,20 +126,17 @@ func (c *Controller) getRoles(ctx *gin.Context) {
 // @Param role-id path string true "Role ID"
 // @Param request body pbauth.AddRolePermissionRequest true "Add Role Permission Request"
 // @Success 201 {object} pbauth.AddRolePermissionResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/roles/{role-id} [post]
 func (c *Controller) addRolePermission(ctx *gin.Context) {
 	var request pbauth.AddRolePermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -162,11 +145,7 @@ func (c *Controller) addRolePermission(ctx *gin.Context) {
 
 	// Add a permission to the role
 	response, err := c.service.AddRolePermission(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusCreated, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
 // getRolePermissions gets all permissions for a role
@@ -177,20 +156,17 @@ func (c *Controller) addRolePermission(ctx *gin.Context) {
 // @Produce json
 // @Param role-id path string true "Role ID"
 // @Success 200 {object} pbauth.GetRolePermissionsResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/roles/{role-id} [get]
 func (c *Controller) getRolePermissions(ctx *gin.Context) {
 	var request pbauth.GetRolePermissionsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -199,11 +175,7 @@ func (c *Controller) getRolePermissions(ctx *gin.Context) {
 
 	// Get all permissions for the role
 	response, err := c.service.GetRolePermissions(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // revokeRole revokes a role
@@ -214,20 +186,17 @@ func (c *Controller) getRolePermissions(ctx *gin.Context) {
 // @Produce json
 // @Param role-id path string true "Role ID"
 // @Success 200 {object} pbauth.RevokeRoleResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/roles/{role-id} [delete]
 func (c *Controller) revokeRole(ctx *gin.Context) {
 	var request pbauth.RevokeRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -236,9 +205,5 @@ func (c *Controller) revokeRole(ctx *gin.Context) {
 
 	// Revoke a role
 	response, err := c.service.RevokeRole(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

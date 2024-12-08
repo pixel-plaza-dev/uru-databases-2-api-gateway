@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
-	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
@@ -82,28 +82,21 @@ func (c *Controller) Initialize() {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbuser.GetPhoneNumberResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users/phone-numbers [get]
 func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Get the user's active phone numbers
 	response, err := c.service.GetPhoneNumber(ctx, grpcCtx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // changePhoneNumber changes the user's phone number
@@ -114,30 +107,23 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangePhoneNumberRequest true "Change Phone Number Request"
 // @Success 200 {object} pbuser.ChangePhoneNumberResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users/phone-numbers [put]
 func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 	var request pbuser.ChangePhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Change the user's phone number
 	response, err := c.service.ChangePhoneNumber(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // sendVerificationSMS sends a verification SMS to a user
@@ -148,20 +134,17 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.SendVerificationSMSRequest true "Send Verification SMS Request"
 // @Success 200 {object} pbuser.SendVerificationSMSResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users/phone-numbers/send-verification [post]
 func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 	var request pbuser.SendVerificationSMSRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -171,11 +154,7 @@ func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 		grpcCtx,
 		&request,
 	)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // verifyEmail verifies the user's phone number
@@ -186,19 +165,16 @@ func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 // @Produce json
 // @Param token path string true "Verification Token"
 // @Success 200 {object} pbuser.VerifyPhoneNumberResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/phone-numbers/verify/{token} [post]
 func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	var request pbuser.VerifyPhoneNumberRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -207,9 +183,5 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 
 	// Verify the user's phone number
 	response, err := c.service.VerifyPhoneNumber(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

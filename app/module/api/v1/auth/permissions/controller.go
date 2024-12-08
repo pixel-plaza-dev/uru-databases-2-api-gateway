@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
-	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
@@ -83,30 +83,23 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param request body pbauth.AddPermissionRequest true "Add Permission Request"
 // @Success 201 {object} pbauth.AddPermissionResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/permissions/ [post]
 func (c *Controller) addPermission(ctx *gin.Context) {
 	var request pbauth.AddPermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Add a permission
 	response, err := c.service.AddPermission(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusCreated, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
 // getPermissions gets all permissions
@@ -116,28 +109,22 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.GetPermissionsResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/permissions/ [get]
 func (c *Controller) getPermissions(ctx *gin.Context) {
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, nil)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
+
 		return
 	}
 
 	// Get all permissions
 	response, err := c.service.GetPermissions(ctx, grpcCtx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // revokePermission revokes a permission
@@ -148,20 +135,18 @@ func (c *Controller) getPermissions(ctx *gin.Context) {
 // @Produce json
 // @Param permission-id path string true "Permission ID"
 // @Success 200 {object} pbauth.RevokePermissionResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/permissions/{permission-id} [delete]
 func (c *Controller) revokePermission(ctx *gin.Context) {
 	var request pbauth.RevokePermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
+
 		return
 	}
 
@@ -170,11 +155,7 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 
 	// Revoke a permission
 	response, err := c.service.RevokePermission(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // getPermission gets a permission
@@ -185,20 +166,18 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 // @Produce json
 // @Param permission-id path string true "Permission ID"
 // @Success 200 {object} pbauth.GetPermissionResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/auth/permissions/{permission-id} [get]
 func (c *Controller) getPermission(ctx *gin.Context) {
 	var request pbauth.GetPermissionRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
+
 		return
 	}
 
@@ -207,9 +186,5 @@ func (c *Controller) getPermission(ctx *gin.Context) {
 
 	// Get the permission
 	response, err := c.service.GetPermission(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

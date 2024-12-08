@@ -7,9 +7,9 @@ import (
 	"github.com/joho/godotenv"
 	appgrpc "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc"
 	appjwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api"
+	applistener "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
+	applogger "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
+	appapi "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api"
 	commonginmiddlewareauth "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
@@ -19,6 +19,7 @@ import (
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
 	clientauthinterceptor "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/auth"
+	commongrpcclientdebugger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/outgoing-ctx"
 	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/listener"
 	commontls "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/tls"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
@@ -36,7 +37,7 @@ func init() {
 	// Declare flags and parse them
 	commonflag.SetModeFlag()
 	flag.Parse()
-	logger.FlagLogger.ModeFlagSet(commonflag.Mode)
+	applogger.FlagLogger.ModeFlagSet(commonflag.Mode)
 
 	// Check if the environment is production
 	if commonflag.Mode.IsProd() {
@@ -66,12 +67,12 @@ func init() {
 func main() {
 	// Get the listener port
 	servicePort, err := commonlistener.LoadServicePort(
-		"0.0.0.0", listener.PortKey,
+		"0.0.0.0", applistener.PortKey,
 	)
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(listener.PortKey)
+	applogger.EnvironmentLogger.EnvironmentVariableLoaded(applistener.PortKey)
 
 	// Get the gRPC services URI
 	var uris = make(map[string]string)
@@ -83,7 +84,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		logger.EnvironmentLogger.EnvironmentVariableLoaded(key)
+		applogger.EnvironmentLogger.EnvironmentVariableLoaded(key)
 		uris[key] = uri
 	}
 
@@ -92,7 +93,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	logger.EnvironmentLogger.EnvironmentVariableLoaded(appjwt.PublicKey)
+	applogger.EnvironmentLogger.EnvironmentVariableLoaded(appjwt.PublicKey)
 
 	// Load Google Cloud service account credentials
 	googleCredentials, err := commongcloud.LoadGoogleCredentials(context.Background())
@@ -110,7 +111,7 @@ func main() {
 			panic(err)
 		}
 		tokenSources[key] = tokenSource
-		// logger.GCloudLogger.LoadedTokenSource(tokenSource)
+		// applogger.GCloudLogger.LoadedTokenSource(tokenSource)
 	}
 
 	// Load transport credentials
@@ -142,12 +143,25 @@ func main() {
 		clientAuthInterceptors[key] = clientAuthInterceptor
 	}
 
+	// Create common gRPC client interceptors after authentication
+	var commonInterceptorsAfterAuth []grpc.UnaryClientInterceptor
+	if commonflag.Mode.IsDev() {
+		outgoingCtxDebugger, _ := commongrpcclientdebugger.NewInterceptor(applogger.OutgoingCtxDebuggerLogger)
+		commonInterceptorsAfterAuth = append(commonInterceptorsAfterAuth, outgoingCtxDebugger.PrintOutgoingCtx())
+	}
+
 	// Create gRPC connections
 	var conns = make(map[string]*grpc.ClientConn)
 	for key, uri := range uris {
 		conn, err := grpc.NewClient(
 			uri, grpc.WithTransportCredentials(transportCredentials),
-			grpc.WithChainUnaryInterceptor(clientAuthInterceptors[key].Authenticate()),
+			grpc.WithChainUnaryInterceptor(
+				append(
+					[]grpc.UnaryClientInterceptor{
+						clientAuthInterceptors[key].Authenticate(),
+					}, commonInterceptorsAfterAuth...,
+				)...,
+			),
 		)
 		if err != nil {
 			panic(err)
@@ -190,11 +204,17 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	// Create the response handler
+	responseHandler, err := commonclientresponse.NewDefaultHandler(commonflag.Mode)
+	if err != nil {
+		panic(err)
+	}
+
 	// Create the authentication middleware
 	authMiddleware, err := commonginmiddlewareauth.NewMiddleware(
 		jwtValidator,
-		logger.AuthMiddlewareLogger,
-		commonflag.Mode,
+		applogger.AuthMiddlewareLogger,
+		responseHandler,
 	)
 	if err != nil {
 		panic(err)
@@ -209,14 +229,8 @@ func main() {
 	// Use ginSwagger middleware to serve the API docs
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Create the response handler
-	responseHandler, err := commonclientresponse.NewDefaultHandler(commonflag.Mode)
-	if err != nil {
-		panic(err)
-	}
-
 	// Create the module controller
-	mainModule := api.NewController(
+	mainModule := appapi.NewController(
 		router, userClient, authClient, authMiddleware, responseHandler,
 	)
 
@@ -227,5 +241,5 @@ func main() {
 	if err = router.Run(servicePort.FormattedPort); err != nil {
 		panic(err)
 	}
-	logger.ListenerLogger.ServerStarted(servicePort.Port)
+	applogger.ListenerLogger.ServerStarted(servicePort.Port)
 }

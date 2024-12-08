@@ -5,6 +5,7 @@ import (
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
+	commonoutgoingctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/outgoing-ctx"
 	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/listener"
 	commonlogger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/utils/logger"
 )
@@ -21,6 +22,9 @@ var (
 
 	// GCloudLogger is the logger for the Google Cloud
 	GCloudLogger, _ = commongcloud.NewLogger(commonlogger.NewDefaultLogger("Google Cloud"))
+
+	// OutgoingCtxDebuggerLogger is the logger for the outgoing context
+	OutgoingCtxDebuggerLogger, _ = commonoutgoingctx.NewLogger(commonlogger.NewDefaultLogger("Outgoing Context"))
 
 	// AuthMiddlewareLogger is the logger for the Auth middleware
 	AuthMiddlewareLogger, _ = authmiddleware.NewLogger(commonlogger.NewDefaultLogger("Auth Middleware"))

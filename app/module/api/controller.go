@@ -5,6 +5,7 @@ import (
 	modulev1 "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1"
 	apptypescontroller "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types/controller"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"

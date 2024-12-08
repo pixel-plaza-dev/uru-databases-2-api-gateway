@@ -10,7 +10,7 @@ import (
 	apptypescontroller "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types/controller"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
-	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
@@ -116,29 +116,22 @@ func (c *Controller) initializeChildren() {
 // @Produce json
 // @Param request body pbuser.SignUpRequest true "Sign Up Request"
 // @Success 201 {object} pbuser.SignUpResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/sign-up [post]
 func (c *Controller) signUp(ctx *gin.Context) {
 	var request pbuser.SignUpRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Create a new user
 	response, err := c.service.SignUp(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusCreated, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
 // updateUser updates the user
@@ -149,30 +142,23 @@ func (c *Controller) signUp(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.UpdateUserRequest true "Update User Request"
 // @Success 200 {object} pbuser.UpdateUserResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users [patch]
 func (c *Controller) updateUser(ctx *gin.Context) {
 	var request pbuser.UpdateUserRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Update the user
 	response, err := c.service.UpdateUser(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // getUserIdByUsername gets the user's ID by username
@@ -183,19 +169,16 @@ func (c *Controller) updateUser(ctx *gin.Context) {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.GetUserIdByUsernameResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/user-id/{username} [get]
 func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	var request pbuser.GetUserIdByUsernameRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -204,11 +187,7 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 
 	// Get the user's ID by username
 	response, err := c.service.GetUserIdByUsername(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // changePassword changes the user's password
@@ -219,30 +198,23 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangePasswordRequest true "Change Password Request"
 // @Success 200 {object} pbuser.ChangePasswordResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users/password [put]
 func (c *Controller) changePassword(ctx *gin.Context) {
 	var request pbuser.ChangePasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Change the user's password
 	response, err := c.service.ChangePassword(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // changeUsername changes the user's username
@@ -253,30 +225,23 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ChangeUsernameRequest true "Change Username Request"
 // @Success 200 {object} pbuser.ChangeUsernameResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users/username [patch]
 func (c *Controller) changeUsername(ctx *gin.Context) {
 	var request pbuser.ChangeUsernameRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Change the user's username
 	response, err := c.service.ChangeUsername(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // forgotPassword sends a reset password email to a user
@@ -287,29 +252,22 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.ForgotPasswordRequest true "Forgot Password Request"
 // @Success 200 {object} pbuser.ForgotPasswordResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/forgot-password [post]
 func (c *Controller) forgotPassword(ctx *gin.Context) {
 	var request pbuser.ForgotPasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Send a reset password email
 	response, err := c.service.ForgotPassword(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // resetPassword resets the user's password
@@ -321,19 +279,16 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 // @Param token path string true "Verification Token"
 // @Param request body pbuser.ResetPasswordRequest true "Reset Password Request"
 // @Success 200 {object} pbuser.ResetPasswordResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/reset-password/{token} [post]
 func (c *Controller) resetPassword(ctx *gin.Context) {
 	var request pbuser.ResetPasswordRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -342,11 +297,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 
 	// Reset the user's password
 	response, err := c.service.ResetPassword(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // deleteUser deletes the user's account
@@ -357,28 +308,21 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 // @Produce json
 // @Param request body pbuser.DeleteUserRequest true "Delete User Request"
 // @Success 200 {object} pbuser.DeleteUserResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
 // @Router /api/v1/users/delete-account [delete]
 func (c *Controller) deleteUser(ctx *gin.Context) {
 	var request pbuser.DeleteUserRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
 	// Delete the user's account
 	response, err := c.service.DeleteUser(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

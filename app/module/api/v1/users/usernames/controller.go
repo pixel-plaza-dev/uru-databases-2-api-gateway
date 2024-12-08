@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
-	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
@@ -71,19 +71,16 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.UsernameExistsResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/usernames/exists/{username} [get]
 func (c *Controller) usernameExists(ctx *gin.Context) {
 	var request pbuser.UsernameExistsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -92,11 +89,7 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 
 	// Check if the username exists
 	response, err := c.service.UsernameExists(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
 // getUsernameByUserId gets the username by user ID
@@ -107,19 +100,16 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbuser.GetUsernameByUserIdResponse
-// @Failure 400 {object} commongintypes.ErrorResponse
-// @Failure 500 {object} commongintypes.ErrorResponse
+// @Failure 400 {object} _.ErrorResponse
+// @Failure 500 {object} _.ErrorResponse
 // @Router /api/v1/users/usernames/{user-id} [get]
 func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 	var request pbuser.GetUsernameByUserIdRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
 	if err != nil {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			commongintypes.NewErrorResponse(err),
-		)
+		c.responseHandler.HandlePrepareCtxError(ctx, err)
 		return
 	}
 
@@ -128,9 +118,5 @@ func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 
 	// Get the username by user ID
 	response, err := c.service.GetUsernameByUserId(ctx, grpcCtx, &request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, response)
+	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

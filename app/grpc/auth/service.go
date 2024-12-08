@@ -28,11 +28,7 @@ func (s *Service) LogIn(
 	grpcCtx context.Context,
 	request *pbauth.LogInRequest,
 ) (*pbauth.LogInResponse, error) {
-	response, err := s.client.LogIn(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.LogIn(grpcCtx, request)
 }
 
 // IsAccessTokenValid checks if the access token is valid
@@ -43,11 +39,7 @@ func (s *Service) IsAccessTokenValid(
 ) (
 	*pbauth.IsAccessTokenValidResponse, error,
 ) {
-	response, err := s.client.IsAccessTokenValid(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.IsAccessTokenValid(grpcCtx, request)
 }
 
 // IsRefreshTokenValid checks if the refresh token is valid
@@ -58,11 +50,7 @@ func (s *Service) IsRefreshTokenValid(
 ) (
 	*pbauth.IsRefreshTokenValidResponse, error,
 ) {
-	response, err := s.client.IsRefreshTokenValid(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.IsRefreshTokenValid(grpcCtx, request)
 }
 
 // RefreshToken refreshes the user's token
@@ -72,11 +60,7 @@ func (s *Service) RefreshToken(
 ) (
 	*pbauth.RefreshTokenResponse, error,
 ) {
-	response, err := s.client.RefreshToken(grpcCtx, &emptypb.Empty{})
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RefreshToken(grpcCtx, &emptypb.Empty{})
 }
 
 // LogOut logs out the user
@@ -84,11 +68,7 @@ func (s *Service) LogOut(
 	ctx *gin.Context,
 	grpcCtx context.Context,
 ) (*pbauth.LogOutResponse, error) {
-	response, err := s.client.LogOut(grpcCtx, &emptypb.Empty{})
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.LogOut(grpcCtx, &emptypb.Empty{})
 }
 
 // GetRefreshTokenInformation gets the refresh token information
@@ -97,13 +77,9 @@ func (s *Service) GetRefreshTokenInformation(
 	grpcCtx context.Context,
 	request *pbauth.GetRefreshTokenInformationRequest,
 ) (
-	response *pbauth.GetRefreshTokenInformationResponse, err error,
+	*pbauth.GetRefreshTokenInformationResponse, error,
 ) {
-	response, err = s.client.GetRefreshTokenInformation(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetRefreshTokenInformation(grpcCtx, request)
 }
 
 // GetRefreshTokensInformation gets all refresh tokens information
@@ -113,11 +89,7 @@ func (s *Service) GetRefreshTokensInformation(
 ) (
 	*pbauth.GetRefreshTokensInformationResponse, error,
 ) {
-	response, err := s.client.GetRefreshTokensInformation(grpcCtx, &emptypb.Empty{})
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetRefreshTokensInformation(grpcCtx, &emptypb.Empty{})
 }
 
 // RevokeRefreshToken revokes a user's refresh token
@@ -128,11 +100,7 @@ func (s *Service) RevokeRefreshToken(
 ) (
 	*pbauth.RevokeRefreshTokenResponse, error,
 ) {
-	response, err := s.client.RevokeRefreshToken(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RevokeRefreshToken(grpcCtx, request)
 }
 
 // RevokeRefreshTokens revokes all the user's refresh tokens
@@ -142,11 +110,7 @@ func (s *Service) RevokeRefreshTokens(
 ) (
 	*pbauth.RevokeRefreshTokensResponse, error,
 ) {
-	response, err := s.client.RevokeRefreshTokens(grpcCtx, &emptypb.Empty{})
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RevokeRefreshTokens(grpcCtx, &emptypb.Empty{})
 }
 
 // AddPermission adds a permission
@@ -157,11 +121,7 @@ func (s *Service) AddPermission(
 ) (
 	*pbauth.AddPermissionResponse, error,
 ) {
-	response, err := s.client.AddPermission(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.AddPermission(grpcCtx, request)
 }
 
 // RevokePermission revokes a permission
@@ -172,11 +132,7 @@ func (s *Service) RevokePermission(
 ) (
 	*pbauth.RevokePermissionResponse, error,
 ) {
-	response, err := s.client.RevokePermission(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RevokePermission(grpcCtx, request)
 }
 
 // GetPermission gets all the permissions
@@ -187,11 +143,7 @@ func (s *Service) GetPermission(
 ) (
 	*pbauth.GetPermissionResponse, error,
 ) {
-	response, err := s.client.GetPermission(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetPermission(grpcCtx, request)
 }
 
 // GetPermissions gets all the permissions
@@ -201,11 +153,7 @@ func (s *Service) GetPermissions(
 ) (
 	*pbauth.GetPermissionsResponse, error,
 ) {
-	response, err := s.client.GetPermissions(grpcCtx, &emptypb.Empty{})
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetPermissions(grpcCtx, &emptypb.Empty{})
 }
 
 // AddRolePermission adds a permission to a role
@@ -216,11 +164,7 @@ func (s *Service) AddRolePermission(
 ) (
 	*pbauth.AddRolePermissionResponse, error,
 ) {
-	response, err := s.client.AddRolePermission(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.AddRolePermission(grpcCtx, request)
 }
 
 // RevokeRolePermission revokes a permission from a role
@@ -231,11 +175,7 @@ func (s *Service) RevokeRolePermission(
 ) (
 	*pbauth.RevokeRolePermissionResponse, error,
 ) {
-	response, err := s.client.RevokeRolePermission(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RevokeRolePermission(grpcCtx, request)
 }
 
 // GetRolePermissions gets all the role's permissions
@@ -246,11 +186,7 @@ func (s *Service) GetRolePermissions(
 ) (
 	*pbauth.GetRolePermissionsResponse, error,
 ) {
-	response, err := s.client.GetRolePermissions(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetRolePermissions(grpcCtx, request)
 }
 
 // AddRole adds a role
@@ -259,11 +195,7 @@ func (s *Service) AddRole(
 	grpcCtx context.Context,
 	request *pbauth.AddRoleRequest,
 ) (*pbauth.AddRoleResponse, error) {
-	response, err := s.client.AddRole(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.AddRole(grpcCtx, request)
 }
 
 // RevokeRole revokes a role
@@ -274,11 +206,7 @@ func (s *Service) RevokeRole(
 ) (
 	*pbauth.RevokeRoleResponse, error,
 ) {
-	response, err := s.client.RevokeRole(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RevokeRole(grpcCtx, request)
 }
 
 // GetRoles gets all the roles
@@ -286,11 +214,7 @@ func (s *Service) GetRoles(
 	ctx *gin.Context,
 	grpcCtx context.Context,
 ) (*pbauth.GetRolesResponse, error) {
-	response, err := s.client.GetRoles(grpcCtx, &emptypb.Empty{})
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetRoles(grpcCtx, &emptypb.Empty{})
 }
 
 // AddUserRole adds a role to a user
@@ -301,11 +225,7 @@ func (s *Service) AddUserRole(
 ) (
 	*pbauth.AddUserRoleResponse, error,
 ) {
-	response, err := s.client.AddUserRole(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.AddUserRole(grpcCtx, request)
 }
 
 // RevokeUserRole revokes a role from a user
@@ -316,11 +236,7 @@ func (s *Service) RevokeUserRole(
 ) (
 	*pbauth.RevokeUserRoleResponse, error,
 ) {
-	response, err := s.client.RevokeUserRole(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.RevokeUserRole(grpcCtx, request)
 }
 
 // GetUserRoles gets all the user's roles
@@ -331,9 +247,5 @@ func (s *Service) GetUserRoles(
 ) (
 	*pbauth.GetUserRolesResponse, error,
 ) {
-	response, err := s.client.GetUserRoles(grpcCtx, request)
-	if err != nil {
-		return nil, s.responseHandler.HandleStatusError(err)
-	}
-	return response, nil
+	return s.client.GetUserRoles(grpcCtx, request)
 }
