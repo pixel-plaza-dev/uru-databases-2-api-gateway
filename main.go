@@ -9,10 +9,10 @@ import (
 	appjwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
-	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/v1"
+	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api"
 	commonginmiddlewareauth "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
-	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	commongcloud "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/cloud/gcloud"
 	commonenv "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/env"
 	commonflag "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/config/flag"
@@ -49,17 +49,20 @@ func init() {
 	}
 }
 
-// @title           Pixel Plaza REST API
-// @version         1.0
-// @description     The REST API Gateway to the Auth, User, Business, Payment and Order microservices
+// @Title           Pixel Plaza REST API
+// @Version         1.0
+// @Description     The REST API Gateway to the Auth, User, Business, Payment and Order microservices
 
-// @license.name  GPL-3.0
-// @license.url   http://www.gnu.org/licenses/gpl-3.0.html
+// @License.name  GPL-3.0
+// @License.url   http://www.gnu.org/licenses/gpl-3.0.html
 
-// @host      uru-databases-2-api-gateway-246064477369.us-central1.run.app
+// @Host      uru-databases-2-api-gateway-246064477369.us-central1.run.app
 // @BasePath  /api/v1
 
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	// Get the listener port
 	servicePort, err := commonlistener.LoadServicePort(
@@ -166,16 +169,17 @@ func main() {
 
 	// Create token validator
 	tokenValidator, err := commonjwtvalidatorgrpc.NewDefaultTokenValidator(
-		tokenSources[appgrpc.AuthServiceUriKey], &authClient, nil,
+		tokenSources[appgrpc.AuthServiceUriKey], authClient, nil,
 	)
 	if err != nil {
 		panic(err)
 	}
 
-	// Create JWT validator
-	jwtValidator, err := commonjwtvalidator.NewDefaultValidator(
+	// Create JWT validator with ED25519 public key
+	jwtValidator, err := commonjwtvalidator.NewEd25519Validator(
 		[]byte(jwtPublicKey),
 		tokenValidator,
+		commonflag.Mode,
 	)
 	if err != nil {
 		panic(err)
@@ -187,7 +191,11 @@ func main() {
 	}
 
 	// Create the authentication middleware
-	authMiddleware, err := commonginmiddlewareauth.NewMiddleware(jwtValidator, logger.AuthMiddlewareLogger)
+	authMiddleware, err := commonginmiddlewareauth.NewMiddleware(
+		jwtValidator,
+		logger.AuthMiddlewareLogger,
+		commonflag.Mode,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -201,12 +209,15 @@ func main() {
 	// Use ginSwagger middleware to serve the API docs
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Create the request handler
-	requestHandler := commonclientrequest.NewDefaultHandler(commonflag.Mode)
+	// Create the response handler
+	responseHandler, err := commonclientresponse.NewDefaultHandler(commonflag.Mode)
+	if err != nil {
+		panic(err)
+	}
 
 	// Create the module controller
-	mainModule := v1.NewController(
-		router, userClient, authClient, authMiddleware, requestHandler,
+	mainModule := api.NewController(
+		router, userClient, authClient, authMiddleware, responseHandler,
 	)
 
 	// Initialize the module controllers

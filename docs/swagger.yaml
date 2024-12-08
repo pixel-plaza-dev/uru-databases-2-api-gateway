@@ -224,12 +224,7 @@ definitions:
           9999-12-31T23:59:59Z inclusive.
         type: integer
     type: object
-  types.BadRequest:
-    properties:
-      error:
-        type: string
-    type: object
-  types.InternalServerError:
+  types.ErrorResponse:
     properties:
       error:
         type: string
@@ -495,11 +490,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Check if an access token is valid
       tags:
       - v1 auth access-tokens
@@ -525,11 +520,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Log in a user
       tags:
       - auth
@@ -548,11 +543,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Log out a user
       tags:
       - auth
@@ -571,11 +568,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all permissions
       tags:
       - v1 auth permissions
@@ -600,11 +599,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Add a permission
       tags:
       - v1 auth permissions
@@ -629,11 +630,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke a permission
       tags:
       - v1 auth permissions
@@ -657,11 +660,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get a permission
       tags:
       - v1 auth permissions
@@ -680,11 +685,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke all refresh tokens
       tags:
       - v1 auth refresh-tokens
@@ -702,11 +709,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all refresh tokens information
       tags:
       - v1 auth refresh-tokens
@@ -724,11 +733,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Refresh a user's token
       tags:
       - v1 auth refresh-tokens
@@ -753,11 +764,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke a refresh token
       tags:
       - v1 auth refresh-tokens
@@ -781,11 +794,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get refresh token information
       tags:
       - v1 auth refresh-tokens
@@ -810,11 +825,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Check if a refresh token is valid
       tags:
       - v1 auth refresh-tokens
@@ -839,11 +854,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke a permission from a role
       tags:
       - v1 auth role-permissions
@@ -862,11 +879,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all roles
       tags:
       - v1 auth roles
@@ -891,11 +910,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Add a role
       tags:
       - v1 auth roles
@@ -920,11 +941,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke a role
       tags:
       - v1 auth roles
@@ -949,11 +972,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all permissions for a role
       tags:
       - v1 auth roles
@@ -983,11 +1008,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Add a permission to a role
       tags:
       - v1 auth roles
@@ -1012,11 +1039,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Revoke a role from a user
       tags:
       - v1 auth user-roles
@@ -1040,11 +1069,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all user's roles
       tags:
       - v1 auth user-roles
@@ -1074,11 +1105,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Add a role to a user
       tags:
       - v1 auth user-roles
@@ -1104,11 +1137,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update user
       tags:
       - v1 users
@@ -1134,11 +1169,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete user account
       tags:
       - v1 users
@@ -1157,11 +1194,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get active emails
       tags:
       - v1 users emails
@@ -1186,11 +1225,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Add email
       tags:
       - v1 users emails
@@ -1215,11 +1254,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete email
       tags:
       - v1 users emails
@@ -1238,11 +1279,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get primary email
       tags:
       - v1 users emails
@@ -1267,11 +1310,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Change primary email
       tags:
       - v1 users emails
@@ -1297,11 +1342,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Send verification email
       tags:
       - v1 users emails
@@ -1326,11 +1373,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Verify email
       tags:
       - v1 users emails
@@ -1356,11 +1403,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Send reset password email
       tags:
       - v1 users
@@ -1386,11 +1433,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Change user password
       tags:
       - v1 users
@@ -1409,11 +1458,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get user phone number
       tags:
       - v1 users phone-numbers
@@ -1438,11 +1489,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Change user phone number
       tags:
       - v1 users phone-numbers
@@ -1468,11 +1521,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Send verification SMS
       tags:
       - v1 users phone-numbers
@@ -1497,11 +1552,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Verify phone number
       tags:
       - v1 users phone-numbers
@@ -1520,11 +1575,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get the user's profile
       tags:
       - v1 users profiles
@@ -1549,11 +1606,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Get a user's profile
       tags:
       - v1 users profiles
@@ -1584,11 +1641,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Reset user password
       tags:
       - v1 users
@@ -1614,11 +1671,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Create a new user
       tags:
       - v1 users
@@ -1643,11 +1700,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Get user ID by username
       tags:
       - v1 users
@@ -1673,11 +1730,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Change user username
       tags:
       - v1 users
@@ -1702,11 +1761,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Get username by user ID
       tags:
       - v1 users usernames
@@ -1731,15 +1790,18 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequest'
+            $ref: '#/definitions/types.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerError'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Check if a username exists
       tags:
       - v1 users usernames
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

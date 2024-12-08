@@ -3,11 +3,12 @@ package user_roles
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
+	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
-	pbconfigrestuserroles "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth/user-roles"
+	pbconfigrestuserroles "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/auth/user-roles"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
@@ -20,31 +21,42 @@ import (
 // @Produce json
 // @Router /api/v1/auth/user-roles [group]
 type Controller struct {
-	route   *gin.RouterGroup
-	service *appgrpcauth.Service
+	route           *gin.RouterGroup
+	service         *appgrpcauth.Service
+	routeHandler    commonhandler.Handler
+	responseHandler commonclientresponse.Handler
 }
 
 // NewController creates a new user roles controller
 func NewController(
 	baseRoute *gin.RouterGroup,
 	service *appgrpcauth.Service,
+	routeHandler commonhandler.Handler,
+	responseHandler commonclientresponse.Handler,
 ) *Controller {
 	// Create a new route for the user roles controller
-	route := baseRoute.Group(pbconfigrestauth.UserRoles.String())
+	route := baseRoute.Group(pbconfigrestuserroles.Base.String())
 
 	// Create a new user roles controller
 	return &Controller{
-		route:   route,
-		service: service,
+		route:           route,
+		service:         service,
+		routeHandler:    routeHandler,
+		responseHandler: responseHandler,
 	}
 }
 
 // Initialize initializes the routes for the controller
 func (c *Controller) Initialize() {
 	// Initialize the routes
-	c.route.POST(pbconfigrestuserroles.ByUserId.String(), c.addUserRole)
-	c.route.DELETE(pbconfigrestuserroles.ByUserId.String(), c.revokeUserRole)
-	c.route.GET(pbconfigrestuserroles.ByUserId.String(), c.getUserRoles)
+	c.route.POST(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestuserroles.AddUserRoleMapper, c.addUserRole))
+	c.route.DELETE(
+		c.routeHandler.CreateAuthenticatedEndpoint(
+			pbconfigrestuserroles.RevokeUserRoleMapper,
+			c.revokeUserRole,
+		),
+	)
+	c.route.GET(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestuserroles.GetUserRolesMapper, c.getUserRoles))
 }
 
 // addUserRole adds a role to a user
@@ -56,18 +68,19 @@ func (c *Controller) Initialize() {
 // @Param user-id path string true "User ID"
 // @Param request body pbauth.AddUserRoleRequest true "Add User Role Request"
 // @Success 201 {object} pbauth.AddUserRoleResponse
-// @Failure 400 {object} commongintypes.BadRequest
-// @Failure 500 {object} commongintypes.InternalServerError
+// @Failure 400 {object} commongintypes.ErrorResponse
+// @Failure 500 {object} commongintypes.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/auth/user-roles/{user-id} [post]
 func (c *Controller) addUserRole(ctx *gin.Context) {
 	var request pbauth.AddUserRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongintypes.NewInternalServerError(),
+			commongintypes.NewErrorResponse(err),
 		)
 		return
 	}
@@ -78,7 +91,7 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 	// Add a role to a user
 	response, err := c.service.AddUserRole(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, response)
@@ -92,18 +105,19 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbauth.RevokeUserRoleResponse
-// @Failure 400 {object} commongintypes.BadRequest
-// @Failure 500 {object} commongintypes.InternalServerError
+// @Failure 400 {object} commongintypes.ErrorResponse
+// @Failure 500 {object} commongintypes.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/auth/user-roles/{user-id} [delete]
 func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	var request pbauth.RevokeUserRoleRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongintypes.NewInternalServerError(),
+			commongintypes.NewErrorResponse(err),
 		)
 		return
 	}
@@ -114,7 +128,7 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	// Revoke a role from the user
 	response, err := c.service.RevokeUserRole(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -128,18 +142,19 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbauth.GetUserRolesResponse
-// @Failure 400 {object} commongintypes.BadRequest
-// @Failure 500 {object} commongintypes.InternalServerError
+// @Failure 400 {object} commongintypes.ErrorResponse
+// @Failure 500 {object} commongintypes.ErrorResponse
+// @Security BearerAuth
 // @Router /api/v1/auth/user-roles/{user-id} [get]
 func (c *Controller) getUserRoles(ctx *gin.Context) {
 	var request pbauth.GetUserRolesRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongintypes.NewInternalServerError(),
+			commongintypes.NewErrorResponse(err),
 		)
 		return
 	}
@@ -150,7 +165,7 @@ func (c *Controller) getUserRoles(ctx *gin.Context) {
 	// Get all user's roles
 	response, err := c.service.GetUserRoles(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

@@ -3,11 +3,12 @@ package usernames
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
+	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
-	pbconfigrestusers "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/users"
-	pbconfigrestusernames "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/users/usernames"
+	pbconfigrestusernames "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/users/usernames"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
@@ -20,30 +21,46 @@ import (
 // @Produce json
 // @Router /api/v1/users/usernames [group]
 type Controller struct {
-	route   *gin.RouterGroup
-	service *appgrpcuser.Service
+	route           *gin.RouterGroup
+	service         *appgrpcuser.Service
+	routeHandler    commonhandler.Handler
+	responseHandler commonclientresponse.Handler
 }
 
 // NewController creates a new username controller
 func NewController(
 	baseRoute *gin.RouterGroup,
 	service *appgrpcuser.Service,
+	routeHandler commonhandler.Handler,
+	responseHandler commonclientresponse.Handler,
 ) *Controller {
 	// Create a new route for the usernames controller
-	route := baseRoute.Group(pbconfigrestusers.Usernames.String())
+	route := baseRoute.Group(pbconfigrestusernames.Base.String())
 
 	// Create a new user controller
 	return &Controller{
-		route:   route,
-		service: service,
+		route:           route,
+		service:         service,
+		routeHandler:    routeHandler,
+		responseHandler: responseHandler,
 	}
 }
 
 // Initialize initializes the routes for the controller
 func (c *Controller) Initialize() {
 	// Initialize the routes
-	c.route.GET(pbconfigrestusernames.ExistsByUsername.String(), c.usernameExists)
-	c.route.GET(pbconfigrestusernames.ByUserId.String(), c.getUsernameByUserId)
+	c.route.GET(
+		c.routeHandler.CreateAuthenticatedEndpoint(
+			pbconfigrestusernames.UsernameExistsMapper,
+			c.usernameExists,
+		),
+	)
+	c.route.GET(
+		c.routeHandler.CreateAuthenticatedEndpoint(
+			pbconfigrestusernames.GetUsernameByUserIdMapper,
+			c.getUsernameByUserId,
+		),
+	)
 }
 
 // usernameExists checks if a username exists
@@ -54,18 +71,18 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param username path string true "Username"
 // @Success 200 {object} pbuser.UsernameExistsResponse
-// @Failure 400 {object} commongintypes.BadRequest
-// @Failure 500 {object} commongintypes.InternalServerError
+// @Failure 400 {object} commongintypes.ErrorResponse
+// @Failure 500 {object} commongintypes.ErrorResponse
 // @Router /api/v1/users/usernames/exists/{username} [get]
 func (c *Controller) usernameExists(ctx *gin.Context) {
 	var request pbuser.UsernameExistsRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongintypes.NewInternalServerError(),
+			commongintypes.NewErrorResponse(err),
 		)
 		return
 	}
@@ -76,7 +93,7 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 	// Check if the username exists
 	response, err := c.service.UsernameExists(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -90,18 +107,18 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 // @Produce json
 // @Param user-id path string true "User ID"
 // @Success 200 {object} pbuser.GetUsernameByUserIdResponse
-// @Failure 400 {object} commongintypes.BadRequest
-// @Failure 500 {object} commongintypes.InternalServerError
+// @Failure 400 {object} commongintypes.ErrorResponse
+// @Failure 500 {object} commongintypes.ErrorResponse
 // @Router /api/v1/users/usernames/{user-id} [get]
 func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 	var request pbuser.GetUsernameByUserIdRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongintypes.NewInternalServerError(),
+			commongintypes.NewErrorResponse(err),
 		)
 		return
 	}
@@ -112,7 +129,7 @@ func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 	// Get the username by user ID
 	response, err := c.service.GetUsernameByUserId(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

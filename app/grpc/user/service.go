@@ -3,22 +3,22 @@ package user
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Service is the service for user
 type Service struct {
-	client  pbuser.UserClient
-	handler commonclientrequest.Handler
+	client          pbuser.UserClient
+	responseHandler commonclientresponse.Handler
 }
 
 // NewService creates a new service
-func NewService(client pbuser.UserClient, handler commonclientrequest.Handler) *Service {
+func NewService(client pbuser.UserClient, responseHandler commonclientresponse.Handler) *Service {
 	return &Service{
-		client:  client,
-		handler: handler,
+		client:          client,
+		responseHandler: responseHandler,
 	}
 }
 
@@ -30,7 +30,7 @@ func (s *Service) SignUp(
 ) (*pbuser.SignUpResponse, error) {
 	response, err := s.client.SignUp(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -47,7 +47,7 @@ func (s *Service) UpdateUser(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -64,7 +64,7 @@ func (s *Service) GetProfile(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -80,7 +80,7 @@ func (s *Service) GetMyProfile(
 		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -97,7 +97,7 @@ func (s *Service) GetUserIdByUsername(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -114,7 +114,7 @@ func (s *Service) ChangePassword(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -131,7 +131,7 @@ func (s *Service) UsernameExists(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -148,7 +148,7 @@ func (s *Service) GetUsernameByUserId(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -165,7 +165,7 @@ func (s *Service) ChangeUsername(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -178,7 +178,7 @@ func (s *Service) AddEmail(
 ) (*pbuser.AddEmailResponse, error) {
 	response, err := s.client.AddEmail(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -193,7 +193,7 @@ func (s *Service) DeleteEmail(
 ) {
 	response, err := s.client.DeleteEmail(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -210,7 +210,7 @@ func (s *Service) ChangePrimaryEmail(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -227,7 +227,7 @@ func (s *Service) SendVerificationEmail(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -242,7 +242,7 @@ func (s *Service) VerifyEmail(
 ) {
 	response, err := s.client.VerifyEmail(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -258,7 +258,7 @@ func (s *Service) GetPrimaryEmail(
 		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -274,7 +274,7 @@ func (s *Service) GetActiveEmails(
 		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -291,7 +291,7 @@ func (s *Service) ChangePhoneNumber(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -308,7 +308,7 @@ func (s *Service) SendVerificationSMS(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -325,7 +325,7 @@ func (s *Service) VerifyPhoneNumber(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -341,7 +341,7 @@ func (s *Service) GetPhoneNumber(
 		grpcCtx, &emptypb.Empty{},
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -358,7 +358,7 @@ func (s *Service) ForgotPassword(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -375,7 +375,7 @@ func (s *Service) ResetPassword(
 		grpcCtx, request,
 	)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -390,7 +390,7 @@ func (s *Service) DeleteUser(
 ) {
 	response, err := s.client.DeleteUser(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }

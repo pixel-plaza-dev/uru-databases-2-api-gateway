@@ -3,11 +3,12 @@ package access_tokens
 import (
 	"github.com/gin-gonic/gin"
 	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
+	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	commongintypes "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
-	pbconfigrestauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth"
-	pbconfigrestaccesstokens "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/v1/auth/access-tokens"
+	pbconfigrestaccesstokens "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/auth/access-tokens"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
 	"net/http"
 )
@@ -20,22 +21,28 @@ import (
 // @Produce json
 // @Router /api/v1/auth/access-tokens [group]
 type Controller struct {
-	route   *gin.RouterGroup
-	service *appgrpcauth.Service
+	route           *gin.RouterGroup
+	service         *appgrpcauth.Service
+	routeHandler    commonhandler.Handler
+	responseHandler commonclientresponse.Handler
 }
 
 // NewController creates a new access tokens controller
 func NewController(
 	baseRoute *gin.RouterGroup,
 	service *appgrpcauth.Service,
+	routeHandler commonhandler.Handler,
+	responseHandler commonclientresponse.Handler,
 ) *Controller {
 	// Create a new route for the access tokens controller
-	route := baseRoute.Group(pbconfigrestauth.AccessTokens.String())
+	route := baseRoute.Group(pbconfigrestaccesstokens.Base.String())
 
 	// Create a new access tokens controller
 	return &Controller{
-		route:   route,
-		service: service,
+		route:           route,
+		service:         service,
+		routeHandler:    routeHandler,
+		responseHandler: responseHandler,
 	}
 }
 
@@ -43,8 +50,10 @@ func NewController(
 func (c *Controller) Initialize() {
 	// Initialize the routes
 	c.route.GET(
-		pbconfigrestaccesstokens.ValidByJwtId.String(),
-		c.isAccessTokenValid,
+		c.routeHandler.CreateAuthenticatedEndpoint(
+			pbconfigrestaccesstokens.IsAccessTokenValidMapper,
+			c.isAccessTokenValid,
+		),
 	)
 }
 
@@ -56,18 +65,18 @@ func (c *Controller) Initialize() {
 // @Produce json
 // @Param jwt-id path string true "JWT ID"
 // @Success 200 {object} pbauth.IsAccessTokenValidResponse
-// @Failure 400 {object} commongintypes.BadRequest
-// @Failure 500 {object} commongintypes.InternalServerError
+// @Failure 400 {object} commongintypes.ErrorResponse
+// @Failure 500 {object} commongintypes.ErrorResponse
 // @Router /api/v1/auth/access-tokens/valid/{jwt-id} [get]
 func (c *Controller) isAccessTokenValid(ctx *gin.Context) {
 	var request pbauth.IsAccessTokenValidRequest
 
 	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
+	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request, c.responseHandler)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
-			commongintypes.NewInternalServerError(),
+			commongintypes.NewErrorResponse(err),
 		)
 		return
 	}
@@ -78,7 +87,7 @@ func (c *Controller) isAccessTokenValid(ctx *gin.Context) {
 	// Check if the access token is valid
 	response, err := c.service.IsAccessTokenValid(ctx, grpcCtx, &request)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, commongintypes.NewBadRequest(err))
+		ctx.JSON(http.StatusBadRequest, commongintypes.NewErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

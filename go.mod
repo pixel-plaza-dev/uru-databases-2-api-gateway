@@ -5,9 +5,9 @@ go 1.23.2
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.2.17
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.6.43
-	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.3.4
+	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.3.9
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.7.2
+	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.4.4
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.8.12

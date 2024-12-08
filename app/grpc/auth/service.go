@@ -3,23 +3,23 @@ package auth
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	commonclientrequest "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/request"
+	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Service is the service for auth
 type Service struct {
-	client  pbauth.AuthClient
-	handler commonclientrequest.Handler
+	client          pbauth.AuthClient
+	responseHandler commonclientresponse.Handler
 }
 
 // NewService creates a new service
 func NewService(
 	client pbauth.AuthClient,
-	handler commonclientrequest.Handler,
+	responseHandler commonclientresponse.Handler,
 ) *Service {
-	return &Service{client: client, handler: handler}
+	return &Service{client: client, responseHandler: responseHandler}
 }
 
 // LogIn logs in q user
@@ -30,7 +30,7 @@ func (s *Service) LogIn(
 ) (*pbauth.LogInResponse, error) {
 	response, err := s.client.LogIn(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -45,7 +45,7 @@ func (s *Service) IsAccessTokenValid(
 ) {
 	response, err := s.client.IsAccessTokenValid(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -60,7 +60,7 @@ func (s *Service) IsRefreshTokenValid(
 ) {
 	response, err := s.client.IsRefreshTokenValid(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -74,7 +74,7 @@ func (s *Service) RefreshToken(
 ) {
 	response, err := s.client.RefreshToken(grpcCtx, &emptypb.Empty{})
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -86,7 +86,7 @@ func (s *Service) LogOut(
 ) (*pbauth.LogOutResponse, error) {
 	response, err := s.client.LogOut(grpcCtx, &emptypb.Empty{})
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -101,7 +101,7 @@ func (s *Service) GetRefreshTokenInformation(
 ) {
 	response, err = s.client.GetRefreshTokenInformation(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -115,7 +115,7 @@ func (s *Service) GetRefreshTokensInformation(
 ) {
 	response, err := s.client.GetRefreshTokensInformation(grpcCtx, &emptypb.Empty{})
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -130,7 +130,7 @@ func (s *Service) RevokeRefreshToken(
 ) {
 	response, err := s.client.RevokeRefreshToken(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -144,7 +144,7 @@ func (s *Service) RevokeRefreshTokens(
 ) {
 	response, err := s.client.RevokeRefreshTokens(grpcCtx, &emptypb.Empty{})
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -159,7 +159,7 @@ func (s *Service) AddPermission(
 ) {
 	response, err := s.client.AddPermission(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -174,7 +174,7 @@ func (s *Service) RevokePermission(
 ) {
 	response, err := s.client.RevokePermission(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -189,7 +189,7 @@ func (s *Service) GetPermission(
 ) {
 	response, err := s.client.GetPermission(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -203,7 +203,7 @@ func (s *Service) GetPermissions(
 ) {
 	response, err := s.client.GetPermissions(grpcCtx, &emptypb.Empty{})
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -218,7 +218,7 @@ func (s *Service) AddRolePermission(
 ) {
 	response, err := s.client.AddRolePermission(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -233,7 +233,7 @@ func (s *Service) RevokeRolePermission(
 ) {
 	response, err := s.client.RevokeRolePermission(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -248,7 +248,7 @@ func (s *Service) GetRolePermissions(
 ) {
 	response, err := s.client.GetRolePermissions(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -261,7 +261,7 @@ func (s *Service) AddRole(
 ) (*pbauth.AddRoleResponse, error) {
 	response, err := s.client.AddRole(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -276,7 +276,7 @@ func (s *Service) RevokeRole(
 ) {
 	response, err := s.client.RevokeRole(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -288,7 +288,7 @@ func (s *Service) GetRoles(
 ) (*pbauth.GetRolesResponse, error) {
 	response, err := s.client.GetRoles(grpcCtx, &emptypb.Empty{})
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -303,7 +303,7 @@ func (s *Service) AddUserRole(
 ) {
 	response, err := s.client.AddUserRole(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -318,7 +318,7 @@ func (s *Service) RevokeUserRole(
 ) {
 	response, err := s.client.RevokeUserRole(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }
@@ -333,7 +333,7 @@ func (s *Service) GetUserRoles(
 ) {
 	response, err := s.client.GetUserRoles(grpcCtx, request)
 	if err != nil {
-		return nil, s.handler.HandleError(err)
+		return nil, s.responseHandler.HandleStatusError(err)
 	}
 	return response, nil
 }

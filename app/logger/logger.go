@@ -11,17 +11,17 @@ import (
 
 var (
 	// FlagLogger is the logger for the flag
-	FlagLogger = commonflag.NewLogger(commonlogger.NewDefaultLogger("Flag"))
+	FlagLogger, _ = commonflag.NewLogger(commonlogger.NewDefaultLogger("Flag"))
 
 	// ListenerLogger is the logger for the listener
-	ListenerLogger = commonlistener.NewLogger(commonlogger.NewDefaultLogger("Net Listener"))
+	ListenerLogger, _ = commonlistener.NewLogger(commonlogger.NewDefaultLogger("Net Listener"))
 
 	// EnvironmentLogger is the logger for the environment
-	EnvironmentLogger = commonenv.NewLogger(commonlogger.NewDefaultLogger("Environment"))
+	EnvironmentLogger, _ = commonenv.NewLogger(commonlogger.NewDefaultLogger("Environment"))
 
 	// GCloudLogger is the logger for the Google Cloud
-	GCloudLogger = commongcloud.NewLogger(commonlogger.NewDefaultLogger("Google Cloud"))
+	GCloudLogger, _ = commongcloud.NewLogger(commonlogger.NewDefaultLogger("Google Cloud"))
 
 	// AuthMiddlewareLogger is the logger for the Auth middleware
-	AuthMiddlewareLogger = authmiddleware.NewLogger(commonlogger.NewDefaultLogger("Auth Middleware"))
+	AuthMiddlewareLogger, _ = authmiddleware.NewLogger(commonlogger.NewDefaultLogger("Auth Middleware"))
 )
