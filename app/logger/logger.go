@@ -23,8 +23,8 @@ var (
 	// GCloudLogger is the logger for the Google Cloud
 	GCloudLogger, _ = commongcloud.NewLogger(commonlogger.NewDefaultLogger("Google Cloud"))
 
-	// OutgoingCtxDebuggerLogger is the logger for the outgoing context
-	OutgoingCtxDebuggerLogger, _ = commonoutgoingctx.NewLogger(commonlogger.NewDefaultLogger("Outgoing Context"))
+	// OutgoingCtxLogger is the logger for the outgoing context
+	OutgoingCtxLogger, _ = commonoutgoingctx.NewLogger(commonlogger.NewDefaultLogger("Outgoing Context"))
 
 	// AuthMiddlewareLogger is the logger for the Auth middleware
 	AuthMiddlewareLogger, _ = authmiddleware.NewLogger(commonlogger.NewDefaultLogger("Auth Middleware"))

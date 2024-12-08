@@ -19,11 +19,14 @@ import (
 	commonjwtvalidator "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator"
 	commonjwtvalidatorgrpc "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/crypto/jwt/validator/grpc"
 	clientauthinterceptor "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/auth"
-	commongrpcclientdebugger "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/outgoing-ctx"
+	commongrpcoutgoingctx "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/grpc/client/interceptor/outgoing-ctx"
 	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/listener"
 	commontls "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/tls"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
+	pbconfigauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/auth"
+	pbconfiguser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/user"
+	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"google.golang.org/grpc"
@@ -75,17 +78,18 @@ func main() {
 	applogger.EnvironmentLogger.EnvironmentVariableLoaded(applistener.PortKey)
 
 	// Get the gRPC services URI
-	var uris = make(map[string]string)
-	for _, key := range []string{
+	var uriKeys = []string{
 		appgrpc.AuthServiceUriKey,
 		appgrpc.UserServiceUriKey,
-	} {
-		uri, err := commonenv.LoadVariable(key)
+	}
+	var uris = make(map[string]string)
+	for _, uriKey := range uriKeys {
+		uri, err := commonenv.LoadVariable(uriKey)
 		if err != nil {
 			panic(err)
 		}
-		applogger.EnvironmentLogger.EnvironmentVariableLoaded(key)
-		uris[key] = uri
+		applogger.EnvironmentLogger.EnvironmentVariableLoaded(uriKey)
+		uris[uriKey] = uri
 	}
 
 	// Get the JWT public key
@@ -103,14 +107,14 @@ func main() {
 
 	// Get the service account token source for each gRPC server URI
 	var tokenSources = make(map[string]*oauth.TokenSource)
-	for key, uri := range uris {
+	for _, uriKey := range uriKeys {
 		tokenSource, err := commongcloud.LoadServiceAccountCredentials(
-			context.Background(), "https://"+uri, googleCredentials,
+			context.Background(), "https://"+uris[uriKey], googleCredentials,
 		)
 		if err != nil {
 			panic(err)
 		}
-		tokenSources[key] = tokenSource
+		tokenSources[uriKey] = tokenSource
 		// applogger.GCloudLogger.LoadedTokenSource(tokenSource)
 	}
 
@@ -133,32 +137,46 @@ func main() {
 		}
 	}
 
+	// Create gRPC interceptions map
+	var grpcInterceptions = map[string]*map[pbtypesgrpc.Method]pbtypesgrpc.Interception{
+		appgrpc.UserServiceUriKey: &pbconfiguser.Interceptions,
+		appgrpc.AuthServiceUriKey: &pbconfigauth.Interceptions,
+	}
+
 	// Create client authentication interceptors
 	var clientAuthInterceptors = make(map[string]*clientauthinterceptor.Interceptor)
-	for key, tokenSource := range tokenSources {
-		clientAuthInterceptor, err := clientauthinterceptor.NewInterceptor(tokenSource)
+	for _, uriKey := range uriKeys {
+		clientAuthInterceptor, err := clientauthinterceptor.NewInterceptor(
+			tokenSources[uriKey],
+			grpcInterceptions[uriKey],
+		)
 		if err != nil {
 			panic(err)
 		}
-		clientAuthInterceptors[key] = clientAuthInterceptor
+		clientAuthInterceptors[uriKey] = clientAuthInterceptor
 	}
 
 	// Create common gRPC client interceptors after authentication
 	var commonInterceptorsAfterAuth []grpc.UnaryClientInterceptor
 	if commonflag.Mode.IsDev() {
-		outgoingCtxDebugger, _ := commongrpcclientdebugger.NewInterceptor(applogger.OutgoingCtxDebuggerLogger)
-		commonInterceptorsAfterAuth = append(commonInterceptorsAfterAuth, outgoingCtxDebugger.PrintOutgoingCtx())
+		outgoingCtx, err := commongrpcoutgoingctx.NewInterceptor(applogger.OutgoingCtxLogger)
+		if err != nil {
+			panic(err)
+		}
+
+		// Add the outgoing context interceptor
+		commonInterceptorsAfterAuth = append(commonInterceptorsAfterAuth, outgoingCtx.PrintOutgoingCtx())
 	}
 
 	// Create gRPC connections
 	var conns = make(map[string]*grpc.ClientConn)
-	for key, uri := range uris {
+	for _, uriKey := range uriKeys {
 		conn, err := grpc.NewClient(
-			uri, grpc.WithTransportCredentials(transportCredentials),
+			uris[uriKey], grpc.WithTransportCredentials(transportCredentials),
 			grpc.WithChainUnaryInterceptor(
 				append(
 					[]grpc.UnaryClientInterceptor{
-						clientAuthInterceptors[key].Authenticate(),
+						clientAuthInterceptors[uriKey].Authenticate(),
 					}, commonInterceptorsAfterAuth...,
 				)...,
 			),
@@ -166,7 +184,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		conns[key] = conn
+		conns[uriKey] = conn
 	}
 	defer func(conns map[string]*grpc.ClientConn) {
 		for _, conn := range conns {
