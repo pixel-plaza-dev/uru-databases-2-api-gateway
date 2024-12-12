@@ -2,7 +2,6 @@ package role_permissions
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -22,7 +21,7 @@ import (
 // @Router /api/v1/auth/role-permissions [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcauth.Service
+	client          pbauth.AuthClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +29,7 @@ type Controller struct {
 // NewController creates a new role-permissions controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcauth.Service,
+	client pbauth.AuthClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +39,7 @@ func NewController(
 	// Create a new role-permissions controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -83,6 +82,6 @@ func (c *Controller) revokeRolePermission(ctx *gin.Context) {
 	request.RoleId = ctx.Param(pbtypesrest.RoleId.String())
 
 	// Revoke a permission from the role
-	response, err := c.service.RevokeRolePermission(ctx, grpcCtx, &request)
+	response, err := c.client.RevokeRolePermission(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

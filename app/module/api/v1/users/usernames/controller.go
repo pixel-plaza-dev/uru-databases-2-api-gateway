@@ -2,7 +2,6 @@ package usernames
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -22,7 +21,7 @@ import (
 // @Router /api/v1/users/usernames [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcuser.Service
+	client          pbuser.UserClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +29,7 @@ type Controller struct {
 // NewController creates a new username controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcuser.Service,
+	client pbuser.UserClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +39,7 @@ func NewController(
 	// Create a new user controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -88,7 +87,7 @@ func (c *Controller) usernameExists(ctx *gin.Context) {
 	request.Username = ctx.Param(pbtypesrest.Username.String())
 
 	// Check if the username exists
-	response, err := c.service.UsernameExists(ctx, grpcCtx, &request)
+	response, err := c.client.UsernameExists(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -117,6 +116,6 @@ func (c *Controller) getUsernameByUserId(ctx *gin.Context) {
 	request.UserId = ctx.Param(pbtypesrest.UserId.String())
 
 	// Get the username by user ID
-	response, err := c.service.GetUsernameByUserId(ctx, grpcCtx, &request)
+	response, err := c.client.GetUsernameByUserId(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

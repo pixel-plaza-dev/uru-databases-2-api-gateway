@@ -2,7 +2,6 @@ package access_tokens
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -22,7 +21,7 @@ import (
 // @Router /api/v1/auth/access-tokens [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcauth.Service
+	client          pbauth.AuthClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +29,7 @@ type Controller struct {
 // NewController creates a new access tokens controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcauth.Service,
+	client pbauth.AuthClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +39,7 @@ func NewController(
 	// Create a new access tokens controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -82,6 +81,6 @@ func (c *Controller) isAccessTokenValid(ctx *gin.Context) {
 	request.JwtId = ctx.Param(pbtypesrest.JwtId.String())
 
 	// Check if the access token is valid
-	response, err := c.service.IsAccessTokenValid(ctx, grpcCtx, &request)
+	response, err := c.client.IsAccessTokenValid(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

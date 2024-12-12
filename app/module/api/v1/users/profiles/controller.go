@@ -2,7 +2,6 @@ package profiles
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -10,6 +9,7 @@ import (
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
 	pbconfigrestprofiles "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/users/profiles"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ import (
 // @Router /api/v1/users/profiles [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcuser.Service
+	client          pbuser.UserClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +30,7 @@ type Controller struct {
 // NewController creates a new profiles controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcuser.Service,
+	client pbuser.UserClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +40,7 @@ func NewController(
 	// Create a new user controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -73,7 +73,7 @@ func (c *Controller) getMyProfile(ctx *gin.Context) {
 	}
 
 	// Get the user's profile
-	response, err := c.service.GetMyProfile(ctx, grpcCtx)
+	response, err := c.client.GetMyProfile(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -102,6 +102,6 @@ func (c *Controller) getProfile(ctx *gin.Context) {
 	request.Username = ctx.Param(pbtypesrest.Username.String())
 
 	// Get the user's profile
-	response, err := c.service.GetProfile(ctx, grpcCtx, &request)
+	response, err := c.client.GetProfile(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

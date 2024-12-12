@@ -7,7 +7,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.3.23
 	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.8.2
-	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.4.4
+	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.5.10
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.8.12

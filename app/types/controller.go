@@ -1,4 +1,4 @@
-package controller
+package types
 
 type (
 	// Controller interface

@@ -23,8 +23,14 @@ import (
 	commonlistener "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/listener"
 	commontls "github.com/pixel-plaza-dev/uru-databases-2-go-service-common/http/tls"
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
+	pborder "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/order"
+	pbpayment "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/payment"
+	pbshop "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/shop"
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
 	pbconfigauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/auth"
+	pbconfigorder "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/order"
+	pbconfigpayment "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/payment"
+	pbconfigshop "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/shop"
 	pbconfiguser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/grpc/user"
 	pbtypesgrpc "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/grpc"
 	swaggerFiles "github.com/swaggo/files"
@@ -81,6 +87,9 @@ func main() {
 	var uriKeys = []string{
 		appgrpc.AuthServiceUriKey,
 		appgrpc.UserServiceUriKey,
+		appgrpc.ShopServiceUriKey,
+		appgrpc.PaymentServiceUriKey,
+		appgrpc.OrderServiceUriKey,
 	}
 	var uris = make(map[string]string)
 	for _, uriKey := range uriKeys {
@@ -139,8 +148,11 @@ func main() {
 
 	// Create gRPC interceptions map
 	var grpcInterceptions = map[string]*map[pbtypesgrpc.Method]pbtypesgrpc.Interception{
-		appgrpc.UserServiceUriKey: &pbconfiguser.Interceptions,
-		appgrpc.AuthServiceUriKey: &pbconfigauth.Interceptions,
+		appgrpc.UserServiceUriKey:    &pbconfiguser.Interceptions,
+		appgrpc.AuthServiceUriKey:    &pbconfigauth.Interceptions,
+		appgrpc.ShopServiceUriKey:    &pbconfigshop.Interceptions,
+		appgrpc.OrderServiceUriKey:   &pbconfigorder.Interceptions,
+		appgrpc.PaymentServiceUriKey: &pbconfigpayment.Interceptions,
 	}
 
 	// Create client authentication interceptors
@@ -198,6 +210,9 @@ func main() {
 	// Create gRPC server clients
 	userClient := pbuser.NewUserClient(conns[appgrpc.UserServiceUriKey])
 	authClient := pbauth.NewAuthClient(conns[appgrpc.AuthServiceUriKey])
+	shopClient := pbshop.NewShopClient(conns[appgrpc.ShopServiceUriKey])
+	paymentClient := pbpayment.NewPaymentClient(conns[appgrpc.PaymentServiceUriKey])
+	orderClient := pborder.NewOrderClient(conns[appgrpc.OrderServiceUriKey])
 
 	// Create token validator
 	tokenValidator, err := commonjwtvalidatorgrpc.NewDefaultTokenValidator(
@@ -247,13 +262,20 @@ func main() {
 	// Use ginSwagger middleware to serve the API docs
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Create the module controller
-	mainModule := appapi.NewController(
-		router, userClient, authClient, authMiddleware, responseHandler,
+	// Create the API controller
+	mainController := appapi.NewController(
+		router, authMiddleware, responseHandler,
 	)
 
-	// Initialize the module controllers
-	mainModule.Initialize()
+	// Initialize the API version 1 controller
+	v1Controller := mainController.InitializeV1()
+
+	// Initialize the API version 1 children controllers
+	v1Controller.InitializeAuth(authClient)
+	v1Controller.InitializeUsers(userClient)
+	v1Controller.InitializePayments(paymentClient)
+	v1Controller.InitializeShops(shopClient)
+	v1Controller.InitializeOrders(orderClient)
 
 	// Run the server
 	if err = router.Run(servicePort.FormattedPort); err != nil {

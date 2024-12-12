@@ -2,7 +2,6 @@ package emails
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -10,10 +9,11 @@ import (
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
 	pbconfigrestemails "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/users/emails"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 )
 
-// Controller struct for the emails module
+// Controller struct for the users emails module
 // @Summary Users Emails Router Group
 // @Description Router group for users emails-related endpoints
 // @Tags v1 users emails
@@ -22,7 +22,7 @@ import (
 // @Router /api/v1/users/emails [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcuser.Service
+	client          pbuser.UserClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +30,7 @@ type Controller struct {
 // NewController creates a new emails controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcuser.Service,
+	client pbuser.UserClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +40,7 @@ func NewController(
 	// Create a new emails controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -88,7 +88,7 @@ func (c *Controller) getActiveEmails(ctx *gin.Context) {
 	}
 
 	// Get the user's active emails
-	response, err := c.service.GetActiveEmails(ctx, grpcCtx)
+	response, err := c.client.GetActiveEmails(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -114,7 +114,7 @@ func (c *Controller) addEmail(ctx *gin.Context) {
 	}
 
 	// Add an email to the user's account
-	response, err := c.service.AddEmail(ctx, grpcCtx, &request)
+	response, err := c.client.AddEmail(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
@@ -138,7 +138,7 @@ func (c *Controller) getPrimaryEmail(ctx *gin.Context) {
 	}
 
 	// Get the user's primary email
-	response, err := c.service.GetPrimaryEmail(ctx, grpcCtx)
+	response, err := c.client.GetPrimaryEmail(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -165,7 +165,7 @@ func (c *Controller) changePrimaryEmail(ctx *gin.Context) {
 	}
 
 	// Change the user's primary email
-	response, err := c.service.ChangePrimaryEmail(ctx, grpcCtx, &request)
+	response, err := c.client.ChangePrimaryEmail(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -195,7 +195,7 @@ func (c *Controller) deleteEmail(ctx *gin.Context) {
 	request.Email = ctx.Param(pbtypesrest.Email.String())
 
 	// Delete an email from the user's account
-	response, err := c.service.DeleteEmail(ctx, grpcCtx, &request)
+	response, err := c.client.DeleteEmail(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -222,8 +222,8 @@ func (c *Controller) sendVerificationEmail(ctx *gin.Context) {
 	}
 
 	// Send a verification email
-	response, err := c.service.SendVerificationEmail(
-		ctx, grpcCtx,
+	response, err := c.client.SendVerificationEmail(
+		grpcCtx,
 		&request,
 	)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
@@ -254,6 +254,6 @@ func (c *Controller) verifyEmail(ctx *gin.Context) {
 	request.Token = ctx.Param(pbtypesrest.Token.String())
 
 	// Verify the user's email
-	response, err := c.service.VerifyEmail(ctx, grpcCtx, &request)
+	response, err := c.client.VerifyEmail(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

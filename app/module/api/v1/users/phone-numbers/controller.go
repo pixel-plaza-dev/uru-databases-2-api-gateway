@@ -2,7 +2,6 @@ package phone_numbers
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -10,6 +9,7 @@ import (
 	pbuser "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/user"
 	pbconfigrestphonenumbers "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/users/phone-numbers"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ import (
 // @Router /api/v1/users/phone-numbers [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcuser.Service
+	client          pbuser.UserClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +30,7 @@ type Controller struct {
 // NewController creates a new phone numbers controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcuser.Service,
+	client pbuser.UserClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +40,7 @@ func NewController(
 	// Create a new user controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -95,7 +95,7 @@ func (c *Controller) getPhoneNumber(ctx *gin.Context) {
 	}
 
 	// Get the user's active phone numbers
-	response, err := c.service.GetPhoneNumber(ctx, grpcCtx)
+	response, err := c.client.GetPhoneNumber(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -122,7 +122,7 @@ func (c *Controller) changePhoneNumber(ctx *gin.Context) {
 	}
 
 	// Change the user's phone number
-	response, err := c.service.ChangePhoneNumber(ctx, grpcCtx, &request)
+	response, err := c.client.ChangePhoneNumber(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -149,8 +149,7 @@ func (c *Controller) sendVerificationSMS(ctx *gin.Context) {
 	}
 
 	// Send a verification phone number
-	response, err := c.service.SendVerificationSMS(
-		ctx,
+	response, err := c.client.SendVerificationSMS(
 		grpcCtx,
 		&request,
 	)
@@ -182,6 +181,6 @@ func (c *Controller) verifyPhoneNumber(ctx *gin.Context) {
 	request.Token = ctx.Param(pbtypesrest.Token.String())
 
 	// Verify the user's phone number
-	response, err := c.service.VerifyPhoneNumber(ctx, grpcCtx, &request)
+	response, err := c.client.VerifyPhoneNumber(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

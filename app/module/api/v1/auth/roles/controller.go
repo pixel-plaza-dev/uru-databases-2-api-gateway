@@ -2,7 +2,6 @@ package roles
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -10,6 +9,7 @@ import (
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
 	pbconfigrestroles "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/auth/roles"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ import (
 // @Router /api/v1/auth/roles [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcauth.Service
+	client          pbauth.AuthClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +30,7 @@ type Controller struct {
 // NewController creates a new roles controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcauth.Service,
+	client pbauth.AuthClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +40,7 @@ func NewController(
 	// Create a new roles controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -89,7 +89,7 @@ func (c *Controller) addRole(ctx *gin.Context) {
 	}
 
 	// Add a role
-	response, err := c.service.AddRole(ctx, grpcCtx, &request)
+	response, err := c.client.AddRole(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
@@ -113,7 +113,7 @@ func (c *Controller) getRoles(ctx *gin.Context) {
 	}
 
 	// Get all roles
-	response, err := c.service.GetRoles(ctx, grpcCtx)
+	response, err := c.client.GetRoles(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -144,7 +144,7 @@ func (c *Controller) addRolePermission(ctx *gin.Context) {
 	request.RoleId = ctx.Param(pbtypesrest.RoleId.String())
 
 	// Add a permission to the role
-	response, err := c.service.AddRolePermission(ctx, grpcCtx, &request)
+	response, err := c.client.AddRolePermission(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
@@ -174,7 +174,7 @@ func (c *Controller) getRolePermissions(ctx *gin.Context) {
 	request.RoleId = ctx.Param(pbtypesrest.RoleId.String())
 
 	// Get all permissions for the role
-	response, err := c.service.GetRolePermissions(ctx, grpcCtx, &request)
+	response, err := c.client.GetRolePermissions(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -204,6 +204,6 @@ func (c *Controller) revokeRole(ctx *gin.Context) {
 	request.RoleId = ctx.Param(pbtypesrest.RoleId.String())
 
 	// Revoke a role
-	response, err := c.service.RevokeRole(ctx, grpcCtx, &request)
+	response, err := c.client.RevokeRole(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

@@ -2,12 +2,11 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcuser "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/user"
 	moduleusersemails "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/users/emails"
 	moduleusersphonenumbers "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/users/phone-numbers"
 	moduleusersprofiles "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/users/profiles"
 	moduleusersusernames "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/users/usernames"
-	apptypescontroller "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types/controller"
+	apptypes "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
@@ -20,7 +19,7 @@ import (
 	"net/http"
 )
 
-// Controller struct
+// Controller struct for the users module
 // @Summary Users Router Group
 // @Description Router group for users-related endpoints
 // @Tags v1 users
@@ -30,34 +29,29 @@ import (
 type Controller struct {
 	route           *gin.RouterGroup
 	client          pbuser.UserClient
-	service         *appgrpcuser.Service
-	authMiddleware  authmiddleware.Authentication
+	authentication  authmiddleware.Authentication
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
 
-// NewController creates a new user controller
+// NewController creates a new users controller
 func NewController(
 	baseRoute *gin.RouterGroup,
 	client pbuser.UserClient,
-	authMiddleware authmiddleware.Authentication,
+	authentication authmiddleware.Authentication,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
-	// Create a new route for the user controller
+	// Create a new route for the users controller
 	route := baseRoute.Group(pbconfigrestusers.Base.String())
 
 	// Create the route handler
-	routeHandler := commonhandler.NewDefaultHandler(authMiddleware, &pbconfiggrpcuser.Interceptions)
+	routeHandler := commonhandler.NewDefaultHandler(authentication, &pbconfiggrpcuser.Interceptions)
 
-	// Create the user service
-	service := appgrpcuser.NewService(client, responseHandler)
-
-	// Create a new user controller
+	// Create a new users controller
 	return &Controller{
 		route:           route,
 		client:          client,
-		service:         service,
-		authMiddleware:  authMiddleware,
+		authentication:  authentication,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -87,18 +81,18 @@ func (c *Controller) Initialize() {
 // initializeChildren initializes the routes for the children controllers
 func (c *Controller) initializeChildren() {
 	// Create the children controllers
-	emailsController := moduleusersemails.NewController(c.route, c.service, c.routeHandler, c.responseHandler)
+	emailsController := moduleusersemails.NewController(c.route, c.client, c.routeHandler, c.responseHandler)
 	phoneNumbersController := moduleusersphonenumbers.NewController(
 		c.route,
-		c.service,
+		c.client,
 		c.routeHandler,
 		c.responseHandler,
 	)
-	profilesController := moduleusersprofiles.NewController(c.route, c.service, c.routeHandler, c.responseHandler)
-	usernamesController := moduleusersusernames.NewController(c.route, c.service, c.routeHandler, c.responseHandler)
+	profilesController := moduleusersprofiles.NewController(c.route, c.client, c.routeHandler, c.responseHandler)
+	usernamesController := moduleusersusernames.NewController(c.route, c.client, c.routeHandler, c.responseHandler)
 
 	// Initialize the routes for the children controllers
-	for _, controller := range []apptypescontroller.Controller{
+	for _, controller := range []apptypes.Controller{
 		emailsController,
 		phoneNumbersController,
 		profilesController,
@@ -130,7 +124,7 @@ func (c *Controller) signUp(ctx *gin.Context) {
 	}
 
 	// Create a new user
-	response, err := c.service.SignUp(ctx, grpcCtx, &request)
+	response, err := c.client.SignUp(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
@@ -157,7 +151,7 @@ func (c *Controller) updateUser(ctx *gin.Context) {
 	}
 
 	// Update the user
-	response, err := c.service.UpdateUser(ctx, grpcCtx, &request)
+	response, err := c.client.UpdateUser(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -186,7 +180,7 @@ func (c *Controller) getUserIdByUsername(ctx *gin.Context) {
 	request.Username = ctx.Param(pbtypesrest.Username.String())
 
 	// Get the user's ID by username
-	response, err := c.service.GetUserIdByUsername(ctx, grpcCtx, &request)
+	response, err := c.client.GetUserIdByUsername(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -213,7 +207,7 @@ func (c *Controller) changePassword(ctx *gin.Context) {
 	}
 
 	// Change the user's password
-	response, err := c.service.ChangePassword(ctx, grpcCtx, &request)
+	response, err := c.client.ChangePassword(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -240,7 +234,7 @@ func (c *Controller) changeUsername(ctx *gin.Context) {
 	}
 
 	// Change the user's username
-	response, err := c.service.ChangeUsername(ctx, grpcCtx, &request)
+	response, err := c.client.ChangeUsername(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -266,7 +260,7 @@ func (c *Controller) forgotPassword(ctx *gin.Context) {
 	}
 
 	// Send a reset password email
-	response, err := c.service.ForgotPassword(ctx, grpcCtx, &request)
+	response, err := c.client.ForgotPassword(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -296,7 +290,7 @@ func (c *Controller) resetPassword(ctx *gin.Context) {
 	request.Token = ctx.Param(pbtypesrest.Token.String())
 
 	// Reset the user's password
-	response, err := c.service.ResetPassword(ctx, grpcCtx, &request)
+	response, err := c.client.ResetPassword(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -323,6 +317,6 @@ func (c *Controller) deleteUser(ctx *gin.Context) {
 	}
 
 	// Delete the user's account
-	response, err := c.service.DeleteUser(ctx, grpcCtx, &request)
+	response, err := c.client.DeleteUser(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

@@ -2,7 +2,6 @@ package user_roles
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -22,7 +21,7 @@ import (
 // @Router /api/v1/auth/user-roles [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcauth.Service
+	client          pbauth.AuthClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +29,7 @@ type Controller struct {
 // NewController creates a new user roles controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcauth.Service,
+	client pbauth.AuthClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +39,7 @@ func NewController(
 	// Create a new user roles controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -86,7 +85,7 @@ func (c *Controller) addUserRole(ctx *gin.Context) {
 	request.UserId = ctx.Param(pbtypesrest.UserId.String())
 
 	// Add a role to a user
-	response, err := c.service.AddUserRole(ctx, grpcCtx, &request)
+	response, err := c.client.AddUserRole(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
@@ -116,7 +115,7 @@ func (c *Controller) revokeUserRole(ctx *gin.Context) {
 	request.UserId = ctx.Param(pbtypesrest.UserId.String())
 
 	// Revoke a role from the user
-	response, err := c.service.RevokeUserRole(ctx, grpcCtx, &request)
+	response, err := c.client.RevokeUserRole(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -146,6 +145,6 @@ func (c *Controller) getUserRoles(ctx *gin.Context) {
 	request.UserId = ctx.Param(pbtypesrest.UserId.String())
 
 	// Get all user's roles
-	response, err := c.service.GetUserRoles(ctx, grpcCtx, &request)
+	response, err := c.client.GetUserRoles(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

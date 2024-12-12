@@ -2,7 +2,6 @@ package refresh_tokens
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -10,6 +9,7 @@ import (
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
 	pbconfigrestrefreshtokens "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/auth/refresh-tokens"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ import (
 // @Router /api/v1/auth/refresh-tokens [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcauth.Service
+	client          pbauth.AuthClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +30,7 @@ type Controller struct {
 // NewController creates a new refresh tokens controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcauth.Service,
+	client pbauth.AuthClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +40,7 @@ func NewController(
 	// Create a new refresh tokens controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -112,7 +112,7 @@ func (c *Controller) isRefreshTokenValid(ctx *gin.Context) {
 	request.JwtId = ctx.Param(pbtypesrest.JwtId.String())
 
 	// Check if the refresh token is valid
-	response, err := c.service.IsRefreshTokenValid(ctx, grpcCtx, &request)
+	response, err := c.client.IsRefreshTokenValid(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -135,10 +135,10 @@ func (c *Controller) getRefreshTokensInformation(ctx *gin.Context) {
 		return
 	}
 
-	// Get all user' sessions
-	response, err := c.service.GetRefreshTokensInformation(
-		ctx,
+	// Get all user's refresh tokens information
+	response, err := c.client.GetRefreshTokensInformation(
 		grpcCtx,
+		&emptypb.Empty{},
 	)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
@@ -163,7 +163,7 @@ func (c *Controller) refreshToken(ctx *gin.Context) {
 	}
 
 	// Refresh the token
-	response, err := c.service.RefreshToken(ctx, grpcCtx)
+	response, err := c.client.RefreshToken(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -187,7 +187,7 @@ func (c *Controller) revokeRefreshTokens(ctx *gin.Context) {
 	}
 
 	// Revoke all user's refresh tokens
-	response, err := c.service.RevokeRefreshTokens(ctx, grpcCtx)
+	response, err := c.client.RevokeRefreshTokens(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -217,8 +217,7 @@ func (c *Controller) getRefreshTokenInformation(ctx *gin.Context) {
 	request.JwtId = ctx.Param(pbtypesrest.JwtId.String())
 
 	// Get the refresh token information
-	response, err := c.service.GetRefreshTokenInformation(
-		ctx,
+	response, err := c.client.GetRefreshTokenInformation(
 		grpcCtx,
 		&request,
 	)
@@ -251,6 +250,6 @@ func (c *Controller) revokeRefreshToken(ctx *gin.Context) {
 	request.JwtId = ctx.Param(pbtypesrest.JwtId.String())
 
 	// Revoke the given refresh token
-	response, err := c.service.RevokeRefreshToken(ctx, grpcCtx, &request)
+	response, err := c.client.RevokeRefreshToken(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

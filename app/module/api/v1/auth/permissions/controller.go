@@ -2,7 +2,6 @@ package permissions
 
 import (
 	"github.com/gin-gonic/gin"
-	appgrpcauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
@@ -10,6 +9,7 @@ import (
 	pbauth "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/auth"
 	pbconfigrestpermissions "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/config/rest/api/v1/auth/permissions"
 	pbtypesrest "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/types/rest"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ import (
 // @Router /api/v1/auth/permissions [group]
 type Controller struct {
 	route           *gin.RouterGroup
-	service         *appgrpcauth.Service
+	client          pbauth.AuthClient
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }
@@ -30,7 +30,7 @@ type Controller struct {
 // NewController creates a new permissions controller
 func NewController(
 	baseRoute *gin.RouterGroup,
-	service *appgrpcauth.Service,
+	client pbauth.AuthClient,
 	routeHandler commonhandler.Handler,
 	responseHandler commonclientresponse.Handler,
 ) *Controller {
@@ -40,7 +40,7 @@ func NewController(
 	// Create a new permissions controller
 	return &Controller{
 		route:           route,
-		service:         service,
+		client:          client,
 		routeHandler:    routeHandler,
 		responseHandler: responseHandler,
 	}
@@ -98,7 +98,7 @@ func (c *Controller) addPermission(ctx *gin.Context) {
 	}
 
 	// Add a permission
-	response, err := c.service.AddPermission(ctx, grpcCtx, &request)
+	response, err := c.client.AddPermission(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusCreated, response, err)
 }
 
@@ -123,7 +123,7 @@ func (c *Controller) getPermissions(ctx *gin.Context) {
 	}
 
 	// Get all permissions
-	response, err := c.service.GetPermissions(ctx, grpcCtx)
+	response, err := c.client.GetPermissions(grpcCtx, &emptypb.Empty{})
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -154,7 +154,7 @@ func (c *Controller) revokePermission(ctx *gin.Context) {
 	request.PermissionId = ctx.Param(pbtypesrest.PermissionId.String())
 
 	// Revoke a permission
-	response, err := c.service.RevokePermission(ctx, grpcCtx, &request)
+	response, err := c.client.RevokePermission(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
@@ -185,6 +185,6 @@ func (c *Controller) getPermission(ctx *gin.Context) {
 	request.PermissionId = ctx.Param(pbtypesrest.PermissionId.String())
 
 	// Get the permission
-	response, err := c.service.GetPermission(ctx, grpcCtx, &request)
+	response, err := c.client.GetPermission(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
