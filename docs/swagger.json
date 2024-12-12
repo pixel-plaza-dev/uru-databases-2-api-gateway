@@ -67,7 +67,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "v1 auth"
                 ],
                 "summary": "Log in a user",
                 "parameters": [
@@ -118,7 +118,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "v1 auth"
                 ],
                 "summary": "Log out a user",
                 "responses": {
@@ -5675,7 +5675,7 @@
             "type": "object",
             "properties": {
                 "permission": {
-                    "type": "string"
+                    "$ref": "#/definitions/auth.Permission"
                 }
             }
         },

@@ -73,7 +73,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "v1 auth"
                 ],
                 "summary": "Log in a user",
                 "parameters": [
@@ -124,7 +124,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "v1 auth"
                 ],
                 "summary": "Log out a user",
                 "responses": {
@@ -5681,7 +5681,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "permission": {
-                    "type": "string"
+                    "$ref": "#/definitions/auth.Permission"
                 }
             }
         },

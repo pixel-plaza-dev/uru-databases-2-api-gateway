@@ -3,7 +3,7 @@ definitions:
   auth.AddPermissionRequest:
     properties:
       permission:
-        type: string
+        $ref: '#/definitions/auth.Permission'
     type: object
   auth.AddPermissionResponse:
     properties:
@@ -1687,7 +1687,7 @@ paths:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Log in a user
       tags:
-      - auth
+      - v1 auth
   /api/v1/auth/log-out:
     post:
       consumes:
@@ -1712,7 +1712,7 @@ paths:
       - BearerAuth: []
       summary: Log out a user
       tags:
-      - auth
+      - v1 auth
   /api/v1/auth/permissions/:
     get:
       consumes:
