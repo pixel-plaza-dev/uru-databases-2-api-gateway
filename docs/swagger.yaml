@@ -208,6 +208,1162 @@ definitions:
       role_id:
         type: string
     type: object
+  order.AddProductToCartRequest:
+    properties:
+      branch_product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  order.AddProductToCartResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  order.GetCartResponse:
+    properties:
+      message:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/order.GetProduct'
+        type: array
+      total_price:
+        type: number
+    type: object
+  order.GetCartTotalResponse:
+    properties:
+      message:
+        type: string
+      total_price:
+        type: number
+    type: object
+  order.GetCartsResponse:
+    properties:
+      cart_id:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  order.GetCurrentCartResponse:
+    properties:
+      message:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/order.GetProduct'
+        type: array
+      total_price:
+        type: number
+    type: object
+  order.GetOrder:
+    properties:
+      order_date:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      order_id:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/order.GetProduct'
+        type: array
+      total_price:
+        type: string
+    type: object
+  order.GetOrderResponse:
+    properties:
+      message:
+        type: string
+      order:
+        $ref: '#/definitions/order.GetOrder'
+    type: object
+  order.GetOrdersResponse:
+    properties:
+      message:
+        type: string
+      orders_id:
+        items:
+          type: string
+        type: array
+    type: object
+  order.GetProduct:
+    properties:
+      branch_product_id:
+        type: string
+      description:
+        type: string
+      image_id:
+        type: string
+      name:
+        type: string
+      quantity:
+        type: integer
+      total_price:
+        type: string
+    type: object
+  order.PlaceOrderResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  order.RemoveProductFromCartResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.ActivatePaymentAccountRequest:
+    properties:
+      payment_account_id:
+        type: string
+    type: object
+  payment.ActivatePaymentAccountResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.AddBranchRentPaymentRequest:
+    properties:
+      branch_rent_id:
+        type: string
+      payment:
+        $ref: '#/definitions/payment.AddPayment'
+    type: object
+  payment.AddBranchRentPaymentResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.AddOrderPaymentRequest:
+    properties:
+      order_id:
+        type: string
+      payment:
+        $ref: '#/definitions/payment.AddPayment'
+    type: object
+  payment.AddOrderPaymentResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.AddPayment:
+    properties:
+      amount:
+        type: string
+      payment_account_id:
+        type: string
+      payment_date:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      payment_identifier:
+        type: string
+    type: object
+  payment.AddPaymentAccountRequest:
+    properties:
+      business_id:
+        type: string
+      payment_account:
+        $ref: '#/definitions/payment.PaymentAccount'
+    type: object
+  payment.AddPaymentAccountResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.GetActivePaymentAccountsResponse:
+    properties:
+      message:
+        type: string
+      payment_accounts:
+        items:
+          $ref: '#/definitions/payment.PaymentAccount'
+        type: array
+    type: object
+  payment.GetBranchRentPaymentsResponse:
+    properties:
+      message:
+        type: string
+      payments:
+        items:
+          $ref: '#/definitions/payment.GetPayment'
+        type: array
+    type: object
+  payment.GetBranchRentsPaymentsResponse:
+    properties:
+      message:
+        type: string
+      payments:
+        items:
+          $ref: '#/definitions/payment.GetPayment'
+        type: array
+    type: object
+  payment.GetOrderPaymentsResponse:
+    properties:
+      message:
+        type: string
+      payments:
+        items:
+          $ref: '#/definitions/payment.GetPayment'
+        type: array
+    type: object
+  payment.GetPayment:
+    properties:
+      amount:
+        type: string
+      is_verified:
+        type: boolean
+      payment_account_id:
+        type: string
+      payment_date:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      payment_identifier:
+        type: string
+    type: object
+  payment.GetPaymentAccountsResponse:
+    properties:
+      message:
+        type: string
+      payment_accounts:
+        items:
+          $ref: '#/definitions/payment.PaymentAccount'
+        type: array
+    type: object
+  payment.GetSuspendedPaymentAccountsResponse:
+    properties:
+      message:
+        type: string
+      payment_accounts:
+        items:
+          $ref: '#/definitions/payment.PaymentAccount'
+        type: array
+    type: object
+  payment.PayForBranchRentRequest:
+    properties:
+      branch_rent_id:
+        type: string
+      payment:
+        $ref: '#/definitions/payment.AddPayment'
+    type: object
+  payment.PayForBranchRentResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.PayForOrderRequest:
+    properties:
+      order_id:
+        type: string
+      payment:
+        $ref: '#/definitions/payment.AddPayment'
+    type: object
+  payment.PayForOrderResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.PaymentAccount:
+    properties:
+      account_email:
+        type: string
+      account_identifier:
+        type: string
+      account_name:
+        type: string
+      account_phone_number:
+        type: string
+      platform:
+        type: string
+    type: object
+  payment.SuspendPaymentAccountRequest:
+    properties:
+      payment_account_id:
+        type: string
+    type: object
+  payment.SuspendPaymentAccountResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  payment.VerifyPaymentRequest:
+    properties:
+      payment_id:
+        type: string
+    type: object
+  payment.VerifyPaymentResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.ActivateBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.ActivateBusinessProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.ActivateBusinessRequest:
+    properties:
+      business_id:
+        type: string
+    type: object
+  shop.ActivateBusinessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.ActivateProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBranchProductRequest:
+    properties:
+      branch_id:
+        type: string
+      discount_percentage:
+        type: number
+      price:
+        type: number
+      product_id:
+        type: string
+      stock:
+        type: integer
+    type: object
+  shop.AddBranchProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBranchRent:
+    properties:
+      from:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      price:
+        type: number
+      store_id:
+        type: string
+      to:
+        $ref: '#/definitions/timestamppb.Timestamp'
+    type: object
+  shop.AddBranchRentRequest:
+    properties:
+      branch_id:
+        type: string
+      branch_rent:
+        $ref: '#/definitions/shop.AddBranchRent'
+    type: object
+  shop.AddBranchRentResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBranchRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      store_id:
+        type: string
+    type: object
+  shop.AddBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBusinessClientRequest:
+    properties:
+      business_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  shop.AddBusinessClientResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBusinessMarketCategoryRequest:
+    properties:
+      business_id:
+        type: string
+      market_category_id:
+        type: string
+    type: object
+  shop.AddBusinessMarketCategoryResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBusinessOwnerRequest:
+    properties:
+      business_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  shop.AddBusinessOwnerResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBusinessProductRequest:
+    properties:
+      additional_details:
+        items:
+          type: string
+        type: array
+      business_id:
+        type: string
+      images_id:
+        items:
+          type: string
+        type: array
+      product_id:
+        type: string
+    type: object
+  shop.AddBusinessProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddBusinessRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.AddBusinessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddMarketCategoryRequest:
+    properties:
+      market_category:
+        $ref: '#/definitions/shop.MarketCategory'
+    type: object
+  shop.AddMarketCategoryResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddProductCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.AddProductCategoryResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddProductRequest:
+    properties:
+      product:
+        $ref: '#/definitions/shop.Product'
+      product_id:
+        type: string
+    type: object
+  shop.AddProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.AddStoreRequest:
+    properties:
+      store:
+        $ref: '#/definitions/shop.Store'
+    type: object
+  shop.AddStoreResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.Book:
+    properties:
+      author:
+        type: string
+      genres:
+        items:
+          type: string
+        type: array
+      isbn:
+        type: string
+      language:
+        type: string
+      pages:
+        type: integer
+      published_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      publisher:
+        type: string
+    type: object
+  shop.BranchProduct:
+    properties:
+      additional_details:
+        items:
+          type: string
+        type: array
+      discount_percentage:
+        type: number
+      images_id:
+        items:
+          type: string
+        type: array
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/shop.Product'
+      stock:
+        type: integer
+    type: object
+  shop.BusinessProduct:
+    properties:
+      additional_details:
+        items:
+          type: string
+        type: array
+      images_id:
+        items:
+          type: string
+        type: array
+      product_id:
+        type: string
+    type: object
+  shop.Clothing:
+    properties:
+      color:
+        type: string
+      gender:
+        type: string
+      material:
+        type: string
+      season:
+        type: string
+      size:
+        type: string
+    type: object
+  shop.DeleteBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.DeleteBusinessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.DeleteStoreResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.Electronics:
+    properties:
+      color:
+        type: string
+      model:
+        type: string
+      technical_specifications:
+        items:
+          type: string
+        type: array
+    type: object
+  shop.Food:
+    properties:
+      food_type:
+        type: string
+      ingredients:
+        items:
+          type: string
+        type: array
+    type: object
+  shop.GetBranchProductResponse:
+    properties:
+      branch_product:
+        $ref: '#/definitions/shop.BranchProduct'
+      message:
+        type: string
+    type: object
+  shop.GetBranchRent:
+    properties:
+      from:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      paid_amount:
+        type: number
+      price:
+        type: number
+      store_id:
+        type: string
+      to:
+        $ref: '#/definitions/timestamppb.Timestamp'
+    type: object
+  shop.GetBranchRentsResponse:
+    properties:
+      branch_rents:
+        items:
+          $ref: '#/definitions/shop.GetBranchRent'
+        type: array
+      message:
+        type: string
+    type: object
+  shop.GetBranchResponse:
+    properties:
+      description:
+        type: string
+      joined_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      message:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.GetBusinessBranchesResponse:
+    properties:
+      branch_ids:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  shop.GetBusinessMarketCategoriesResponse:
+    properties:
+      market_category_ids:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  shop.GetBusinessOwnersResponse:
+    properties:
+      message:
+        type: string
+      user_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  shop.GetBusinessProductResponse:
+    properties:
+      business_product:
+        $ref: '#/definitions/shop.BusinessProduct'
+      message:
+        type: string
+    type: object
+  shop.GetBusinessResponse:
+    properties:
+      description:
+        type: string
+      joined_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      message:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.GetBusinessUnpaidBranchRentsResponse:
+    properties:
+      branch_rents:
+        items:
+          $ref: '#/definitions/shop.GetBranchRent'
+        type: array
+      message:
+        type: string
+    type: object
+  shop.GetMarketCategoryResponse:
+    properties:
+      market_category:
+        $ref: '#/definitions/shop.MarketCategory'
+      message:
+        type: string
+    type: object
+  shop.GetProductCategoryResponse:
+    properties:
+      message:
+        type: string
+      product_category:
+        $ref: '#/definitions/shop.ProductCategory'
+    type: object
+  shop.GetProductResponse:
+    properties:
+      message:
+        type: string
+      product:
+        $ref: '#/definitions/shop.Product'
+    type: object
+  shop.GetStoreResponse:
+    properties:
+      message:
+        type: string
+      store:
+        $ref: '#/definitions/shop.Store'
+    type: object
+  shop.GetUnoccupiedStoresResponse:
+    properties:
+      message:
+        type: string
+      stores:
+        items:
+          $ref: '#/definitions/shop.Store'
+        type: array
+    type: object
+  shop.GetUnpaidBranchRentsResponse:
+    properties:
+      branch_rents:
+        items:
+          $ref: '#/definitions/shop.GetBranchRent'
+        type: array
+      message:
+        type: string
+    type: object
+  shop.IsBusinessClientResponse:
+    properties:
+      is_client:
+        type: boolean
+      message:
+        type: string
+    type: object
+  shop.MarketCategory:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.Product:
+    properties:
+      barcode:
+        type: string
+      book:
+        $ref: '#/definitions/shop.Book'
+      brand:
+        type: string
+      clothing:
+        $ref: '#/definitions/shop.Clothing'
+      description:
+        type: string
+      electronics:
+        $ref: '#/definitions/shop.Electronics'
+      food:
+        $ref: '#/definitions/shop.Food'
+      height:
+        type: number
+      length:
+        type: number
+      name:
+        type: string
+      price:
+        type: number
+      product_category_ids:
+        items:
+          type: string
+        type: array
+      toy:
+        $ref: '#/definitions/shop.Toy'
+      weight:
+        type: number
+      width:
+        type: number
+    type: object
+  shop.ProductCategory:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.RemoveBusinessOwnerRequest:
+    properties:
+      business_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  shop.RemoveBusinessOwnerResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.SearchBranchProductResult:
+    properties:
+      additional_details:
+        items:
+          type: string
+        type: array
+      brand:
+        type: string
+      description:
+        type: string
+      discount_percentage:
+        type: number
+      images_id:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: string
+      stock:
+        type: integer
+    type: object
+  shop.SearchBranchProductsRequest:
+    properties:
+      product_category_id:
+        type: string
+      query:
+        type: string
+    type: object
+  shop.SearchBranchProductsResponse:
+    properties:
+      message:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/shop.SearchBranchProductResult'
+        type: array
+    type: object
+  shop.SearchBusinessProductResult:
+    properties:
+      additional_details:
+        items:
+          type: string
+        type: array
+      brand:
+        type: string
+      description:
+        type: string
+      images_id:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      product_id:
+        type: string
+    type: object
+  shop.SearchBusinessProductsRequest:
+    properties:
+      product_category_id:
+        type: string
+      query:
+        type: string
+    type: object
+  shop.SearchBusinessProductsResponse:
+    properties:
+      message:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/shop.SearchBusinessProductResult'
+        type: array
+    type: object
+  shop.SearchProductResult:
+    properties:
+      brand:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      product_id:
+        type: string
+    type: object
+  shop.SearchProductsRequest:
+    properties:
+      product_category_id:
+        type: string
+      query:
+        type: string
+    type: object
+  shop.SearchProductsResponse:
+    properties:
+      message:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/shop.SearchProductResult'
+        type: array
+    type: object
+  shop.SetBusinessProfilePictureRequest:
+    properties:
+      business_id:
+        type: string
+      image_id:
+        type: string
+    type: object
+  shop.SetBusinessProfilePictureResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.Store:
+    properties:
+      floors:
+        type: integer
+      mall_floor:
+        type: integer
+      square_meters:
+        type: integer
+      store_number:
+        type: string
+    type: object
+  shop.SuspendBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.SuspendBusinessProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.SuspendBusinessRequest:
+    properties:
+      business_id:
+        type: string
+    type: object
+  shop.SuspendBusinessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.SuspendProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.Toy:
+    properties:
+      age_group:
+        type: string
+      toy_type:
+        type: string
+    type: object
+  shop.UpdateBook:
+    properties:
+      author:
+        type: string
+      genres:
+        items:
+          type: string
+        type: array
+      isbn:
+        type: string
+      language:
+        type: string
+      pages:
+        type: integer
+      published_at:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      publisher:
+        type: string
+    type: object
+  shop.UpdateBranchProductRequest:
+    properties:
+      branch_id:
+        type: string
+      discount_percentage:
+        type: number
+      price:
+        type: number
+      product_id:
+        type: string
+      stock:
+        type: integer
+    type: object
+  shop.UpdateBranchProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateBranchRentRequest:
+    properties:
+      branch_rent_id:
+        type: string
+      from:
+        $ref: '#/definitions/timestamppb.Timestamp'
+      price:
+        type: string
+      to:
+        $ref: '#/definitions/timestamppb.Timestamp'
+    type: object
+  shop.UpdateBranchRentResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateBranchRequest:
+    properties:
+      branch_id:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.UpdateBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateBusinessProductRequest:
+    properties:
+      additional_details:
+        items:
+          type: string
+        type: array
+      business_id:
+        type: string
+      images_id:
+        items:
+          type: string
+        type: array
+      product_id:
+        type: string
+    type: object
+  shop.UpdateBusinessProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateBusinessRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.UpdateBusinessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateClothing:
+    properties:
+      color:
+        type: string
+      gender:
+        type: string
+      material:
+        type: string
+      season:
+        type: string
+      size:
+        type: string
+    type: object
+  shop.UpdateElectronics:
+    properties:
+      color:
+        type: string
+      model:
+        type: string
+      technical_specifications:
+        items:
+          type: string
+        type: array
+    type: object
+  shop.UpdateFood:
+    properties:
+      food_type:
+        type: string
+      ingredients:
+        items:
+          type: string
+        type: array
+    type: object
+  shop.UpdateMarketCategoryRequest:
+    properties:
+      description:
+        type: string
+      market_category_id:
+        type: string
+      name:
+        type: string
+    type: object
+  shop.UpdateMarketCategoryResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateProduct:
+    properties:
+      barcode:
+        type: string
+      book:
+        $ref: '#/definitions/shop.UpdateBook'
+      brand:
+        type: string
+      clothing:
+        $ref: '#/definitions/shop.UpdateClothing'
+      description:
+        type: string
+      electronics:
+        $ref: '#/definitions/shop.UpdateElectronics'
+      food:
+        $ref: '#/definitions/shop.UpdateFood'
+      height:
+        type: number
+      length:
+        type: number
+      name:
+        type: string
+      price:
+        type: number
+      product_category_ids:
+        items:
+          type: string
+        type: array
+      toy:
+        $ref: '#/definitions/shop.UpdateToy'
+      weight:
+        type: number
+      width:
+        type: number
+    type: object
+  shop.UpdateProductCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      product_category_id:
+        type: string
+    type: object
+  shop.UpdateProductCategoryResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateProductRequest:
+    properties:
+      product:
+        $ref: '#/definitions/shop.UpdateProduct'
+      product_id:
+        type: string
+    type: object
+  shop.UpdateProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.UpdateToy:
+    properties:
+      age_group:
+        type: string
+      toy_type:
+        type: string
+    type: object
   timestamppb.Timestamp:
     properties:
       nanos:
@@ -333,6 +1489,8 @@ definitions:
         type: string
       phone_number:
         type: string
+      profile_picture:
+        type: string
       username:
         type: string
     type: object
@@ -359,6 +1517,8 @@ definitions:
       last_name:
         type: string
       message:
+        type: string
+      profile_picture:
         type: string
     type: object
   user.GetUserIdByUsernameResponse:
@@ -1115,6 +2275,2274 @@ paths:
       summary: Add a role to a user
       tags:
       - v1 auth user-roles
+  /api/v1/orders:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.GetOrdersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all orders
+      tags:
+      - v1 orders
+  /api/v1/orders/{orderId}:
+    get:
+      consumes:
+      - application/json
+      description: Get an order by ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: orderId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.GetOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get an order by ID
+      tags:
+      - v1 orders
+  /api/v1/orders/carts:
+    get:
+      consumes:
+      - application/json
+      description: Get all carts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.GetCartsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all carts
+      tags:
+      - v1 orders carts
+  /api/v1/orders/carts/{cartId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a cart by ID
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cartId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.GetCartResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a cart by ID
+      tags:
+      - v1 orders carts
+  /api/v1/orders/carts/{cartId}/total:
+    get:
+      consumes:
+      - application/json
+      description: Get the total of a cart by ID
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cartId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.GetCartTotalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get the total of a cart by ID
+      tags:
+      - v1 orders carts
+  /api/v1/orders/carts/current:
+    get:
+      consumes:
+      - application/json
+      description: Get the current cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.GetCurrentCartResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get the current cart
+      tags:
+      - v1 orders carts current-cart
+    post:
+      consumes:
+      - application/json
+      description: Add a product to the current cart
+      parameters:
+      - description: Add Product To Cart Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.AddProductToCartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.AddProductToCartResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a product to the current cart
+      tags:
+      - v1 orders carts current-cart
+  /api/v1/orders/carts/current/{branchProductId}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a product from the current cart
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cartId
+        required: true
+        type: string
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.RemoveProductFromCartResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove a product from the current cart
+      tags:
+      - v1 orders carts current-cart
+  /api/v1/orders/carts/current/checkout:
+    post:
+      consumes:
+      - application/json
+      description: Place an order for the current cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.PlaceOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Place an order for the current cart
+      tags:
+      - v1 orders carts current-cart
+  /api/v1/payments/accounts:
+    get:
+      consumes:
+      - application/json
+      description: Get payment accounts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.GetPaymentAccountsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get payment accounts
+      tags:
+      - v1 payments accounts
+    post:
+      consumes:
+      - application/json
+      description: Add a new payment account
+      parameters:
+      - description: Add Payment Account Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.AddPaymentAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/payment.AddPaymentAccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new payment account
+      tags:
+      - v1 payments accounts
+  /api/v1/payments/accounts/activate:
+    put:
+      consumes:
+      - application/json
+      description: Activate a payment account
+      parameters:
+      - description: Activate Payment Account Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.ActivatePaymentAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.ActivatePaymentAccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Activate a payment account
+      tags:
+      - v1 payments accounts
+  /api/v1/payments/accounts/active:
+    get:
+      consumes:
+      - application/json
+      description: Get active payment accounts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.GetActivePaymentAccountsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get active payment accounts
+      tags:
+      - v1 payments accounts
+  /api/v1/payments/accounts/suspend:
+    put:
+      consumes:
+      - application/json
+      description: Suspend a payment account
+      parameters:
+      - description: Suspend Payment Account Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.SuspendPaymentAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.SuspendPaymentAccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend a payment account
+      tags:
+      - v1 payments accounts
+  /api/v1/payments/accounts/suspended:
+    get:
+      consumes:
+      - application/json
+      description: Get suspended payment accounts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.GetSuspendedPaymentAccountsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get suspended payment accounts
+      tags:
+      - v1 payments accounts
+  /api/v1/payments/accounts/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify a payment
+      parameters:
+      - description: Verify Payment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.VerifyPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.VerifyPaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Verify a payment
+      tags:
+      - v1 payments accounts
+  /api/v1/payments/branch-rents:
+    get:
+      consumes:
+      - application/json
+      description: Get branch rents payments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.GetBranchRentsPaymentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get branch rents payments
+      tags:
+      - v1 payments branch-rents
+    post:
+      consumes:
+      - application/json
+      description: Add a new branch rent payment
+      parameters:
+      - description: Add Branch Rent Payment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.AddBranchRentPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/payment.AddBranchRentPaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new branch rent payment
+      tags:
+      - v1 payments branch-rents
+  /api/v1/payments/branch-rents/{branchRentId}:
+    get:
+      consumes:
+      - application/json
+      description: Get branch rent payments by branch rent ID
+      parameters:
+      - description: Branch Rent ID
+        in: path
+        name: branchRentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.GetBranchRentPaymentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get branch rent payments by branch rent ID
+      tags:
+      - v1 payments branch-rents
+  /api/v1/payments/branch-rents/pay:
+    post:
+      consumes:
+      - application/json
+      description: Process payment for a branch rent
+      parameters:
+      - description: Pay For Branch Rent Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.PayForBranchRentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.PayForBranchRentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Process payment for a branch rent
+      tags:
+      - v1 payments branch-rents
+  /api/v1/payments/orders:
+    get:
+      consumes:
+      - application/json
+      description: Get order payments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.GetOrderPaymentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order payments
+      tags:
+      - v1 payments orders
+    post:
+      consumes:
+      - application/json
+      description: Add a new order payment
+      parameters:
+      - description: Add Order Payment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.AddOrderPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/payment.AddOrderPaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new order payment
+      tags:
+      - v1 payments orders
+  /api/v1/payments/orders/pay:
+    post:
+      consumes:
+      - application/json
+      description: Process payment for an order
+      parameters:
+      - description: Pay For Order Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.PayForOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment.PayForOrderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Process payment for an order
+      tags:
+      - v1 payments orders
+  /api/v1/shops/businesses:
+    post:
+      consumes:
+      - application/json
+      description: Add a new business
+      parameters:
+      - description: Add Business Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBusinessRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new business
+      tags:
+      - v1 shops businesses
+    put:
+      consumes:
+      - application/json
+      description: Update a business
+      parameters:
+      - description: Update Business Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateBusinessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a business
+      tags:
+      - v1 shops businesses
+  /api/v1/shops/businesses/{businessId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a business
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.DeleteBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a business
+      tags:
+      - v1 shops businesses
+    get:
+      consumes:
+      - application/json
+      description: Get a business by ID
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a business by ID
+      tags:
+      - v1 shops businesses
+  /api/v1/shops/businesses/activate:
+    post:
+      consumes:
+      - application/json
+      description: Activate a business
+      parameters:
+      - description: Activate Business Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.ActivateBusinessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.ActivateBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Activate a business
+      tags:
+      - v1 shops businesses
+  /api/v1/shops/businesses/branches:
+    post:
+      consumes:
+      - application/json
+      description: Add a new branch
+      parameters:
+      - description: Add Branch Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBranchRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new branch
+      tags:
+      - v1 shops businesses branches
+    put:
+      consumes:
+      - application/json
+      description: Update a branch
+      parameters:
+      - description: Update Branch Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateBranchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a branch
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/branches/{branchId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.DeleteBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a branch
+      tags:
+      - v1 shops businesses branches
+    get:
+      consumes:
+      - application/json
+      description: Get a branch by ID
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a branch by ID
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/branches/activate/{branchId}:
+    post:
+      consumes:
+      - application/json
+      description: Activate a branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.ActivateBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Activate a branch
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/branches/business-id/{businessId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all branches for a business
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBusinessBranchesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get all branches for a business
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/branches/products:
+    post:
+      consumes:
+      - application/json
+      description: Add a new branch product
+      parameters:
+      - description: Add Branch Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBranchProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBranchProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new branch product
+      tags:
+      - v1 shops businesses branches products
+    put:
+      consumes:
+      - application/json
+      description: Update a branch product
+      parameters:
+      - description: Update Branch Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateBranchProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateBranchProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a branch product
+      tags:
+      - v1 shops businesses branches products
+  /api/v1/shops/businesses/branches/products/{productId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a branch product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBranchProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a branch product by ID
+      tags:
+      - v1 shops businesses branches products
+  /api/v1/shops/businesses/branches/products/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for branch products
+      parameters:
+      - description: Search Branch Products Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.SearchBranchProductsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SearchBranchProductsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Search for branch products
+      tags:
+      - v1 shops businesses branches products
+  /api/v1/shops/businesses/branches/suspend/{branchId}:
+    post:
+      consumes:
+      - application/json
+      description: Suspend a branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SuspendBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend a branch
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/clients:
+    post:
+      consumes:
+      - application/json
+      description: Add a new business client
+      parameters:
+      - description: Add Business Client Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBusinessClientRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBusinessClientResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new business client
+      tags:
+      - v1 shops businesses clients
+  /api/v1/shops/businesses/markets/categories:
+    post:
+      consumes:
+      - application/json
+      description: Add a new business market category
+      parameters:
+      - description: Add Business Market Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBusinessMarketCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBusinessMarketCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new business market category
+      tags:
+      - v1 shops businesses markets
+  /api/v1/shops/businesses/markets/categories/{businessId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all business market categories
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBusinessMarketCategoriesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get all business market categories
+      tags:
+      - v1 shops businesses markets
+  /api/v1/shops/businesses/owners:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a business owner
+      parameters:
+      - description: Remove Business Owner Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.RemoveBusinessOwnerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.RemoveBusinessOwnerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove a business owner
+      tags:
+      - v1 shops businesses owners
+    post:
+      consumes:
+      - application/json
+      description: Add a new business owner
+      parameters:
+      - description: Add Business Owner Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBusinessOwnerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBusinessOwnerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new business owner
+      tags:
+      - v1 shops businesses owners
+  /api/v1/shops/businesses/owners/{businessId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all business owners
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBusinessOwnersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all business owners
+      tags:
+      - v1 shops businesses owners
+  /api/v1/shops/businesses/products:
+    post:
+      consumes:
+      - application/json
+      description: Add a new business product
+      parameters:
+      - description: Add Business Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBusinessProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBusinessProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new business product
+      tags:
+      - v1 shops businesses products
+    put:
+      consumes:
+      - application/json
+      description: Update a business product
+      parameters:
+      - description: Update Business Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateBusinessProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateBusinessProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a business product
+      tags:
+      - v1 shops businesses products
+  /api/v1/shops/businesses/products/{productId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a business product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBusinessProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a business product by ID
+      tags:
+      - v1 shops businesses products
+  /api/v1/shops/businesses/products/activate/{productId}:
+    post:
+      consumes:
+      - application/json
+      description: Activate a business product
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.ActivateBusinessProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Activate a business product
+      tags:
+      - v1 shops businesses products
+  /api/v1/shops/businesses/products/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for business products
+      parameters:
+      - description: Search Business Products Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.SearchBusinessProductsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SearchBusinessProductsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Search for business products
+      tags:
+      - v1 shops businesses products
+  /api/v1/shops/businesses/products/suspend/{productId}:
+    post:
+      consumes:
+      - application/json
+      description: Suspend a business product
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SuspendBusinessProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend a business product
+      tags:
+      - v1 shops businesses products
+  /api/v1/shops/businesses/profile-picture:
+    post:
+      consumes:
+      - application/json
+      description: Set the profile picture of a business
+      parameters:
+      - description: Set Business Profile Picture Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.SetBusinessProfilePictureRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SetBusinessProfilePictureResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Set the profile picture of a business
+      tags:
+      - v1 shops businesses
+  /api/v1/shops/businesses/suspend:
+    post:
+      consumes:
+      - application/json
+      description: Suspend a business
+      parameters:
+      - description: Suspend Business Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.SuspendBusinessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SuspendBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend a business
+      tags:
+      - v1 shops businesses
+  /api/v1/shops/clients/{businessId}:
+    get:
+      consumes:
+      - application/json
+      description: Check if a business is a client
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.IsBusinessClientResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Check if a business is a client
+      tags:
+      - v1 shops businesses clients
+  /api/v1/shops/markets/categories:
+    post:
+      consumes:
+      - application/json
+      description: Add a new market category
+      parameters:
+      - description: Add Market Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddMarketCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddMarketCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new market category
+      tags:
+      - v1 shops markets categories
+    put:
+      consumes:
+      - application/json
+      description: Update a market category
+      parameters:
+      - description: Update Market Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateMarketCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateMarketCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a market category
+      tags:
+      - v1 shops markets categories
+  /api/v1/shops/markets/categories/{categoryId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a market category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetMarketCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a market category by ID
+      tags:
+      - v1 shops markets categories
+  /api/v1/shops/products:
+    post:
+      consumes:
+      - application/json
+      description: Add a new product
+      parameters:
+      - description: Add Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new product
+      tags:
+      - v1 shops products
+    put:
+      consumes:
+      - application/json
+      description: Update a product
+      parameters:
+      - description: Update Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - v1 shops products
+  /api/v1/shops/products/{productId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a product by ID
+      tags:
+      - v1 shops products
+  /api/v1/shops/products/activate/{productId}:
+    post:
+      consumes:
+      - application/json
+      description: Activate a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.ActivateProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Activate a product
+      tags:
+      - v1 shops products
+  /api/v1/shops/products/categories:
+    post:
+      consumes:
+      - application/json
+      description: Add a new product category
+      parameters:
+      - description: Add Product Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddProductCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddProductCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new product category
+      tags:
+      - v1 shops products categories
+    put:
+      consumes:
+      - application/json
+      description: Update a product category
+      parameters:
+      - description: Update Product Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateProductCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateProductCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a product category
+      tags:
+      - v1 shops products categories
+  /api/v1/shops/products/categories/{categoryId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a product category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetProductCategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get a product category by ID
+      tags:
+      - v1 shops products categories
+  /api/v1/shops/products/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for products
+      parameters:
+      - description: Search Products Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.SearchProductsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SearchProductsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Search for products
+      tags:
+      - v1 shops products
+  /api/v1/shops/products/suspend/{productId}:
+    post:
+      consumes:
+      - application/json
+      description: Suspend a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.SuspendProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend a product
+      tags:
+      - v1 shops products
+  /api/v1/shops/stores:
+    post:
+      consumes:
+      - application/json
+      description: Add a new store
+      parameters:
+      - description: Add Store Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddStoreRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddStoreResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new store
+      tags:
+      - v1 shops stores
+  /api/v1/shops/stores/{storeId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.DeleteStoreResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a store
+      tags:
+      - v1 shops stores
+    get:
+      consumes:
+      - application/json
+      description: Get a store by ID
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetStoreResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a store by ID
+      tags:
+      - v1 shops stores
+  /api/v1/shops/stores/rents:
+    post:
+      consumes:
+      - application/json
+      description: Add a new branch rent
+      parameters:
+      - description: Add Branch Rent Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.AddBranchRentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.AddBranchRentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new branch rent
+      tags:
+      - v1 shops stores rents
+    put:
+      consumes:
+      - application/json
+      description: Update a branch rent
+      parameters:
+      - description: Update Branch Rent Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateBranchRentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateBranchRentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a branch rent
+      tags:
+      - v1 shops stores rents
+  /api/v1/shops/stores/rents/{branchId}:
+    get:
+      consumes:
+      - application/json
+      description: Get branch rents by branch ID
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBranchRentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get branch rents by branch ID
+      tags:
+      - v1 shops stores rents
+  /api/v1/shops/stores/rents/branch-unpaid/{branchId}:
+    get:
+      consumes:
+      - application/json
+      description: Get unpaid branch rents by branch ID
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetUnpaidBranchRentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get unpaid branch rents by branch ID
+      tags:
+      - v1 shops stores rents
+  /api/v1/shops/stores/rents/business-unpaid/{businessId}:
+    get:
+      consumes:
+      - application/json
+      description: Get unpaid branch rents by business ID
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetBusinessUnpaidBranchRentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get unpaid branch rents by business ID
+      tags:
+      - v1 shops stores rents
+  /api/v1/shops/stores/unoccupied:
+    get:
+      consumes:
+      - application/json
+      description: Get unoccupied stores
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.GetUnoccupiedStoresResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get unoccupied stores
+      tags:
+      - v1 shops stores
   /api/v1/users:
     patch:
       consumes:

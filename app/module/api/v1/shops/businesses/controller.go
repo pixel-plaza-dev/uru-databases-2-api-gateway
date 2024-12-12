@@ -8,7 +8,9 @@ import (
 	moduleshopsowners "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/shops/businesses/owners"
 	moduleshopsproducts "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/shops/businesses/products"
 	apptypes "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/types"
+	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonhandler "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/route"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"
 	commongrpcclientctx "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/context"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
 	pbshop "github.com/pixel-plaza-dev/uru-databases-2-protobuf-common/compiled/pixel_plaza/shop"
@@ -27,6 +29,7 @@ import (
 type Controller struct {
 	route           *gin.RouterGroup
 	client          pbshop.ShopClient
+	authMiddleware  authmiddleware.Authentication
 	routeHandler    commonhandler.Handler
 	responseHandler commonclientresponse.Handler
 }

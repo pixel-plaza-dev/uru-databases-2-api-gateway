@@ -5,7 +5,7 @@ import (
 	moduleauth "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/auth"
 	moduleorders "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/orders"
 	modulepayments "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/payments"
-	moduleshops "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/shops/businesses"
+	moduleshops "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/shops"
 	moduleusers "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api/v1/users"
 	authmiddleware "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	_ "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/types"

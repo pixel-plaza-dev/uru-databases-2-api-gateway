@@ -24,7 +24,7 @@ import (
 // Controller struct for the auth module
 // @Summary Auth Router Group
 // @Description Router group for authentication-related endpoints
-// @Tags auth
+// @Tags v1 auth
 // @Accept json
 // @Produce json
 // @Router /api/v1/auth [group]
@@ -110,7 +110,7 @@ func (c *Controller) initializeChildren() {
 // logIn logs in a user
 // @Summary Log in a user
 // @Description Log in a user with their credentials
-// @Tags auth
+// @Tags v1 auth
 // @Accept json
 // @Produce json
 // @Param request body LogInRequest true "Log In Request"
@@ -138,7 +138,7 @@ func (c *Controller) logIn(ctx *gin.Context) {
 // logOut logs out a user
 // @Summary Log out a user
 // @Description Log out a user by invalidating their access token
-// @Tags auth
+// @Tags v1 auth
 // @Accept json
 // @Produce json
 // @Success 200 {object} pbauth.LogOutResponse

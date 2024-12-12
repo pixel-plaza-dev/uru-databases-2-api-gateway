@@ -54,7 +54,7 @@ func (c *Controller) Initialize() {
 			c.addBusinessOwner,
 		),
 	)
-	c.route.POST(
+	c.route.DELETE(
 		c.routeHandler.CreateAuthenticatedEndpoint(
 			pbconfigrestowners.RemoveBusinessOwnerMapper,
 			c.removeBusinessOwner,
