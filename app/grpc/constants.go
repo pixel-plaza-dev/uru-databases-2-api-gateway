@@ -7,8 +7,8 @@ const (
 	// AuthServiceUriKey is the key of the auth service URI
 	AuthServiceUriKey = "AUTH_SERVICE_HOST"
 
-	// BusinessServiceUriKey is the key of the business service URI
-	BusinessServiceUriKey = "BUSINESS_SERVICE_HOST"
+	// ShopServiceUriKey is the key of the shop service URI
+	ShopServiceUriKey = "SHOP_SERVICE_HOST"
 
 	// OrderServiceUriKey is the key of the order service URI
 	OrderServiceUriKey = "ORDER_SERVICE_HOST"
