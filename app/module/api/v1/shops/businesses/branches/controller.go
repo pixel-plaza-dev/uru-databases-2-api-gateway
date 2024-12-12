@@ -59,11 +59,16 @@ func (c *Controller) Initialize() {
 		),
 	)
 	c.route.PUT(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestbranches.UpdateBranchMapper, c.updateBranch))
-	c.route.POST(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestbranches.SuspendBranchMapper, c.suspendBranch))
 	c.route.POST(
 		c.routeHandler.CreateAuthenticatedEndpoint(
-			pbconfigrestbranches.ActivateBranchMapper,
-			c.activateBranch,
+			pbconfigrestbranches.CloseTemporarilyBranchMapper,
+			c.closeTemporarilyBranch,
+		),
+	)
+	c.route.POST(
+		c.routeHandler.CreateAuthenticatedEndpoint(
+			pbconfigrestbranches.OpenBranchMapper,
+			c.openBranch,
 		),
 	)
 	c.route.DELETE(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestbranches.DeleteBranchMapper, c.deleteBranch))
@@ -197,20 +202,20 @@ func (c *Controller) updateBranch(ctx *gin.Context) {
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
-// suspendBranch suspends a branch
-// @Summary Suspend a branch
-// @Description Suspend a branch
+// closeTemporarilyBranch closes temporarily the given branch
+// @Summary Close temporarily the given branch
+// @Description Close temporarily the given branch
 // @Tags v1 shops businesses branches
 // @Accept json
 // @Produce json
 // @Param branchId path string true "Branch ID"
-// @Success 200 {object} pbshop.SuspendBranchResponse
+// @Success 200 {object} pbshop.CloseTemporarilyBranchResponse
 // @Failure 400 {object} _.ErrorResponse
 // @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
-// @Router /api/v1/shops/businesses/branches/suspend/{branchId} [post]
-func (c *Controller) suspendBranch(ctx *gin.Context) {
-	var request pbshop.SuspendBranchRequest
+// @Router /api/v1/shops/businesses/branches/close-temporarily/{branchId} [post]
+func (c *Controller) closeTemporarilyBranch(ctx *gin.Context) {
+	var request pbshop.CloseTemporarilyBranchRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -223,24 +228,24 @@ func (c *Controller) suspendBranch(ctx *gin.Context) {
 	request.BranchId = ctx.Param(typesrest.BranchId.String())
 
 	// Suspend the branch
-	response, err := c.client.SuspendBranch(grpcCtx, &request)
+	response, err := c.client.CloseTemporarilyBranch(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 
-// activateBranch activates a branch
-// @Summary Activate a branch
-// @Description Activate a branch
+// openBranch opens a branch
+// @Summary Opens a branch
+// @Description Opens a branch
 // @Tags v1 shops businesses branches
 // @Accept json
 // @Produce json
 // @Param branchId path string true "Branch ID"
-// @Success 200 {object} pbshop.ActivateBranchResponse
+// @Success 200 {object} pbshop.OpenBranchResponse
 // @Failure 400 {object} _.ErrorResponse
 // @Failure 500 {object} _.ErrorResponse
 // @Security BearerAuth
-// @Router /api/v1/shops/businesses/branches/activate/{branchId} [post]
-func (c *Controller) activateBranch(ctx *gin.Context) {
-	var request pbshop.ActivateBranchRequest
+// @Router /api/v1/shops/businesses/branches/open/{branchId} [post]
+func (c *Controller) openBranch(ctx *gin.Context) {
+	var request pbshop.OpenBranchRequest
 
 	// Prepare the gRPC context
 	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
@@ -252,8 +257,8 @@ func (c *Controller) activateBranch(ctx *gin.Context) {
 	// Get the branch ID from the path
 	request.BranchId = ctx.Param(typesrest.BranchId.String())
 
-	// Activate the branch
-	response, err := c.client.ActivateBranch(grpcCtx, &request)
+	// Open the branch
+	response, err := c.client.OpenBranch(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 

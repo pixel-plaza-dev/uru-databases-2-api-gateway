@@ -54,18 +54,6 @@ func (c *Controller) Initialize() {
 	c.route.GET(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestproducts.GetProductMapper, c.getProduct))
 	c.route.PUT(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestproducts.UpdateProductMapper, c.updateProduct))
 	c.route.GET(c.routeHandler.CreateAuthenticatedEndpoint(pbconfigrestproducts.SearchProductsMapper, c.searchProducts))
-	c.route.POST(
-		c.routeHandler.CreateAuthenticatedEndpoint(
-			pbconfigrestproducts.SuspendProductMapper,
-			c.suspendProduct,
-		),
-	)
-	c.route.POST(
-		c.routeHandler.CreateAuthenticatedEndpoint(
-			pbconfigrestproducts.ActivateProductMapper,
-			c.activateProduct,
-		),
-	)
 
 	// Initialize the routes for the children controllers
 	c.initializeChildren()
@@ -192,65 +180,5 @@ func (c *Controller) searchProducts(ctx *gin.Context) {
 
 	// Search for products
 	response, err := c.client.SearchProducts(grpcCtx, &request)
-	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
-}
-
-// suspendProduct suspends a product
-// @Summary Suspend a product
-// @Description Suspend a product
-// @Tags v1 shops products
-// @Accept json
-// @Produce json
-// @Param productId path string true "Product ID"
-// @Success 200 {object} pbshop.SuspendProductResponse
-// @Failure 400 {object} _.ErrorResponse
-// @Failure 500 {object} _.ErrorResponse
-// @Security BearerAuth
-// @Router /api/v1/shops/products/suspend/{productId} [post]
-func (c *Controller) suspendProduct(ctx *gin.Context) {
-	var request pbshop.SuspendProductRequest
-
-	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
-	if err != nil {
-		c.responseHandler.HandlePrepareCtxError(ctx, err)
-		return
-	}
-
-	// Get the product ID from the path
-	request.ProductId = ctx.Param(typesrest.ProductId.String())
-
-	// Suspend the product
-	response, err := c.client.SuspendProduct(grpcCtx, &request)
-	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
-}
-
-// activateProduct activates a product
-// @Summary Activate a product
-// @Description Activate a product
-// @Tags v1 shops products
-// @Accept json
-// @Produce json
-// @Param productId path string true "Product ID"
-// @Success 200 {object} pbshop.ActivateProductResponse
-// @Failure 400 {object} _.ErrorResponse
-// @Failure 500 {object} _.ErrorResponse
-// @Security BearerAuth
-// @Router /api/v1/shops/products/activate/{productId} [post]
-func (c *Controller) activateProduct(ctx *gin.Context) {
-	var request pbshop.ActivateProductRequest
-
-	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
-	if err != nil {
-		c.responseHandler.HandlePrepareCtxError(ctx, err)
-		return
-	}
-
-	// Get the product ID from the path
-	request.ProductId = ctx.Param(typesrest.ProductId.String())
-
-	// Activate the product
-	response, err := c.client.ActivateProduct(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }

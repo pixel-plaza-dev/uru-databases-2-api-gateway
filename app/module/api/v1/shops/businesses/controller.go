@@ -70,18 +70,6 @@ func (c *Controller) Initialize() {
 			c.setBusinessProfilePicture,
 		),
 	)
-	c.route.POST(
-		c.routeHandler.CreateAuthenticatedEndpoint(
-			pbconfigrestbusinesses.SuspendBusinessMapper,
-			c.suspendBusiness,
-		),
-	)
-	c.route.POST(
-		c.routeHandler.CreateAuthenticatedEndpoint(
-			pbconfigrestbusinesses.ActivateBusinessMapper,
-			c.activateBusiness,
-		),
-	)
 	c.route.DELETE(
 		c.routeHandler.CreateAuthenticatedEndpoint(
 			pbconfigrestbusinesses.DeleteBusinessMapper,
@@ -221,60 +209,6 @@ func (c *Controller) setBusinessProfilePicture(ctx *gin.Context) {
 
 	// Set the profile picture of the business
 	response, err := c.client.SetBusinessProfilePicture(grpcCtx, &request)
-	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
-}
-
-// suspendBusiness suspends a business
-// @Summary Suspend a business
-// @Description Suspend a business
-// @Tags v1 shops businesses
-// @Accept json
-// @Produce json
-// @Param request body pbshop.SuspendBusinessRequest true "Suspend Business Request"
-// @Success 200 {object} pbshop.SuspendBusinessResponse
-// @Failure 400 {object} _.ErrorResponse
-// @Failure 500 {object} _.ErrorResponse
-// @Security BearerAuth
-// @Router /api/v1/shops/businesses/suspend [post]
-func (c *Controller) suspendBusiness(ctx *gin.Context) {
-	var request pbshop.SuspendBusinessRequest
-
-	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
-	if err != nil {
-		c.responseHandler.HandlePrepareCtxError(ctx, err)
-		return
-	}
-
-	// Suspend the business
-	response, err := c.client.SuspendBusiness(grpcCtx, &request)
-	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
-}
-
-// activateBusiness activates a business
-// @Summary Activate a business
-// @Description Activate a business
-// @Tags v1 shops businesses
-// @Accept json
-// @Produce json
-// @Param request body pbshop.ActivateBusinessRequest true "Activate Business Request"
-// @Success 200 {object} pbshop.ActivateBusinessResponse
-// @Failure 400 {object} _.ErrorResponse
-// @Failure 500 {object} _.ErrorResponse
-// @Security BearerAuth
-// @Router /api/v1/shops/businesses/activate [post]
-func (c *Controller) activateBusiness(ctx *gin.Context) {
-	var request pbshop.ActivateBusinessRequest
-
-	// Prepare the gRPC context
-	grpcCtx, err := commongrpcclientctx.PrepareCtx(ctx, &request)
-	if err != nil {
-		c.responseHandler.HandlePrepareCtxError(ctx, err)
-		return
-	}
-
-	// Activate the business
-	response, err := c.client.ActivateBusiness(grpcCtx, &request)
 	c.responseHandler.HandleResponse(ctx, http.StatusOK, response, err)
 }
 

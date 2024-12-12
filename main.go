@@ -5,11 +5,13 @@ import (
 	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app"
 	appgrpc "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/grpc"
 	appjwt "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/jwt"
 	applistener "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
 	applogger "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
 	appapi "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api"
+	_ "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/docs"
 	commonginmiddlewareauth "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
@@ -38,8 +40,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/oauth"
-
-	_ "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/docs"
 )
 
 func init() {
@@ -133,7 +133,7 @@ func main() {
 	if commonflag.Mode.IsDev() {
 		// Load server TLS credentials
 		transportCredentials, err = credentials.NewServerTLSFromFile(
-			appgrpc.ServerCertPath, appgrpc.ServerKeyPath,
+			app.ServerCertPath, app.ServerKeyPath,
 		)
 		if err != nil {
 			panic(err)
@@ -282,4 +282,19 @@ func main() {
 		panic(err)
 	}
 	applogger.ListenerLogger.ServerStarted(servicePort.Port)
+
+	/*
+		// Run the server
+		if commonflag.Mode.IsProd() {
+			if err = router.Run(servicePort.FormattedPort); err != nil {
+				panic(err)
+			}
+			applogger.ListenerLogger.ServerStarted(servicePort.Port)
+		} else {
+			// Start the server with HTTPS
+			if err = router.RunTLS(servicePort.FormattedPort, app.ServerCertPath, app.ServerKeyPath); err != nil {
+				panic(err)
+			}
+		}
+	*/
 }

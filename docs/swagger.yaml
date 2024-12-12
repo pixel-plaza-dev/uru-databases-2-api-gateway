@@ -470,7 +470,7 @@ definitions:
         type: string
       account_phone_number:
         type: string
-      platform:
+      account_platform:
         type: string
     type: object
   payment.SuspendPaymentAccountRequest:
@@ -489,31 +489,6 @@ definitions:
         type: string
     type: object
   payment.VerifyPaymentResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.ActivateBranchResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.ActivateBusinessProductResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.ActivateBusinessRequest:
-    properties:
-      business_id:
-        type: string
-    type: object
-  shop.ActivateBusinessResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.ActivateProductResponse:
     properties:
       message:
         type: string
@@ -736,6 +711,21 @@ definitions:
       product_id:
         type: string
     type: object
+  shop.CloseAdminRevisionRequest:
+    properties:
+      admin_revision_id:
+        type: string
+    type: object
+  shop.CloseAdminRevisionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.CloseTemporarilyBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
   shop.Clothing:
     properties:
       color:
@@ -938,6 +928,72 @@ definitions:
       name:
         type: string
     type: object
+  shop.OpenAdminRevision:
+    properties:
+      description:
+        type: string
+      is_suspended:
+        type: boolean
+      title:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToBranchRequest:
+    properties:
+      admin_revision:
+        $ref: '#/definitions/shop.OpenAdminRevision'
+      branch_id:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToBusinessProductRequest:
+    properties:
+      admin_revision:
+        $ref: '#/definitions/shop.OpenAdminRevision'
+      business_id:
+        type: string
+      product_id:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToBusinessProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToBusinessRequest:
+    properties:
+      business_id:
+        type: string
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToBusinessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToProductRequest:
+    properties:
+      admin_revision:
+        $ref: '#/definitions/shop.OpenAdminRevision'
+      product_id:
+        type: string
+    type: object
+  shop.OpenAdminRevisionToProductResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  shop.OpenBranchResponse:
+    properties:
+      message:
+        type: string
+    type: object
   shop.Product:
     properties:
       barcode:
@@ -1118,36 +1174,27 @@ definitions:
       store_number:
         type: string
     type: object
-  shop.SuspendBranchResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.SuspendBusinessProductResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.SuspendBusinessRequest:
-    properties:
-      business_id:
-        type: string
-    type: object
-  shop.SuspendBusinessResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  shop.SuspendProductResponse:
-    properties:
-      message:
-        type: string
-    type: object
   shop.Toy:
     properties:
       age_group:
         type: string
       toy_type:
+        type: string
+    type: object
+  shop.UpdateAdminRevisionRequest:
+    properties:
+      admin_revision_id:
+        type: string
+      description:
+        type: string
+      is_suspended:
+        type: boolean
+      title:
+        type: string
+    type: object
+  shop.UpdateAdminRevisionResponse:
+    properties:
+      message:
         type: string
     type: object
   shop.UpdateBook:
@@ -3066,38 +3113,6 @@ paths:
       summary: Get a business by ID
       tags:
       - v1 shops businesses
-  /api/v1/shops/businesses/activate:
-    post:
-      consumes:
-      - application/json
-      description: Activate a business
-      parameters:
-      - description: Activate Business Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/shop.ActivateBusinessRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.ActivateBusinessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Activate a business
-      tags:
-      - v1 shops businesses
   /api/v1/shops/businesses/branches:
     post:
       consumes:
@@ -3220,37 +3235,6 @@ paths:
       summary: Get a branch by ID
       tags:
       - v1 shops businesses branches
-  /api/v1/shops/businesses/branches/activate/{branchId}:
-    post:
-      consumes:
-      - application/json
-      description: Activate a branch
-      parameters:
-      - description: Branch ID
-        in: path
-        name: branchId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.ActivateBranchResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Activate a branch
-      tags:
-      - v1 shops businesses branches
   /api/v1/shops/businesses/branches/business-id/{businessId}:
     get:
       consumes:
@@ -3278,6 +3262,68 @@ paths:
           schema:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Get all branches for a business
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/branches/close-temporarily/{branchId}:
+    post:
+      consumes:
+      - application/json
+      description: Close temporarily the given branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.CloseTemporarilyBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Close temporarily the given branch
+      tags:
+      - v1 shops businesses branches
+  /api/v1/shops/businesses/branches/open/{branchId}:
+    post:
+      consumes:
+      - application/json
+      description: Opens a branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: branchId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.OpenBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Opens a branch
       tags:
       - v1 shops businesses branches
   /api/v1/shops/businesses/branches/products:
@@ -3404,37 +3450,6 @@ paths:
       summary: Search for branch products
       tags:
       - v1 shops businesses branches products
-  /api/v1/shops/businesses/branches/suspend/{branchId}:
-    post:
-      consumes:
-      - application/json
-      description: Suspend a branch
-      parameters:
-      - description: Branch ID
-        in: path
-        name: branchId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.SuspendBranchResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Suspend a branch
-      tags:
-      - v1 shops businesses branches
   /api/v1/shops/businesses/clients:
     post:
       consumes:
@@ -3714,37 +3729,6 @@ paths:
       summary: Get a business product by ID
       tags:
       - v1 shops businesses products
-  /api/v1/shops/businesses/products/activate/{productId}:
-    post:
-      consumes:
-      - application/json
-      description: Activate a business product
-      parameters:
-      - description: Product ID
-        in: path
-        name: productId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.ActivateBusinessProductResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Activate a business product
-      tags:
-      - v1 shops businesses products
   /api/v1/shops/businesses/products/search:
     post:
       consumes:
@@ -3773,37 +3757,6 @@ paths:
           schema:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Search for business products
-      tags:
-      - v1 shops businesses products
-  /api/v1/shops/businesses/products/suspend/{productId}:
-    post:
-      consumes:
-      - application/json
-      description: Suspend a business product
-      parameters:
-      - description: Product ID
-        in: path
-        name: productId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.SuspendBusinessProductResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Suspend a business product
       tags:
       - v1 shops businesses products
   /api/v1/shops/businesses/profile-picture:
@@ -3836,38 +3789,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Set the profile picture of a business
-      tags:
-      - v1 shops businesses
-  /api/v1/shops/businesses/suspend:
-    post:
-      consumes:
-      - application/json
-      description: Suspend a business
-      parameters:
-      - description: Suspend Business Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/shop.SuspendBusinessRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.SuspendBusinessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Suspend a business
       tags:
       - v1 shops businesses
   /api/v1/shops/clients/{businessId}:
@@ -4085,37 +4006,6 @@ paths:
       summary: Get a product by ID
       tags:
       - v1 shops products
-  /api/v1/shops/products/activate/{productId}:
-    post:
-      consumes:
-      - application/json
-      description: Activate a product
-      parameters:
-      - description: Product ID
-        in: path
-        name: productId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/shop.ActivateProductResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Activate a product
-      tags:
-      - v1 shops products
   /api/v1/shops/products/categories:
     post:
       consumes:
@@ -4238,24 +4128,25 @@ paths:
       summary: Search for products
       tags:
       - v1 shops products
-  /api/v1/shops/products/suspend/{productId}:
-    post:
+  /api/v1/shops/revisions:
+    delete:
       consumes:
       - application/json
-      description: Suspend a product
+      description: Close an admin revision
       parameters:
-      - description: Product ID
-        in: path
-        name: productId
+      - description: Close Admin Revision Request
+        in: body
+        name: request
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/shop.CloseAdminRevisionRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/shop.SuspendProductResponse'
+            $ref: '#/definitions/shop.CloseAdminRevisionResponse'
         "400":
           description: Bad Request
           schema:
@@ -4266,9 +4157,168 @@ paths:
             $ref: '#/definitions/types.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Suspend a product
+      summary: Close an admin revision
       tags:
-      - v1 shops products
+      - v1 shops revisions
+    post:
+      consumes:
+      - application/json
+      description: Update an admin revision
+      parameters:
+      - description: Update Admin Revision Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.UpdateAdminRevisionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.UpdateAdminRevisionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an admin revision
+      tags:
+      - v1 shops revisions
+  /api/v1/shops/revisions/branches:
+    post:
+      consumes:
+      - application/json
+      description: Open an admin revision to a branch
+      parameters:
+      - description: Open Admin Revision To Branch Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.OpenAdminRevisionToBranchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.OpenAdminRevisionToBranchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Open an admin revision to a branch
+      tags:
+      - v1 shops revisions
+  /api/v1/shops/revisions/businesses:
+    post:
+      consumes:
+      - application/json
+      description: Open an admin revision to a business
+      parameters:
+      - description: Open Admin Revision To Business Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.OpenAdminRevisionToBusinessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.OpenAdminRevisionToBusinessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Open an admin revision to a business
+      tags:
+      - v1 shops revisions businesses
+  /api/v1/shops/revisions/businesses/products:
+    get:
+      consumes:
+      - application/json
+      description: Open an admin revision to a business product
+      parameters:
+      - description: Open Admin Revision To Business Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.OpenAdminRevisionToBusinessProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.OpenAdminRevisionToBusinessProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Open an admin revision to a business product
+      tags:
+      - v1 shops revisions businesses
+  /api/v1/shops/revisions/products:
+    post:
+      consumes:
+      - application/json
+      description: Open an admin revision to a product
+      parameters:
+      - description: Open Admin Revision To Product Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.OpenAdminRevisionToProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.OpenAdminRevisionToProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Open an admin revision to a product
+      tags:
+      - v1 shops revisions
   /api/v1/shops/stores:
     post:
       consumes:
