@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app"
@@ -11,7 +12,7 @@ import (
 	applistener "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/listener"
 	applogger "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/logger"
 	appapi "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/app/module/api"
-	_ "github.com/pixel-plaza-dev/uru-databases-2-api-gateway/docs"
+	"github.com/pixel-plaza-dev/uru-databases-2-api-gateway/docs"
 	commonginmiddlewareauth "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/auth"
 	commonheader "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/gin/middleware/security/header"
 	commonclientresponse "github.com/pixel-plaza-dev/uru-databases-2-go-api-common/http/grpc/client/response"
@@ -66,8 +67,7 @@ func init() {
 // @License.name  GPL-3.0
 // @License.url   http://www.gnu.org/licenses/gpl-3.0.html
 
-// @Host      uru-databases-2-api-gateway-246064477369.us-central1.run.app
-// @BasePath  /api/v1
+// @BasePath  /
 
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -82,6 +82,9 @@ func main() {
 		panic(err)
 	}
 	applogger.EnvironmentLogger.EnvironmentVariableLoaded(applistener.PortKey)
+
+	// Dynamically set the Swagger host
+	docs.SwaggerInfo.Host = "localhost:" + servicePort.Port
 
 	// Get the gRPC services URI
 	var uriKeys = []string{
@@ -255,6 +258,9 @@ func main() {
 
 	// Gin router
 	router := gin.Default()
+
+	// Set up CORS middleware
+	router.Use(cors.Default())
 
 	// Added secure headers middleware
 	router.Use(commonheader.SecurityHeaders())

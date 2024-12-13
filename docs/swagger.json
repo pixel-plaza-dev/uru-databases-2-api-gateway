@@ -11,7 +11,7 @@
         "version": "1.0"
     },
     "host": "uru-databases-2-api-gateway-246064477369.us-central1.run.app",
-    "basePath": "/api/v1",
+    "basePath": "/",
     "paths": {
         "/api/v1/auth/access-tokens/valid/{jwt-id}": {
             "get": {

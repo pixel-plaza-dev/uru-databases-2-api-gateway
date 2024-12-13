@@ -8289,7 +8289,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "uru-databases-2-api-gateway-246064477369.us-central1.run.app",
-	BasePath:         "/api/v1",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Pixel Plaza REST API",
 	Description:      "The REST API Gateway to the Auth, User, Business, Payment and Order microservices",
