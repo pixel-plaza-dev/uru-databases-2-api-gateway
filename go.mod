@@ -6,8 +6,8 @@ require (
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.3.25
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.9.12
+	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.3.26
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.9.13
 	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.5.17
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
