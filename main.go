@@ -84,7 +84,11 @@ func main() {
 	applogger.EnvironmentLogger.EnvironmentVariableLoaded(applistener.PortKey)
 
 	// Dynamically set the Swagger host
-	docs.SwaggerInfo.Host = "localhost:" + servicePort.Port
+	if commonflag.Mode != nil && commonflag.Mode.IsDev() {
+		docs.SwaggerInfo.Host = "localhost:" + servicePort.Port
+	} else {
+		docs.SwaggerInfo.Host = "uru-databases-2-api-gateway-246064477369.us-central1.run.app"
+	}
 
 	// Get the gRPC services URI
 	var uriKeys = []string{
