@@ -3,10 +3,11 @@ module github.com/pixel-plaza-dev/uru-databases-2-api-gateway
 go 1.23.2
 
 require (
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
-	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.3.24
-	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.9.11
+	github.com/pixel-plaza-dev/uru-databases-2-go-api-common v0.3.25
+	github.com/pixel-plaza-dev/uru-databases-2-go-service-common v0.9.12
 	github.com/pixel-plaza-dev/uru-databases-2-protobuf-common v0.5.17
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
@@ -30,7 +31,6 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
-	github.com/gin-contrib/cors v1.7.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
